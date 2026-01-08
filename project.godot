@@ -15,6 +15,10 @@ run/main_scene="res://node_3d.tscn"
 config/features=PackedStringArray("4.5", "Mobile")
 config/icon="res://icon.svg"
 
+[autoload]
+
+NetworkManager="*res://Networking/network_manager.gd"
+
 [display]
 
 window/stretch/mode="viewport"
