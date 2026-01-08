@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" uid="uid://cb4dheuccgbv" path="res://Networking/network_test.gd" id="1_lb6m4"]
 
-[node name="ConnectionTest" type="Node3D"]
+[node name="ConnectionTest" type="Node3D" node_paths=PackedStringArray("joinID")]
 script = ExtResource("1_lb6m4")
+joinID = NodePath("Join/TextEdit")
 
 [node name="Info" type="Panel" parent="."]
 anchors_preset = 11
