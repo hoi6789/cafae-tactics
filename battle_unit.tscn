@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cn7jljtoo25cf"]
+
+[ext_resource type="Texture2D" uid="uid://bejbmx6hg216a" path="res://HandicootIdle.png" id="1_2vhx8"]
+[ext_resource type="Script" uid="uid://batkgiufupgom" path="res://battle_unit.gd" id="2_dvocn"]
+
+[node name="BattleUnit" type="Sprite3D"]
+pixel_size = 0.001
+billboard = 2
+texture = ExtResource("1_2vhx8")
+script = ExtResource("2_dvocn")

@@ -22,7 +22,7 @@ next_pass = SubResource("ShaderMaterial_5stwb")
 albedo_color = Color(0.938896, 0, 0.237025, 1)
 
 [node name="HexTile" type="StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
 script = ExtResource("1_2crfn")
 
 [node name="CollisionPolygon3D" type="CollisionPolygon3D" parent="."]
@@ -34,5 +34,6 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 
 mesh = SubResource("TubeTrailMesh_3iqd7")
 surface_material_override/0 = SubResource("StandardMaterial3D_2crfn")
 
+[connection signal="input_event" from="." to="." method="_on_input_event"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

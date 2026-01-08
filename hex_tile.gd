@@ -1,4 +1,6 @@
 extends StaticBody3D
+class_name Hex
+
 var id = 0
 var q: float = 0
 var r: float = 0
@@ -7,8 +9,9 @@ var s: float = 0
 var type: String = "default"
 var baseColour: Color
 var surfMaterial
+var inputManager
 
-func initialize(cubePos: Vector2, _type: String):
+func initialize(cubePos: Vector2, _type: String = "default"):
 	## Initialization function to setup properties of a hex
 	surfMaterial = $CollisionPolygon3D/MeshInstance3D.get_surface_override_material(0).duplicate(true)
 	type = _type
@@ -19,7 +22,7 @@ func initialize(cubePos: Vector2, _type: String):
 func setColour(palette: String):
 	match palette:
 		_:
-			baseColour = Color(0.825 + cRand(), 0.209 + cRand(), 0.969 + cRand(), 1.0)
+			baseColour = varyColour(Color(0.825, 0.209, 0.969, 1.0))
 	
 	surfMaterial.albedo_color = baseColour
 	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
@@ -32,24 +35,38 @@ func setPosition(cubePos: Vector2):
 	r = cubePos.y
 	s = 0 - q - r
 	
-	## multiplies by q/r basis vectors to determine position of the hex in world coords
-	var offset_q = q / 2 * Vector3(sqrt(3), 0, 0)
-	var offset_r = r / 2 * Vector3(sqrt(3)/2, 0, 1.5)
-	
-	position = offset_q + offset_r
+	position = HexMath.axis_to_3D(q, r)
+	if HexMath.FLAT_HEXES:
+		rotation.y = PI/2
 	print(position)
 	pass
 
-func cRand():
-	return (randf() * 0.2) - 0.1
+func varyColour(col: Color):
+	var variance = 0.2
+	col.r = col.r + ((randf() * variance) - (variance / 2))
+	col.g = col.g + ((randf() * variance) - (variance / 2))
+	col.b = col.b + ((randf() * variance) - (variance / 2))
+	return col
 
 func _on_mouse_entered() -> void:
-	surfMaterial.albedo_color = Color(0, 1, 0, 1)
-	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
-	print(id)
+	if inputManager.selectorState == "hexes":
+		pass
+		surfMaterial.albedo_color = Color(0, 1, 0, 1)
+		$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
+		print(id)
 	pass # Replace with function body.
 
 func _on_mouse_exited() -> void:
 	surfMaterial.albedo_color = baseColour
 	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
+	pass # Replace with function body.
+
+
+func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == 1 and event.pressed == true and inputManager.selectorState == "hexes":
+			inputManager.selectorState = "none"
+			inputManager.chooseHex(self)
+			_on_mouse_exited()
+			pass
 	pass # Replace with function body.

@@ -1,12 +1,31 @@
-[gd_scene load_steps=4 format=3 uid="uid://dpa6fw8x117ed"]
+[gd_scene load_steps=6 format=3 uid="uid://dpa6fw8x117ed"]
 
 [ext_resource type="Script" uid="uid://bxd281ovohk1g" path="res://battle_controller.gd" id="1_a202f"]
 [ext_resource type="PackedScene" uid="uid://ccmqueenj03hf" path="res://hex_tile.tscn" id="2_noarx"]
 [ext_resource type="Script" uid="uid://bgnogf41mi852" path="res://camera_3d.gd" id="3_a0tk4"]
+[ext_resource type="Script" uid="uid://cc7jvukf2h4xc" path="res://battle_input_manager.gd" id="3_jka67"]
+[ext_resource type="PackedScene" uid="uid://cn7jljtoo25cf" path="res://battle_unit.tscn" id="5_i5arm"]
 
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_a202f")
 HexTile = ExtResource("2_noarx")
+
+[node name="InputManager" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("3_jka67")
+
+[node name="SummonButton" type="Button" parent="InputManager"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "summon unit (0/1)"
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.960342, 0.278823, 0, -0.278823, 0.960342, 0, 1.69987, 2.42782)
@@ -15,8 +34,9 @@ script = ExtResource("3_a0tk4")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7.27733, 0)
 
-[node name="Control" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="HexTile" parent="." instance=ExtResource("2_noarx")]
+
+[node name="BattleUnit" parent="." instance=ExtResource("5_i5arm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.31784922, 0)
+
+[connection signal="pressed" from="InputManager/SummonButton" to="InputManager" method="_on_summon_button_pressed"]
