@@ -12,9 +12,10 @@ section_rings = 1
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5stwb"]
 render_priority = 0
 shader = ExtResource("2_pmlg5")
+shader_parameter/normal_threshold = 0.1
+shader_parameter/depth_threshold = 0.05
+shader_parameter/depth_artifact_correction_coef = 2.0
 shader_parameter/outline_color = Color(0, 0, 0, 1)
-shader_parameter/outline_width = 2.0
-shader_parameter/constant_width = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2crfn"]
 next_pass = SubResource("ShaderMaterial_5stwb")
