@@ -1,7 +1,7 @@
 extends Node3D
 
 @export var HexTile: PackedScene
-var mapTiles: Array = [[0, 0, 0], [sqrt(3)/2, 0, 0], [0, 0, 2]]
+var mapTiles: Array = [[0, 0, "default"], [0, 1, "default"], [1, 0, "default"], [1, 1, "default"]]
 
 func _ready() -> void:
 	for coordinate in mapTiles:
@@ -9,5 +9,5 @@ func _ready() -> void:
 		var newTile = HexTile.instantiate()
 		newTile.id = 1
 		add_child(newTile)
-		newTile.position = Vector3(coordinate[0], coordinate[1], coordinate[2])
+		newTile.initialize(Vector2(coordinate[0], coordinate[1]), coordinate[2])
 	pass
