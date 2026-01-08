@@ -50,8 +50,9 @@ func init_steam():
 	
 	
 	
-func _joined():
-	pass
+func _joined(connect: int, id):
+	if connect == 1:
+		infopanel.text += "\nLobby ID: " + str(id)
 
 func get_lobbies():
 	Steam.addRequestLobbyListDistanceFilter(Steam.LOBBY_DISTANCE_FILTER_DEFAULT)
