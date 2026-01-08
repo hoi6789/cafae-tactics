@@ -5,7 +5,8 @@ var PORT: int = 5000
 var is_owned: bool = false
 var steam_id: int = 0
 var steam_user: String = "Guest"
-var lobby_id: int = 0
+var lobby_id: int = -1
+var player_count = 0
 
 var infopanel: RichTextLabel
 
@@ -42,17 +43,26 @@ func init_steam():
 	
 	#setup steam call backs
 	Steam.lobby_created.connect(_lobby_created)
+	Steam.lobby_joined.connect(_peer_joined)
 	Steam.lobby_match_list.connect(_lobby_list)
 	
 	#create the multiplayer peer object
 	peer = SteamMultiplayerPeer.new()
 	
 	
+
+func rebuild_player_list():
+	infopanel.text = ""
+	for i in player_count:
+		print(i)
+		infopanel.text += "\n"+Steam.getFriendPersonaName(Steam.getLobbyMemberByIndex(lobby_id,i))	
 	
+	infopanel.text += "\nLobby ID: " + str(lobby_id)
 	
-func _joined(connect: int, id):
-	if connect == 1:
-		infopanel.text += "\nLobby ID: " + str(id)
+func _peer_joined(lobby: int, permissions: int, locked: bool, response: int):
+		lobby_id = lobby
+		player_count = Steam.getNumLobbyMembers(lobby_id)
+		rebuild_player_list()
 
 func get_lobbies():
 	Steam.addRequestLobbyListDistanceFilter(Steam.LOBBY_DISTANCE_FILTER_DEFAULT)
@@ -65,7 +75,6 @@ func _lobby_created(connect: int, id):
 		Steam.setLobbyJoinable(id, true)
 		Steam.setLobbyData(id, "mode", "TEST")
 		Steam.setLobbyData(id, "name", "TEST")
-		peer.host_with_lobby(id)
 		infopanel.text += "\nLobby ID: " + str(id)
 
 func _lobby_list():
@@ -74,11 +83,11 @@ func _lobby_list():
 func join(id):
 	peer.create_client(PORT)
 	multiplayer.multiplayer_peer = peer
-	multiplayer.peer_connected.connect(_joined)
-	peer.connect_to_lobby(id)
+	#multiplayer.peer_connected.connect(_peer_joined)
+	Steam.joinLobby(id)
 
 func host():
 	peer.create_host(PORT)
 	multiplayer.multiplayer_peer = peer
-	multiplayer.peer_connected.connect(_joined)
+	#multiplayer.peer_connected.connect(_peer_joined)
 	Steam.createLobby(Steam.LOBBY_TYPE_PUBLIC, 2)
