@@ -3,6 +3,7 @@ var spd = 1
 var mouse3Down = false
 
 func _input(event: InputEvent) -> void:
+	## looking around with mouse 3
 	if event is InputEventMouseMotion and mouse3Down:
 		print(event.relative)
 		rotation.y -= event.relative.x * 0.01
@@ -11,6 +12,7 @@ func _input(event: InputEvent) -> void:
 	pass
 
 func _process(delta: float) -> void:
+	## controls camera movement
 	mouse3Down = Input.is_action_pressed("mouse3Down")
 	if Input.is_action_pressed("camera_panRight"):
 		position.x += cos(rotation.y) * delta * spd
