@@ -53,7 +53,7 @@ func _on_mouse_entered() -> void:
 		pass
 		surfMaterial.albedo_color = Color(0, 1, 0, 1)
 		$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
-		print(id)
+		#print(id)
 	pass # Replace with function body.
 
 func _on_mouse_exited() -> void:
