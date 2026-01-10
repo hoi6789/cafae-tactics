@@ -9,6 +9,7 @@
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_a202f")
 HexTile = ExtResource("2_noarx")
+SceneUnit = ExtResource("5_i5arm")
 
 [node name="InputManager" type="Control" parent="."]
 unique_name_in_owner = true

@@ -1,8 +1,13 @@
 extends Node3D
 
+## Prefabs used for copying 
 @export var HexTile: PackedScene
+@export var SceneUnit: PackedScene
+
 var mapTiles: Array = [[0, 0], [0, 1], [1, 0], [1, 1]]
-var mapHexes: Array[Hex]
+var mapHexes: Dictionary[String, Hex]
+var mapHexesQ: Dictionary[int, Dictionary]
+var mapHexesR: Dictionary[int, Dictionary]
 
 func _ready() -> void:
 	for coordinate in mapTiles:
@@ -15,15 +20,33 @@ func _ready() -> void:
 		elif coordinate.size() == 3: 
 			newTile.initialize(Vector2(coordinate[0], coordinate[1]), coordinate[2])
 		newTile.inputManager = %InputManager
-		mapHexes.push_back(newTile)
+		mapHexes[str(coordinate[0]) + "," + str(coordinate[1])] = (newTile)
+		if not mapHexesQ.has(coordinate[0]):
+			mapHexesQ[coordinate[0]] = {}
+		if not mapHexesR.has(coordinate[1]):
+			mapHexesR[coordinate[1]] = {}
+		mapHexesQ[coordinate[0]][coordinate[1]] = newTile
+		mapHexesR[coordinate[1]][coordinate[0]] = newTile
 	pass
 
 func processInput(command: Array[int]):
 	## Big function that runs the entire game. this is gonna be a big match case i'm so sorry
 	match command[0]:
-		
+		5: ## summons a unit at a target hex. params: q of hex, r of hex, id of unit, controller of unit, team of unit
+			var summonedRes: Resource
+			match command[3]:
+				1: summonedRes = load("res://testUnit1.tres")
+				_: summonedRes = load("res://testUnit1.tres")
+			var summonedUnit = SceneUnit.instantiate()
+			summonedUnit.setLocation(command[1], command[2])
+			summonedUnit.unitData = summonedRes
+			mapHexesQ[command[1]][command[2]].storedUnits.push_back(summonedUnit)
+			add_child(summonedUnit)
+			pass
 		_:
-			print(mapHexes[0].id)
+			print(mapHexes["0,0"].id)
+			print(mapHexesQ)
+			print(mapHexesR)
 			
 			pass
 	pass

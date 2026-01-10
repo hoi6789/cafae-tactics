@@ -18,7 +18,7 @@ func _on_summon_button_pressed() -> void:
 func chooseHex(hex: Hex):
 	match queueCommand:
 		5:
-			var n:Array[int] = [1]
+			var n: Array[int] = [5, hex.q, hex.r, 1]
 			print(Vector3(hex.q, hex.r, hex.s))
 			hex.id = 2
 			controller.processInput(n)
