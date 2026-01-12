@@ -102,19 +102,21 @@ func join(id):
 func _peer_joined(lobby: int, permissions: int, locked: bool, response: int):
 		if hosting:
 			return
-		print("joined lobby " + str(lobby), ", ", response)
+		print("joined lobby " + str(lobby), ", ", response, ", ", locked)
 		lobby_id = lobby
 		player_count = Steam.getNumLobbyMembers(lobby_id)
 		print("new count: " + str(player_count))
 		#create the multiplayer peer object
-		print(peer.connect_to_lobby(lobby))
+		peer.connect_to_lobby(lobby)
 		multiplayer.multiplayer_peer = peer
-		await get_tree().create_timer(1)
-		reset_player_list.rpc()
+		print("setting timer")
+		await get_tree().create_timer(0.1).timeout
+		print("timer active!")
+		reset_player_list.rpc(multiplayer.get_unique_id())
 
 
 
-@rpc("any_peer")
-func reset_player_list():
-	print("rpc!")
+@rpc("any_peer", "call_remote")
+func reset_player_list(sender):
+	print("rpc from " + str(sender) +": "+ str(multiplayer.get_unique_id()))
 	rebuild_player_list()
