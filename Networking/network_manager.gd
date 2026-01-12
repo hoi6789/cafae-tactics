@@ -110,7 +110,7 @@ func _peer_joined(lobby: int, permissions: int, locked: bool, response: int):
 		peer.connect_to_lobby(lobby)
 		multiplayer.multiplayer_peer = peer
 		print("setting timer")
-		await get_tree().create_timer(0.1).timeout
+		await get_tree().create_timer(5).timeout
 		print("timer active!")
 		reset_player_list.rpc(multiplayer.get_unique_id())
 
@@ -120,3 +120,5 @@ func _peer_joined(lobby: int, permissions: int, locked: bool, response: int):
 func reset_player_list(sender):
 	print("rpc from " + str(sender) +": "+ str(multiplayer.get_unique_id()))
 	rebuild_player_list()
+	if hosting:
+		reset_player_list.rpc(multiplayer.get_unique_id())
