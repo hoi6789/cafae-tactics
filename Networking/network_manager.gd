@@ -111,7 +111,7 @@ func _peer_joined(lobby: int, permissions: int, locked: bool, response: int):
 		multiplayer.multiplayer_peer = peer
 		print("setting timer")
 		while len(multiplayer.get_peers()) < 2:
-			await get_tree().process_frame
+			await get_tree().create_timer(0.1).timeout
 		print("timer active!")
 		reset_player_list.rpc(multiplayer.get_unique_id())
 
