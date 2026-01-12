@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="UnitStats" load_steps=2 format=3 uid="uid://81ru57jc54b1"]
+
+[ext_resource type="Script" uid="uid://c0xrc3yqq2vgj" path="res://unitData.gd" id="1_auc6h"]
+
+[resource]
+script = ExtResource("1_auc6h")
+metadata/_custom_type_script = "uid://c0xrc3yqq2vgj"

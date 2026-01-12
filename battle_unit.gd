@@ -1,10 +1,12 @@
 extends Sprite3D
+class_name BattleUnit
 
-@export var maxHealth: int
-var health: int
-@export var attack: int
-@export var defense: int
-@export var speed: int
+@export var unitData: Resource
 
 var player: int
 var team: int
+
+## sets location. idk
+func setLocation(q, r):
+	position = HexMath.axis_to_3D(q, r)
+	pass

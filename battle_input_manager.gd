@@ -5,6 +5,10 @@ var selectorState: String = "none"
 var playerID: int = 1
 var queueCommand: int = 0
 
+var controller = get_parent()
+
+func _ready() -> void:
+	controller = get_parent()
 
 func _on_summon_button_pressed() -> void:
 	selectorState = "hexes"
@@ -14,5 +18,8 @@ func _on_summon_button_pressed() -> void:
 func chooseHex(hex: Hex):
 	match queueCommand:
 		5:
+			var n: Array[int] = [5, hex.q, hex.r, 1]
 			print(Vector3(hex.q, hex.r, hex.s))
+			hex.id = 2
+			controller.processInput(n)
 	pass

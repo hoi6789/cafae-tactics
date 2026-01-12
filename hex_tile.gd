@@ -2,13 +2,20 @@ extends StaticBody3D
 class_name Hex
 
 var id = 0
+
+## coordinates of the hex in cube space (q + r + s = 0)
 var q: float = 0
 var r: float = 0
 var s: float = 0
 
+## 
+var storedUnits = []
+
+## used to determine colour and other properties (terrain?)
 var type: String = "default"
 var baseColour: Color
 var surfMaterial
+
 var inputManager
 
 func initialize(cubePos: Vector2, _type: String = "default"):
@@ -53,7 +60,7 @@ func _on_mouse_entered() -> void:
 		pass
 		surfMaterial.albedo_color = Color(0, 1, 0, 1)
 		$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
-		print(id)
+		#print(id)
 	pass # Replace with function body.
 
 func _on_mouse_exited() -> void:

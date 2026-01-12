@@ -5,7 +5,7 @@ var mouse3Down = false
 func _input(event: InputEvent) -> void:
 	## looking around with mouse 3
 	if event is InputEventMouseMotion and mouse3Down:
-		print(event.relative)
+		#print(event.relative)
 		rotation.y -= event.relative.x * 0.01
 		rotation.x -= event.relative.y * 0.01
 		if rotation_degrees.x < -80: rotation_degrees.x = -80
@@ -35,13 +35,13 @@ func _process(delta: float) -> void:
 		pass
 		
 	if Input.is_action_just_pressed("mouseWheelUp"):
-		print("a")
+		#print("a")
 		position -= basis.z
 		if position.y < 0.5: position.y = 0.5
 		pass
 		
 	if Input.is_action_just_pressed("mouseWheelDown"):
-		print("a")
+		#print("a")
 		position += basis.z
 		if position.y < 0.5: position.y = 0.5
 		pass
