@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://bxd281ovohk1g" path="res://battle_controller.gd" id="1_a202f"]
 [ext_resource type="PackedScene" uid="uid://ccmqueenj03hf" path="res://hex_tile.tscn" id="2_noarx"]
 [ext_resource type="Script" uid="uid://bgnogf41mi852" path="res://camera_3d.gd" id="3_a0tk4"]
-[ext_resource type="Script" uid="uid://cc7jvukf2h4xc" path="res://battle_input_manager.gd" id="3_jka67"]
-[ext_resource type="PackedScene" uid="uid://cn7jljtoo25cf" path="res://battle_unit.tscn" id="5_i5arm"]
+[ext_resource type="Script" path="res://battle_input_manager.gd" id="3_jka67"]
+[ext_resource type="PackedScene" path="res://battle_unit.tscn" id="5_i5arm"]
 
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_a202f")
