@@ -9,9 +9,14 @@ var lobby_id: int = -1
 var player_count = 0
 var hosting = false
 
+var game_started = false
+
 var infopanel: RichTextLabel
 
 var peer: SteamMultiplayerPeer = SteamMultiplayerPeer.new()
+
+signal got_lobby_list
+var lobby_arr
 # Called when the node enters the scene tree for the first time.
 func _init() -> void:
 	OS.set_environment("SteamAppId",str(APP_ID))
@@ -45,35 +50,17 @@ func init_steam():
 	if is_owned == false:
 		get_tree().quit()
 	
-	#add our info to the info panel
-	infopanel.text += "\n"+steam_user + ": " + str(steam_id)
-	
 	#setup steam call backs
 	Steam.lobby_created.connect(_lobby_created)
 	Steam.lobby_joined.connect(_peer_joined)
 	Steam.lobby_match_list.connect(_lobby_list)
-	
-	
-	
-
-func _new_connection(id):
-	infopanel.text += "\nnew peer!"
-	#rebuild_player_list()
-
-func rebuild_player_list():
-	player_count = Steam.getNumLobbyMembers(lobby_id)
-	infopanel.text = ""
-	for i in player_count:
-		print(i)
-		infopanel.text += "\n"+Steam.getFriendPersonaName(Steam.getLobbyMemberByIndex(lobby_id,i))	
-	
-	infopanel.text += "\nLobby ID: " + str(lobby_id)
-	infopanel.text += "\nUpdated: " + Time.get_time_string_from_system(false)
 		
 
-func get_lobbies():
+func get_lobbies() -> Array:
 	Steam.addRequestLobbyListDistanceFilter(Steam.LOBBY_DISTANCE_FILTER_DEFAULT)
 	Steam.requestLobbyList()
+	await got_lobby_list
+	return lobby_arr
 
 func host():
 	hosting = true
@@ -89,13 +76,18 @@ func _lobby_created(connect: int, id):
 		Steam.setLobbyJoinable(id, true)
 		Steam.setLobbyData(id, "mode", "TEST")
 		Steam.setLobbyData(id, "name", "TEST")
-		infopanel.text += "\nLobby ID: " + str(id)
 		#create the multiplayer peer object
 
-func _lobby_list():
-	pass
+func _lobby_list(lobbies: Array):
+	lobby_arr = []
+	for lobby in lobbies:
+		if Steam.getLobbyOwner(lobby) != 0:
+			lobby_arr.push_back(lobby)
+	got_lobby_list.emit()
 	
 func join(id):
+	if hosting:
+		Steam.leaveLobby(lobby_id)
 	hosting = false
 	Steam.joinLobby(id)
 
@@ -117,7 +109,12 @@ func _peer_joined(lobby: int, permissions: int, locked: bool, response: int):
 
 @rpc("any_peer", "call_remote")
 func reset_player_list(sender):
+	player_count = Steam.getNumLobbyMembers(lobby_id)
+	print(player_count)
 	print("rpc from " + str(sender) +": "+ str(multiplayer.get_unique_id()))
-	rebuild_player_list()
 	if hosting:
 		reset_player_list.rpc(multiplayer.get_unique_id())
+
+func startGame():
+	get_tree().change_scene_to_file("res://node_3d.tscn")
+	pass

@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cn2qtrhatkoj0"]
+
+[ext_resource type="Script" uid="uid://cf3jk3t6xarxi" path="res://lobby_button.gd" id="1_h4cm3"]
+
+[node name="Lobby Button" type="Button"]
+custom_minimum_size = Vector2(0, 50)
+script = ExtResource("1_h4cm3")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

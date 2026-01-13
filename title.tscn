@@ -1,0 +1,75 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0c3ebdtisprn"]
+
+[ext_resource type="Script" uid="uid://cb4dheuccgbv" path="res://Networking/network_test.gd" id="1_y7k74"]
+[ext_resource type="PackedScene" uid="uid://cn2qtrhatkoj0" path="res://Networking/lobby_button.tscn" id="2_oyqm6"]
+
+[node name="ConnectionTest" type="Node3D" node_paths=PackedStringArray("joinID", "lobbyLabel", "lobbyContainer")]
+script = ExtResource("1_y7k74")
+joinID = NodePath("Join/TextEdit")
+lobbyLabel = NodePath("Label")
+lobbyButton = ExtResource("2_oyqm6")
+lobbyContainer = NodePath("Panel/VBoxContainer")
+
+[node name="Join" type="Button" parent="."]
+offset_top = 206.0
+offset_right = 437.0
+offset_bottom = 290.0
+text = "Join"
+
+[node name="TextEdit" type="TextEdit" parent="Join"]
+custom_minimum_size = Vector2(0, 43.27)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 7.0
+offset_bottom = 50.270004
+grow_horizontal = 2
+grow_vertical = 0
+placeholder_text = "Lobby ID"
+
+[node name="Label" type="Label" parent="."]
+z_index = 10
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -372.0
+offset_top = -23.0
+grow_horizontal = 0
+grow_vertical = 0
+horizontal_alignment = 2
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -351.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -35.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ReloadButton" type="Button" parent="Panel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Reload"
+
+[connection signal="pressed" from="Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Panel/ReloadButton" to="." method="_on_reload_button_pressed"]
