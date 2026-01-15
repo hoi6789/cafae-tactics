@@ -81,7 +81,7 @@ func _lobby_created(connect: int, id):
 func _lobby_list(lobbies: Array):
 	lobby_arr = []
 	for lobby in lobbies:
-		if Steam.getLobbyOwner(lobby) != 0:
+		if Steam.getLobbyOwner(lobby) != 0 and Steam.getLobbyOwner(lobby) != steam_id:
 			lobby_arr.push_back(lobby)
 	got_lobby_list.emit()
 	

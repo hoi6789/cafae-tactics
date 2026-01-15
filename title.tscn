@@ -11,9 +11,9 @@ lobbyButton = ExtResource("2_oyqm6")
 lobbyContainer = NodePath("Panel/VBoxContainer")
 
 [node name="Join" type="Button" parent="."]
-offset_top = 206.0
+offset_top = 508.0
 offset_right = 437.0
-offset_bottom = 290.0
+offset_bottom = 592.0
 text = "Join"
 
 [node name="TextEdit" type="TextEdit" parent="Join"]
