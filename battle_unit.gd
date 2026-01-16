@@ -6,7 +6,34 @@ class_name BattleUnit
 var player: int
 var team: int
 
+var inputManager: InputManager
+var battleController: BattleController
+
+func initialize(cubePos: Vector2, data: Resource):
+	unitData = data
+	setLocation(cubePos.x, cubePos.y)
+	pass
+
 ## sets location. idk
 func setLocation(q, r):
 	position = HexMath.axis_to_3D(q, r)
+	position.y = (texture.get_size().y * pixel_size / 2) + HexMath.HEX_HEIGHT
 	pass
+
+
+func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == 1 and event.pressed == true and inputManager.selectorState == InputManager.InputStates.UNITS:
+			inputManager.createInputs(Vector2(event.position))
+			print(event)
+			_on_mouse_exited()
+			pass
+	pass # Replace with function body.
+
+
+func _on_mouse_entered() -> void:
+	pass # Replace with function body.
+
+
+func _on_mouse_exited() -> void:
+	pass # Replace with function body.

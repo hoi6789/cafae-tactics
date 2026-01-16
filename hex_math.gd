@@ -8,6 +8,9 @@ const GLOBAL_OFFSET = 0.5
 ## "Flat" and "Pointy" hexes will have different basis vectors
 const FLAT_HEXES = false
 
+## Hex Height is the Y value of the hex.
+const HEX_HEIGHT = 0.1
+
 static func axis_to_3D(q: float, r: float) -> Vector3:
 	## multiplies by q/r basis vectors to determine position of the hex in world coords
 	## basis vectors vary based on flat_hexes

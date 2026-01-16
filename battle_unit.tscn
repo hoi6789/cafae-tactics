@@ -1,10 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://cn7jljtoo25cf"]
+[gd_scene load_steps=4 format=3 uid="uid://cn7jljtoo25cf"]
 
 [ext_resource type="Texture2D" uid="uid://bejbmx6hg216a" path="res://HandicootIdle.png" id="1_2vhx8"]
 [ext_resource type="Script" uid="uid://batkgiufupgom" path="res://battle_unit.gd" id="2_dvocn"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2vhx8"]
 
 [node name="BattleUnit" type="Sprite3D"]
 pixel_size = 0.001
 billboard = 2
 texture = ExtResource("1_2vhx8")
 script = ExtResource("2_dvocn")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
+shape = SubResource("BoxShape3D_2vhx8")
+
+[connection signal="input_event" from="Area3D" to="." method="_on_input_event"]
+[connection signal="mouse_entered" from="Area3D" to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Area3D" to="." method="_on_mouse_exited"]

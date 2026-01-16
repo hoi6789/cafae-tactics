@@ -1,4 +1,12 @@
 extends Node3D
+class_name BattleController
+
+## Enum used as a command list
+enum Command {
+	SUMMON,
+	MOVE,
+	ATTACK,
+}
 
 ## Prefabs used for copying 
 @export var HexTile: PackedScene
@@ -28,18 +36,21 @@ func _ready() -> void:
 		mapHexesQ[coordinate[0]][coordinate[1]] = newTile
 		mapHexesR[coordinate[1]][coordinate[0]] = newTile
 	pass
+	processInput([Command.SUMMON, 0, 0, 1])
 
 func processInput(command: Array[int]):
 	## Big function that runs the entire game. this is gonna be a big match case i'm so sorry
 	match command[0]:
-		5: ## summons a unit at a target hex. params: q of hex, r of hex, id of unit, controller of unit, team of unit
+		Command.SUMMON: ## summons a unit at a target hex. params: q of hex, r of hex, id of unit, controller of unit, team of unit
 			var summonedRes: Resource
 			match command[3]:
-				1: summonedRes = load("res://testUnit1.tres")
-				_: summonedRes = load("res://testUnit1.tres")
+				1: summonedRes = load("res://Unit Scripts/testUnit1.tres")
+				_: summonedRes = load("res://Unit Scripts/testUnit1.tres")
 			var summonedUnit = SceneUnit.instantiate()
-			summonedUnit.setLocation(command[1], command[2])
 			summonedUnit.unitData = summonedRes
+			summonedUnit.inputManager = %InputManager
+			summonedUnit.battleController = self
+			summonedUnit.setLocation(command[1], command[2])
 			mapHexesQ[command[1]][command[2]].storedUnits.push_back(summonedUnit)
 			add_child(summonedUnit)
 			pass

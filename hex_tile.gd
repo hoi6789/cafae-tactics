@@ -16,7 +16,7 @@ var type: String = "default"
 var baseColour: Color
 var surfMaterial
 
-var inputManager
+var inputManager: InputManager
 
 func initialize(cubePos: Vector2, _type: String = "default"):
 	## Initialization function to setup properties of a hex
@@ -56,7 +56,7 @@ func varyColour(col: Color):
 	return col
 
 func _on_mouse_entered() -> void:
-	if inputManager.selectorState == "hexes":
+	if inputManager.selectorState == InputManager.InputStates.HEXES:
 		pass
 		surfMaterial.albedo_color = Color(0, 1, 0, 1)
 		$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
@@ -71,8 +71,8 @@ func _on_mouse_exited() -> void:
 
 func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
-		if event.button_index == 1 and event.pressed == true and inputManager.selectorState == "hexes":
-			inputManager.selectorState = "none"
+		if event.button_index == 1 and event.pressed == true and inputManager.selectorState == InputManager.InputStates.HEXES:
+			inputManager.selectorState = InputManager.InputStates.NONE
 			inputManager.chooseHex(self)
 			_on_mouse_exited()
 			pass
