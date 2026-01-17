@@ -47,10 +47,9 @@ func processInput(command: Array[int]):
 				1: summonedRes = load("res://Unit Scripts/testUnit1.tres")
 				_: summonedRes = load("res://Unit Scripts/testUnit1.tres")
 			var summonedUnit = SceneUnit.instantiate()
-			summonedUnit.unitData = summonedRes
 			summonedUnit.inputManager = %InputManager
 			summonedUnit.battleController = self
-			summonedUnit.setLocation(command[1], command[2])
+			summonedUnit.initialize(Vector2(command[1], command[2]), summonedRes)
 			mapHexesQ[command[1]][command[2]].storedUnits.push_back(summonedUnit)
 			add_child(summonedUnit)
 			pass

@@ -1,10 +1,10 @@
 [gd_resource type="Resource" script_class="UnitStats" load_steps=3 format=3 uid="uid://81ru57jc54b1"]
 
-[ext_resource type="Script" uid="uid://c0xrc3yqq2vgj" path="res://unitData.gd" id="1_auc6h"]
 [ext_resource type="Script" uid="uid://cpawhn2uj76hg" path="res://Battle Scripts/move.gd" id="1_tejyr"]
+[ext_resource type="Script" uid="uid://c0xrc3yqq2vgj" path="res://Unit Scripts/unitData.gd" id="2_tejyr"]
 
 [resource]
-script = ExtResource("1_auc6h")
+script = ExtResource("2_tejyr")
 name = "handicoot from beastieball"
 maxHealth = 5
 moveset = Array[Script]([ExtResource("1_tejyr")])

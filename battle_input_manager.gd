@@ -31,5 +31,7 @@ func chooseHex(hex: Hex):
 			controller.processInput(n)
 	pass
 
-func createInputs(pos: Vector2):
+func createInputs(pos: Vector2, moves: Array[Node3D]):
 	$PanelContainer.position = pos
+	for move in moves:
+		print(move.name)
