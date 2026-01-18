@@ -5,6 +5,7 @@ var inputQueue = []
 
 var done = 0
 var players = 1
+var doneTurn = false
 
 var userState: String = "alloweda"
 var selectorState: int = InputStates.UNITS
@@ -53,6 +54,9 @@ func executeInputs():
 		controller.processInput(input)
 
 func endTurn():
+	if doneTurn:
+		return
+	doneTurn = true
 	if NetworkManager.connected:
 		rpc_finishTurn.rpc()
 	else:
