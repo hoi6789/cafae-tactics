@@ -121,5 +121,6 @@ func reset_player_list(sender):
 		reset_player_list.rpc(multiplayer.get_unique_id())
 
 func startGame():
+	NetworkManager.game_started = true
 	get_tree().change_scene_to_file("res://node_3d.tscn")
 	pass
