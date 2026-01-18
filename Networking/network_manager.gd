@@ -8,6 +8,7 @@ var steam_user: String = "Guest"
 var lobby_id: int = -1
 var player_count = 0
 var hosting = false
+var connected = false
 
 var game_started = false
 
@@ -76,6 +77,8 @@ func _lobby_created(connect: int, id):
 		Steam.setLobbyJoinable(id, true)
 		Steam.setLobbyData(id, "mode", "TEST")
 		Steam.setLobbyData(id, "name", "TEST")
+		
+		connected = true
 		#create the multiplayer peer object
 
 func _lobby_list(lobbies: Array):
@@ -106,6 +109,8 @@ func _peer_joined(lobby: int, permissions: int, locked: bool, response: int):
 			await get_tree().create_timer(0.1).timeout
 		print("timer active!")
 		reset_player_list.rpc(multiplayer.get_unique_id())
+		
+		connected = true
 
 @rpc("any_peer", "call_remote")
 func reset_player_list(sender):
