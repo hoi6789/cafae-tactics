@@ -18,6 +18,8 @@ enum InputStates {
 var playerID: int = 1
 var queueCommand: int = 0
 
+var CURRENT_INPUT_HEADER = 0
+
 var controller: BattleController = get_parent()
 
 func _ready() -> void:
