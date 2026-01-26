@@ -11,6 +11,8 @@ func comp_maxheap(l, r):
 func _init(A: Array, heap_sort=false, _compare_callback = null):
 	if _compare_callback == null:
 		compare_callback = comp_maxheap
+	else:
+		compare_callback = _compare_callback
 	
 	if heap_sort:
 		for a in A:
@@ -59,3 +61,10 @@ func heapify(i=0):
 	if largest != i:
 		swap(i, largest)
 		heapify(largest)
+
+func extract():
+	var node = nodes[0]
+	nodes.remove_at(0)
+	size = size-1
+	heapify(0)
+	return node

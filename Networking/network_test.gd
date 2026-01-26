@@ -42,3 +42,25 @@ func _on_reload_button_pressed() -> void:
 func start_game():
 	NetworkManager.startGame()
 	
+func pathfinding_example() -> void:
+	var g = BFSGraph.new()
+	
+	g.insert_node(0, 0)
+	g.insert_node(0, 1)
+	g.insert_node(0, 2)
+	g.insert_node(0, 3)
+	g.insert_node(0, 4)
+	
+	g.insert_edge(0, 1, 1)
+	g.insert_edge(1, 2, 2)
+	g.insert_edge(2, 4, 30)
+	g.insert_edge(0, 3, 8)
+	g.insert_edge(3, 4, 1)
+	g.insert_edge(3, 1, 1)
+	g.insert_edge(2, 3, 4)
+	
+	var dk = Djikstra.new(g, 0)
+	dk.calc_distance()
+	print("shorted distance to 4: ", dk.dist[4])
+	BFSEdge.print_path(dk.path[4])
+	
