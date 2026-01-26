@@ -1,5 +1,5 @@
 extends BattleScript
 
 func _init() -> void:
-	name = "Move"
+	moveName = "Move"
 	inputScheme = InputManager.InputStates.HEXES

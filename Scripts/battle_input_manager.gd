@@ -73,8 +73,14 @@ func rpc_finishTurn():
 		executeInputs()
 
 func createInputs(pos: Vector2, moves: Array[Node3D]):
-	$PanelContainer.position = pos
+	%ActionsPanel.position = pos
+	for child in $ActionsPanel/VBoxContainer.get_children():
+		$ActionsPanel/VBoxContainer.remove_child(child)
+		child.queue_free()
 	for move in moves:
+		var newButton: Button = Button.new()
+		newButton.text = move.name
+		$ActionsPanel/VBoxContainer.add_child(newButton)
 		print(move.name)
 
 

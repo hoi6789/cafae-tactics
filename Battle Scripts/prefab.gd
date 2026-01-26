@@ -2,6 +2,7 @@ extends Node3D
 class_name BattleScript
 
 var moveName: String
+var desc: String
 var windup: int
 var backswing: int
 var inputScheme: int
