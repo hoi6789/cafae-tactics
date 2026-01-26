@@ -1,15 +1,15 @@
 [gd_scene load_steps=6 format=3 uid="uid://dpa6fw8x117ed"]
 
-[ext_resource type="Script" uid="uid://bxd281ovohk1g" path="res://battle_controller.gd" id="1_a202f"]
-[ext_resource type="PackedScene" uid="uid://ccmqueenj03hf" path="res://hex_tile.tscn" id="2_noarx"]
-[ext_resource type="Script" uid="uid://bgnogf41mi852" path="res://camera_3d.gd" id="3_a0tk4"]
-[ext_resource type="Script" uid="uid://cc7jvukf2h4xc" path="res://battle_input_manager.gd" id="3_jka67"]
-[ext_resource type="PackedScene" uid="uid://cn7jljtoo25cf" path="res://battle_unit.tscn" id="5_i5arm"]
+[ext_resource type="Script" uid="uid://bxd281ovohk1g" path="res://Scripts/battle_controller.gd" id="1_hrtji"]
+[ext_resource type="PackedScene" uid="uid://ccmqueenj03hf" path="res://Prefabs/hex_tile.tscn" id="2_55amd"]
+[ext_resource type="PackedScene" uid="uid://cn7jljtoo25cf" path="res://Prefabs/battle_unit.tscn" id="3_qohhg"]
+[ext_resource type="Script" uid="uid://cc7jvukf2h4xc" path="res://Scripts/battle_input_manager.gd" id="4_g3l8d"]
+[ext_resource type="Script" uid="uid://bgnogf41mi852" path="res://Scripts/camera_3d.gd" id="5_bq2oe"]
 
-[node name="Node3D" type="Node3D"]
-script = ExtResource("1_a202f")
-HexTile = ExtResource("2_noarx")
-SceneUnit = ExtResource("5_i5arm")
+[node name="GameMap" type="Node3D"]
+script = ExtResource("1_hrtji")
+HexTile = ExtResource("2_55amd")
+SceneUnit = ExtResource("3_qohhg")
 
 [node name="InputManager" type="Control" parent="."]
 unique_name_in_owner = true
@@ -20,7 +20,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-script = ExtResource("3_jka67")
+script = ExtResource("4_g3l8d")
 
 [node name="SummonButton" type="Button" parent="InputManager"]
 layout_mode = 0
@@ -62,17 +62,15 @@ text = "End Turn"
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.960342, 0.278823, 0, -0.278823, 0.960342, 0, 1.69987, 2.42782)
-script = ExtResource("3_a0tk4")
+script = ExtResource("5_bq2oe")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 7.27733, 0)
 
-[node name="HexTile" parent="." instance=ExtResource("2_noarx")]
-visible = false
+[node name="HexTile" parent="." instance=ExtResource("2_55amd")]
 
-[node name="BattleUnit" parent="." instance=ExtResource("5_i5arm")]
+[node name="BattleUnit" parent="." instance=ExtResource("3_qohhg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.31784922, 0)
-visible = false
 
 [connection signal="pressed" from="InputManager/SummonButton" to="InputManager" method="_on_summon_button_pressed"]
 [connection signal="pressed" from="InputManager/EndTurnButton" to="InputManager" method="_on_end_turn_button_pressed"]

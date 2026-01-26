@@ -1,14 +1,14 @@
 [gd_scene load_steps=4 format=3 uid="uid://cn7jljtoo25cf"]
 
-[ext_resource type="Texture2D" uid="uid://bejbmx6hg216a" path="res://HandicootIdle.png" id="1_2vhx8"]
-[ext_resource type="Script" uid="uid://batkgiufupgom" path="res://battle_unit.gd" id="2_dvocn"]
+[ext_resource type="SpriteFrames" uid="uid://ht0kyqp1qa1d" path="res://Sprites/SpriteFrames/new_sprite_frames.tres" id="1_2vhx8"]
+[ext_resource type="Script" uid="uid://batkgiufupgom" path="res://Scripts/battle_unit.gd" id="2_dvocn"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2vhx8"]
 
-[node name="BattleUnit" type="Sprite3D"]
+[node name="BattleUnit" type="AnimatedSprite3D"]
 pixel_size = 0.001
 billboard = 2
-texture = ExtResource("1_2vhx8")
+sprite_frames = ExtResource("1_2vhx8")
 script = ExtResource("2_dvocn")
 
 [node name="Area3D" type="Area3D" parent="."]

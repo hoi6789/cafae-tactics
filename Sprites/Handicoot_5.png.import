@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bejbmx6hg216a"
-path.s3tc="res://.godot/imported/HandicootIdle.png-5db4b935466e8a2cbff90b05c0076669.s3tc.ctex"
+uid="uid://bhq8ox24cmru2"
+path.s3tc="res://.godot/imported/Handicoot_5.png-f02877efd1360f9a68dff3016974b35e.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://HandicootIdle.png"
-dest_files=["res://.godot/imported/HandicootIdle.png-5db4b935466e8a2cbff90b05c0076669.s3tc.ctex"]
+source_file="res://Sprites/Handicoot_5.png"
+dest_files=["res://.godot/imported/Handicoot_5.png-f02877efd1360f9a68dff3016974b35e.s3tc.ctex"]
 
 [params]
 

@@ -1,0 +1,50 @@
+[gd_resource type="SpriteFrames" load_steps=6 format=3 uid="uid://ht0kyqp1qa1d"]
+
+[ext_resource type="Texture2D" uid="uid://bhq8ox24cmru2" path="res://Sprites/Handicoot_5.png" id="1_5j456"]
+[ext_resource type="Texture2D" uid="uid://bejbmx6hg216a" path="res://Sprites/HandicootIdle.png" id="2_judcx"]
+[ext_resource type="Texture2D" uid="uid://e0bb3d0t0ycb" path="res://Sprites/Handicoot_9.png" id="3_h846p"]
+[ext_resource type="Texture2D" uid="uid://d20p87tvfgr2g" path="res://Sprites/Handicoot_3.png" id="4_g24hd"]
+[ext_resource type="Texture2D" uid="uid://ca481aghslmqu" path="res://Sprites/Handicoot_4.png" id="5_kgrdv"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_5j456")
+}],
+"loop": true,
+"name": &"attacking",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_judcx")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_h846p")
+}],
+"loop": true,
+"name": &"hitstun",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_g24hd")
+}],
+"loop": true,
+"name": &"moving",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_kgrdv")
+}],
+"loop": true,
+"name": &"windup",
+"speed": 5.0
+}]

@@ -1,4 +1,4 @@
-extends Sprite3D
+extends AnimatedSprite3D
 class_name BattleUnit
 
 @export var unitData: UnitStats

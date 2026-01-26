@@ -53,7 +53,7 @@ func varyColour(col: Color):
 	col.r = col.r + ((randf() * variance) - (variance / 2))
 	col.g = col.g + ((randf() * variance) - (variance / 2))
 	col.b = col.b + ((randf() * variance) - (variance / 2))
-	return col
+	return col.clamp()
 
 func _on_mouse_entered() -> void:
 	if inputManager.selectorState == InputManager.InputStates.HEXES:
