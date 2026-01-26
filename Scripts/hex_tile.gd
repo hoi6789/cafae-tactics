@@ -4,9 +4,7 @@ class_name Hex
 var id = 0
 
 ## coordinates of the hex in cube space (q + r + s = 0)
-var q: float = 0
-var r: float = 0
-var s: float = 0
+var hex_pos: HexVector 
 
 ## 
 var storedUnits = []
@@ -39,14 +37,14 @@ func setColour(palette: TerrainType):
 	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
 	pass
 
+
+
 func setPosition(cubePos: Vector2):
 	## Hexes use "axial" coordinates described in https://www.redblobgames.com/grids/hexagons/
 	## i.e. they are defined on a plane where q + r + s = 0
-	q = cubePos.x
-	r = cubePos.y
-	s = 0 - q - r
+	hex_pos = HexVector.fromCubePos(cubePos)
 	
-	position = HexMath.axis_to_3D(q, r)
+	position = HexMath.axis_to_3D(hex_pos.q, hex_pos.r)
 	if HexMath.FLAT_HEXES:
 		rotation.y = PI/2
 	print(position)
