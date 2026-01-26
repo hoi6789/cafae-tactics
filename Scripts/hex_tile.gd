@@ -12,13 +12,17 @@ var s: float = 0
 var storedUnits = []
 
 ## used to determine colour and other properties (terrain?)
-var type: String = "default"
+enum TerrainType
+{
+	BASIC
+}
+var type: TerrainType = TerrainType.BASIC
 var baseColour: Color
 var surfMaterial
 
 var inputManager: InputManager
 
-func initialize(cubePos: Vector2, _type: String = "default"):
+func initialize(cubePos: Vector2, _type: TerrainType = TerrainType.BASIC):
 	## Initialization function to setup properties of a hex
 	surfMaterial = $CollisionPolygon3D/MeshInstance3D.get_surface_override_material(0).duplicate(true)
 	type = _type
@@ -26,7 +30,7 @@ func initialize(cubePos: Vector2, _type: String = "default"):
 	setPosition(cubePos)
 	pass
 
-func setColour(palette: String):
+func setColour(palette: TerrainType):
 	match palette:
 		_:
 			baseColour = varyColour(Color(0.825, 0.209, 0.969, 1.0))
