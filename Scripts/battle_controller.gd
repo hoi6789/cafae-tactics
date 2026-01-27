@@ -12,34 +12,28 @@ enum Command {
 @export var HexTile: PackedScene
 @export var SceneUnit: PackedScene
 
+## Map variables
+var map: HexagonMap = HexagonMap.new()
+
 var mapTiles: Array = [[0, 0], [0, 1], [1, 0], [1, 1]]
-var mapHexes: Dictionary[String, Hex]
-var mapHexesQ: Dictionary[int, Dictionary]
-var mapHexesR: Dictionary[int, Dictionary]
 
 func _ready() -> void:
-	for coordinate in mapTiles:
-		createTile(coordinate)
+	var v2_arr = []
+	for tile in mapTiles:
+		v2_arr.push_back(Vector2(tile[0], tile[1]))
+	map.force_generate(v2_arr)
+	
+	for hextile: HexTile in map.hex_list.values():
+		var cPos = HexVector.toCubePos(hextile.hex_pos)
+		var coordinate = [cPos.x, cPos.y]
+		print(cPos)
+		var newTile: Hex = HexTile.instantiate()
+		newTile.initialize(hextile)
+		add_child(newTile)
+		
+		newTile.inputManager = %InputManager
 	pass
 	processInput([Command.SUMMON, 0, 0, 1])
-
-func createTile(coordinate):
-	print(coordinate)
-	var newTile: Hex = HexTile.instantiate()
-	newTile.id = 1
-	add_child(newTile)
-	if coordinate.size() == 2:
-		newTile.initialize(Vector2(coordinate[0], coordinate[1]))
-	elif coordinate.size() == 3: 
-		newTile.initialize(Vector2(coordinate[0], coordinate[1]), coordinate[2])
-	newTile.inputManager = %InputManager
-	mapHexes[str(coordinate[0]) + "," + str(coordinate[1])] = (newTile)
-	if not mapHexesQ.has(coordinate[0]):
-		mapHexesQ[coordinate[0]] = {}
-	if not mapHexesR.has(coordinate[1]):
-		mapHexesR[coordinate[1]] = {}
-	mapHexesQ[coordinate[0]][coordinate[1]] = newTile
-	mapHexesR[coordinate[1]][coordinate[0]] = newTile
 
 func processInput(command: Array[int]):
 	## Big function that runs the entire game. this is gonna be a big match case i'm so sorry
@@ -49,17 +43,21 @@ func processInput(command: Array[int]):
 			match command[3]:
 				1: summonedRes = load("res://Unit Scripts/testUnit1.tres")
 				_: summonedRes = load("res://Unit Scripts/testUnit1.tres")
-			var summonedUnit = SceneUnit.instantiate()
+			var summonedUnit: BattleUnit = SceneUnit.instantiate()
 			summonedUnit.inputManager = %InputManager
 			summonedUnit.battleController = self
 			summonedUnit.initialize(Vector2(command[1], command[2]), summonedRes)
-			mapHexesQ[command[1]][command[2]].storedUnits.push_back(summonedUnit)
+			var tile: HexTile = map.get_hex(HexVector.fromCubePos(Vector2(command[1],command[2])))
+			tile.hex.storedUnits.push_back(summonedUnit)
 			add_child(summonedUnit)
+			highlightPath(map.getShortestPath(map.get_hex(summonedUnit.hex_pos), map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[3][0],mapTiles[3][1])))))
 			pass
 		_:
-			print(mapHexes["0,0"].id)
-			print(mapHexesQ)
-			print(mapHexesR)
+			pass
 			
 			pass
 	pass
+
+func highlightPath(hex_path: Array[HexTile]):
+	for tile: HexTile in hex_path:
+		tile.hex.highlight()

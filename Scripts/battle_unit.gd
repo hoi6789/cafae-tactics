@@ -9,6 +9,7 @@ var initMoves: Array[Node3D]
 
 var inputManager: InputManager
 var battleController: BattleController
+var hex_pos: HexVector
 
 func initialize(cubePos: Vector2, data: Resource):
 	unitData = data
@@ -19,12 +20,13 @@ func initialize(cubePos: Vector2, data: Resource):
 		add_child(mychild)
 		initMoves.push_back(mychild)
 		print(get_children())
-	setLocation(cubePos.x, cubePos.y)
+	setLocation(HexVector.fromCubePos(cubePos))
 	pass
 
 ## sets location. idk
-func setLocation(q, r):
-	position = HexMath.axis_to_3D(q, r)
+func setLocation(hex_vec: HexVector):
+	hex_pos = hex_vec
+	position = HexMath.axis_to_3D(hex_vec.q, hex_vec.r)
 	setAnimation("default")
 	pass
 

@@ -12,12 +12,17 @@ func _init():
 func force_generate(cubePositions: Array):
 	var current_id = 0
 	for pos: Vector2 in cubePositions:
-		map[pos] = HexTile.new(current_id, HexVector.fromCubePos(pos), HexTile.TerrainType.BASIC)
+		var hex =  HexTile.new(current_id, HexVector.fromCubePos(pos), HexTile.TerrainType.BASIC)
+		map[pos] = hex
+		hex_list[current_id] = hex
 		current_id += 1
+	rebuild_graph()
 
 func get_hex(hex_vec: HexVector) -> HexTile:
 	var cPos = HexVector.toCubePos(hex_vec)
-	return map[cPos]
+	if cPos in map:
+		return map[cPos]
+	return null
 
 func getIntermovementCost(a: HexTile, b: HexTile):
 	return (a.getMovementCost() + b.getMovementCost())/2
@@ -26,11 +31,11 @@ func rebuild_graph():
 	graph = BFSGraph.new()
 	solutions = {}
 	#nodes
-	for hex: HexTile in map.keys():
+	for hex: HexTile in map.values():
 		graph.insert_node(0,hex.id)
-		hex_list[hex.id] = hex
+		
 	#edges
-	for hex: HexTile in map.keys():
+	for hex: HexTile in map.values():
 		for dir in HexVector.DIRECTIONS:
 			var adj: HexTile = get_hex(HexVector.add(hex.hex_pos, dir))
 			if adj != null:
@@ -43,13 +48,14 @@ func _calcShortestPath(from: HexTile, to: HexTile):
 	solutions[from.id] = solver
 
 func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
-	if solutions[from.id] == null:
+	if from.id not in solutions:
 		_calcShortestPath(from, to)
 	
 	var id_path: Array = solutions[from.id].path[to.id]
-	var path = []
+	var path: Array[HexTile] = []
 	
+	path.push_back(hex_list[id_path[0].from])
 	for id in id_path:
-		path.push_back(hex_list[id])
+		path.push_back(hex_list[id.to])
 	
 	return path

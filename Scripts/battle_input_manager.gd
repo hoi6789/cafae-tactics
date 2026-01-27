@@ -1,6 +1,9 @@
 extends Control
 class_name InputManager
 
+@export var actionsPanel: PanelContainer
+@export var vboxContainer: VBoxContainer
+
 var inputQueue = []
 
 var done = 0
@@ -73,16 +76,16 @@ func rpc_finishTurn():
 		executeInputs()
 
 func createInputs(pos: Vector2, moves: Array[Node3D]):
-	%ActionsPanel.position = pos
-	for child in $ActionsPanel/VBoxContainer.get_children():
-		$ActionsPanel/VBoxContainer.remove_child(child)
+	actionsPanel.position = pos
+	for child in vboxContainer.get_children():
+		vboxContainer.remove_child(child)
 		child.queue_free()
 	for move in moves:
 		var newButton: Button = Button.new()
 		newButton.text = move.name
-		$ActionsPanel/VBoxContainer.add_child(newButton)
+		vboxContainer.add_child(newButton)
 		print(move.name)
-	$ActionsPanel.size = Vector2(0, 0)
+	actionsPanel.size = Vector2(0, 0)
 
 
 func _on_end_turn_button_pressed() -> void:

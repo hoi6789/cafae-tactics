@@ -12,32 +12,28 @@ var baseColour: Color
 var surfMaterial
 
 var inputManager: InputManager
+var highlighted: bool = false
 
 func initialize(_data: HexTile):
 	## Initialization function to setup properties of a hex
 	surfMaterial = $CollisionPolygon3D/MeshInstance3D.get_surface_override_material(0).duplicate(true)
 	data = _data
+	data.hex = self
 	setColour(data.type)
 	setPosition(HexVector.toCubePos(data.hex_pos))
 	pass
+
+func highlight():
+	surfMaterial.albedo_color = Color.CADET_BLUE
 
 func setColour(palette: HexTile.TerrainType):
 	match palette:
 		_:
 			baseColour = varyColour(Color(0.825, 0.209, 0.969, 1.0))
-	
+		
 	surfMaterial.albedo_color = baseColour
 	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
 	pass
-
-static func getTileTypeMovementCost(_type: HexTile.TerrainType) -> float:
-	match _type:
-		HexTile.TerrainType.BASIC: return 1
-		_: return 1
-	return 0
-
-func getMovementCost() -> float:
-	return getTileTypeMovementCost(data.type)
 
 func setPosition(cubePos: Vector2):
 	## Hexes use "axial" coordinates described in https://www.redblobgames.com/grids/hexagons/
