@@ -82,6 +82,7 @@ func createInputs(pos: Vector2, moves: Array[Node3D]):
 		newButton.text = move.name
 		$ActionsPanel/VBoxContainer.add_child(newButton)
 		print(move.name)
+	$ActionsPanel.size = Vector2(0, 0)
 
 
 func _on_end_turn_button_pressed() -> void:

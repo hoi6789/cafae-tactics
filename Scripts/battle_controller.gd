@@ -19,24 +19,27 @@ var mapHexesR: Dictionary[int, Dictionary]
 
 func _ready() -> void:
 	for coordinate in mapTiles:
-		print(coordinate)
-		var newTile: Hex = HexTile.instantiate()
-		newTile.id = 1
-		add_child(newTile)
-		if coordinate.size() == 2:
-			newTile.initialize(Vector2(coordinate[0], coordinate[1]))
-		elif coordinate.size() == 3: 
-			newTile.initialize(Vector2(coordinate[0], coordinate[1]), coordinate[2])
-		newTile.inputManager = %InputManager
-		mapHexes[str(coordinate[0]) + "," + str(coordinate[1])] = (newTile)
-		if not mapHexesQ.has(coordinate[0]):
-			mapHexesQ[coordinate[0]] = {}
-		if not mapHexesR.has(coordinate[1]):
-			mapHexesR[coordinate[1]] = {}
-		mapHexesQ[coordinate[0]][coordinate[1]] = newTile
-		mapHexesR[coordinate[1]][coordinate[0]] = newTile
+		createTile(coordinate)
 	pass
 	processInput([Command.SUMMON, 0, 0, 1])
+
+func createTile(coordinate):
+	print(coordinate)
+	var newTile: Hex = HexTile.instantiate()
+	newTile.id = 1
+	add_child(newTile)
+	if coordinate.size() == 2:
+		newTile.initialize(Vector2(coordinate[0], coordinate[1]))
+	elif coordinate.size() == 3: 
+		newTile.initialize(Vector2(coordinate[0], coordinate[1]), coordinate[2])
+	newTile.inputManager = %InputManager
+	mapHexes[str(coordinate[0]) + "," + str(coordinate[1])] = (newTile)
+	if not mapHexesQ.has(coordinate[0]):
+		mapHexesQ[coordinate[0]] = {}
+	if not mapHexesR.has(coordinate[1]):
+		mapHexesR[coordinate[1]] = {}
+	mapHexesQ[coordinate[0]][coordinate[1]] = newTile
+	mapHexesR[coordinate[1]][coordinate[0]] = newTile
 
 func processInput(command: Array[int]):
 	## Big function that runs the entire game. this is gonna be a big match case i'm so sorry
