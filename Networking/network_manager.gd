@@ -122,5 +122,5 @@ func reset_player_list(sender):
 
 func startGame():
 	NetworkManager.game_started = true
-	get_tree().change_scene_to_file("res://game_map.tscn")
+	get_tree().change_scene_to_file("res://Scenes/game_map.tscn")
 	pass

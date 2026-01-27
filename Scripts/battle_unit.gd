@@ -25,9 +25,13 @@ func initialize(cubePos: Vector2, data: Resource):
 ## sets location. idk
 func setLocation(q, r):
 	position = HexMath.axis_to_3D(q, r)
-	position.y = (texture.get_size().y * pixel_size / 2) + HexMath.HEX_HEIGHT
+	setAnimation("default")
 	pass
 
+func setAnimation(anim: String):
+	animation = anim
+	position.y = (sprite_frames.get_frame_texture(anim, 0).get_size().y * pixel_size / 2) + HexMath.HEX_HEIGHT
+	pass
 
 func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
