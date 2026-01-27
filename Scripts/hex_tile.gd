@@ -37,7 +37,14 @@ func setColour(palette: TerrainType):
 	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
 	pass
 
+static func getTileTypeMovementCost(_type: TerrainType) -> float:
+	match _type:
+		TerrainType.BASIC: return 1
+		_: return 1
+	return 0
 
+func getMovementCost() -> float:
+	return getTileTypeMovementCost(type)
 
 func setPosition(cubePos: Vector2):
 	## Hexes use "axial" coordinates described in https://www.redblobgames.com/grids/hexagons/

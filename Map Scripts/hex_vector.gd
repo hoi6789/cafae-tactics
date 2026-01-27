@@ -4,6 +4,15 @@ var q: float
 var r: float
 var s: float
 
+static var UNIT_Q: HexVector = HexVector.new(0, -1, 1)
+static var UNIT_QR: HexVector = HexVector.new(1, -1, 0)
+static var UNIT_R: HexVector = HexVector.new(1, 0, -1)
+static var UNIT_RS: HexVector = HexVector.new(0, 1, -1)
+static var UNIT_S: HexVector = HexVector.new(-1, 1, 0)
+static var UNIT_QS: HexVector = HexVector.new(-1, 0, 1)
+static var DIRECTIONS = [UNIT_Q,UNIT_QR,UNIT_R,UNIT_RS,UNIT_S,UNIT_QS]
+
+
 func _init(_q,_r,_s):
 	q = _q
 	r = _r
@@ -17,3 +26,12 @@ static func fromCubePos(cubePos: Vector2) -> HexVector:
 
 static func toCubePos(hex_vector: HexVector) -> Vector2:
 	return Vector2(hex_vector.q, hex_vector.r)
+
+static func add(a: HexVector, b: HexVector) -> HexVector:
+	return HexVector.new(a.q+b.q,a.r+b.r,a.s+b.s)
+	
+static func mult(a: HexVector, c: float) -> HexVector:
+	return HexVector.new(a.q*c,a.r*c,a.b*c)
+
+static func sub(a: HexVector, b: HexVector) -> HexVector:
+	return add(a,mult(b,-1))
