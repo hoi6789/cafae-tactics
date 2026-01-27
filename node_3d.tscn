@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://xffkty7ti1l"]
 
-[ext_resource type="Script" path="res://battle_controller.gd" id="1_a202f"]
-[ext_resource type="PackedScene" path="res://hex_tile.tscn" id="2_noarx"]
+[ext_resource type="Script" uid="uid://dubfkj0687481" path="res://battle_controller.gd" id="1_a202f"]
+[ext_resource type="PackedScene" uid="uid://c6it6dg8j35c2" path="res://hex_tile.tscn" id="2_noarx"]
 [ext_resource type="Script" path="res://camera_3d.gd" id="3_a0tk4"]
 [ext_resource type="Script" path="res://battle_input_manager.gd" id="3_jka67"]
-[ext_resource type="PackedScene" path="res://battle_unit.tscn" id="5_i5arm"]
+[ext_resource type="PackedScene" uid="uid://bqh6aqomfnw2l" path="res://battle_unit.tscn" id="5_i5arm"]
 
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_a202f")

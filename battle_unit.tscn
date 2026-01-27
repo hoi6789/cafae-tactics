@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3 uid="uid://bqh6aqomfnw2l"]
+
+[ext_resource type="Texture2D" path="res://HandicootIdle.png" id="1_2vhx8"]
+[ext_resource type="Script" uid="uid://b4jxge2qyahur" path="res://battle_unit.gd" id="2_dvocn"]
+[ext_resource type="Script" uid="uid://c0xrc3yqq2vgj" path="res://Unit Scripts/unitData.gd" id="3_dvocn"]
+
+[sub_resource type="Resource" id="Resource_1qtp0"]
+script = ExtResource("3_dvocn")
+maxHealth = 1
+attack = 1
+defense = 1
+speed = 1
+metadata/_custom_type_script = "uid://c0xrc3yqq2vgj"
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2vhx8"]
+
+[node name="BattleUnit" type="Sprite3D"]
+pixel_size = 0.001
+billboard = 2
+texture = ExtResource("1_2vhx8")
+script = ExtResource("2_dvocn")
+unitData = SubResource("Resource_1qtp0")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
+shape = SubResource("BoxShape3D_2vhx8")
+
+[connection signal="input_event" from="Area3D" to="." method="_on_input_event"]
+[connection signal="mouse_entered" from="Area3D" to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Area3D" to="." method="_on_mouse_exited"]

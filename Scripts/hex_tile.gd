@@ -1,34 +1,27 @@
 extends StaticBody3D
 class_name Hex
 
-var id = 0
-
-## coordinates of the hex in cube space (q + r + s = 0)
-var hex_pos: HexVector 
-
+## tile data
+var data: HexTile 
 ## 
 var storedUnits = []
 
 ## used to determine colour and other properties (terrain?)
-enum TerrainType
-{
-	BASIC
-}
-var type: TerrainType = TerrainType.BASIC
+
 var baseColour: Color
 var surfMaterial
 
 var inputManager: InputManager
 
-func initialize(cubePos: Vector2, _type: TerrainType = TerrainType.BASIC):
+func initialize(_data: HexTile):
 	## Initialization function to setup properties of a hex
 	surfMaterial = $CollisionPolygon3D/MeshInstance3D.get_surface_override_material(0).duplicate(true)
-	type = _type
-	setColour(_type)
-	setPosition(cubePos)
+	data = _data
+	setColour(data.type)
+	setPosition(HexVector.toCubePos(data.hex_pos))
 	pass
 
-func setColour(palette: TerrainType):
+func setColour(palette: HexTile.TerrainType):
 	match palette:
 		_:
 			baseColour = varyColour(Color(0.825, 0.209, 0.969, 1.0))
@@ -37,21 +30,21 @@ func setColour(palette: TerrainType):
 	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
 	pass
 
-static func getTileTypeMovementCost(_type: TerrainType) -> float:
+static func getTileTypeMovementCost(_type: HexTile.TerrainType) -> float:
 	match _type:
-		TerrainType.BASIC: return 1
+		HexTile.TerrainType.BASIC: return 1
 		_: return 1
 	return 0
 
 func getMovementCost() -> float:
-	return getTileTypeMovementCost(type)
+	return getTileTypeMovementCost(data.type)
 
 func setPosition(cubePos: Vector2):
 	## Hexes use "axial" coordinates described in https://www.redblobgames.com/grids/hexagons/
 	## i.e. they are defined on a plane where q + r + s = 0
-	hex_pos = HexVector.fromCubePos(cubePos)
+	data.hex_pos = HexVector.fromCubePos(cubePos)
 	
-	position = HexMath.axis_to_3D(hex_pos.q, hex_pos.r)
+	position = HexMath.axis_to_3D(data.hex_pos.q, data.hex_pos.r)
 	if HexMath.FLAT_HEXES:
 		rotation.y = PI/2
 	print(position)
