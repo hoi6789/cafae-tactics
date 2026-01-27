@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cn2qtrhatkoj0"]
 
-[ext_resource type="Script" uid="uid://cf3jk3t6xarxi" path="res://lobby_button.gd" id="1_h4cm3"]
+[ext_resource type="Script" uid="uid://drn4f1r8oti86" path="res://Networking/lobby_button.gd" id="1_h4cm3"]
 
 [node name="Lobby Button" type="Button"]
 custom_minimum_size = Vector2(0, 50)

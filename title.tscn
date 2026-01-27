@@ -5,9 +5,9 @@
 
 [node name="ConnectionTest" type="Node3D" node_paths=PackedStringArray("joinID", "lobbyLabel", "lobbyContainer")]
 script = ExtResource("1_y7k74")
+lobbyButton = ExtResource("2_oyqm6")
 joinID = NodePath("Join/TextEdit")
 lobbyLabel = NodePath("Label")
-lobbyButton = ExtResource("2_oyqm6")
 lobbyContainer = NodePath("Panel/VBoxContainer")
 
 [node name="Join" type="Button" parent="."]
