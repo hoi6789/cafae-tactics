@@ -9,7 +9,7 @@ enum Command {
 }
 
 ## Prefabs used for copying 
-@export var HexTile: PackedScene
+@export var LocHexTile: PackedScene
 @export var SceneUnit: PackedScene
 
 ## Map variables
@@ -27,7 +27,7 @@ func _ready() -> void:
 		var cPos = HexVector.toCubePos(hextile.hex_pos)
 		var coordinate = [cPos.x, cPos.y]
 		print(cPos)
-		var newTile: Hex = HexTile.instantiate()
+		var newTile: Hex = LocHexTile.instantiate()
 		newTile.initialize(hextile)
 		add_child(newTile)
 		

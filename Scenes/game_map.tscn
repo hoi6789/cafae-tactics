@@ -1,17 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://dpa6fw8x117ed"]
+[gd_scene load_steps=7 format=3 uid="uid://dpa6fw8x117ed"]
 
 [ext_resource type="Script" uid="uid://bxd281ovohk1g" path="res://Scripts/battle_controller.gd" id="1_hrtji"]
 [ext_resource type="PackedScene" uid="uid://ccmqueenj03hf" path="res://Prefabs/hex_tile.tscn" id="2_55amd"]
 [ext_resource type="PackedScene" uid="uid://cn7jljtoo25cf" path="res://Prefabs/battle_unit.tscn" id="3_qohhg"]
 [ext_resource type="Script" uid="uid://cc7jvukf2h4xc" path="res://Scripts/battle_input_manager.gd" id="4_g3l8d"]
 [ext_resource type="Script" uid="uid://bgnogf41mi852" path="res://Scripts/camera_3d.gd" id="5_bq2oe"]
+[ext_resource type="SpriteFrames" uid="uid://ht0kyqp1qa1d" path="res://Sprites/SpriteFrames/new_sprite_frames.tres" id="6_rlp0x"]
 
 [node name="GameMap" type="Node3D"]
 script = ExtResource("1_hrtji")
-HexTile = ExtResource("2_55amd")
+LocHexTile = ExtResource("2_55amd")
 SceneUnit = ExtResource("3_qohhg")
 
-[node name="InputManager" type="Control" parent="."]
+[node name="InputManager" type="Control" parent="." node_paths=PackedStringArray("actionsPanel", "vboxContainer")]
 unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 15
@@ -21,6 +22,8 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("4_g3l8d")
+actionsPanel = NodePath("ActionsPanel")
+vboxContainer = NodePath("ActionsPanel/VBoxContainer")
 
 [node name="SummonButton" type="Button" parent="InputManager"]
 layout_mode = 0
@@ -70,6 +73,8 @@ visible = false
 [node name="BattleUnit" parent="." instance=ExtResource("3_qohhg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.31784922, 0)
 visible = false
+sprite_frames = ExtResource("6_rlp0x")
+unitData = null
 
 [connection signal="pressed" from="InputManager/SummonButton" to="InputManager" method="_on_summon_button_pressed"]
 [connection signal="pressed" from="InputManager/EndTurnButton" to="InputManager" method="_on_end_turn_button_pressed"]
