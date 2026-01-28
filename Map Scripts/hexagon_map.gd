@@ -37,7 +37,8 @@ func rebuild_graph():
 	#edges
 	for hex: HexTile in map.values():
 		for dir in HexVector.DIRECTIONS:
-			var adj: HexTile = get_hex(HexVector.add(hex.hex_pos, dir))
+			var nextpos = HexVector.add(hex.hex_pos, dir)
+			var adj: HexTile = get_hex(nextpos)
 			if adj != null:
 				var cost = getIntermovementCost(hex, adj)
 				graph.insert_edge(hex.id,adj.id,cost)
@@ -48,10 +49,14 @@ func _calcShortestPath(from: HexTile, to: HexTile):
 	solutions[from.id] = solver
 
 func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
-	if from.id not in solutions:
+	if !solutions.has(from.id):
 		_calcShortestPath(from, to)
 	
 	var id_path: Array = solutions[from.id].path[to.id]
+	
+	if len(id_path) == 0:
+		pass#return []
+	
 	var path: Array[HexTile] = []
 	
 	path.push_back(hex_list[id_path[0].from])

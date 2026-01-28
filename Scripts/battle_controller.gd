@@ -18,8 +18,8 @@ var map: HexagonMap = HexagonMap.new()
 var mapTiles: Array = []
 
 func _ready() -> void:
-	for i in range(0, 2):
-		for j in range(0, 2):
+	for i in range(-10, 10):
+		for j in range(-10, 10):
 			mapTiles.push_back([i, j])
 	var v2_arr = []
 	for tile in mapTiles:
