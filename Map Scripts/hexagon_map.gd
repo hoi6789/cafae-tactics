@@ -55,7 +55,7 @@ func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
 	var id_path: Array = solutions[from.id].path[to.id]
 	
 	if len(id_path) == 0:
-		pass#return []
+		return []
 	
 	var path: Array[HexTile] = []
 	

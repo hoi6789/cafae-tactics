@@ -1,5 +1,5 @@
 extends Camera3D
-var spd = 1
+var spd = 4
 var mouse3Down = false
 
 func _input(event: InputEvent) -> void:

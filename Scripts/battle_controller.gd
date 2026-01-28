@@ -18,9 +18,20 @@ var map: HexagonMap = HexagonMap.new()
 var mapTiles: Array = []
 
 func _ready() -> void:
-	for i in range(-10, 10):
-		for j in range(-10, 10):
-			mapTiles.push_back([i, j])
+	var noise: FastNoiseLite = FastNoiseLite.new()
+	noise.noise_type = FastNoiseLite.TYPE_PERLIN # Set the noise type to Perlin
+	noise.seed = randi() # Set a random or fixed seed
+	noise.frequency = 0.01 # Control the scale/zoom of the noise
+	noise.fractal_octaves = 5 # Add layers of noise for detail
+	var mapSize = 30
+	var scale: float = 4
+	
+	for i in range(-mapSize, mapSize):
+		for j in range(-mapSize, mapSize):
+			var hx = HexVector.fromCubePos(Vector2(i, j))
+			var vx = HexMath.axis_to_3D(hx.q, hx.r)
+			if noise.get_noise_2d(vx.x, vx.z) < -0.05:
+				mapTiles.push_back([i, j])
 	var v2_arr = []
 	for tile in mapTiles:
 		v2_arr.push_back(Vector2(tile[0], tile[1]))
@@ -36,7 +47,8 @@ func _ready() -> void:
 		
 		newTile.inputManager = %InputManager
 	pass
-	processInput([Command.SUMMON, 0, 0, 1])
+	var r = randi_range(0, len(mapTiles))
+	processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], 1])
 
 func processInput(command: Array[int]):
 	## Big function that runs the entire game. this is gonna be a big match case i'm so sorry
@@ -53,7 +65,8 @@ func processInput(command: Array[int]):
 			var tile: HexTile = map.get_hex(HexVector.fromCubePos(Vector2(command[1],command[2])))
 			tile.hex.storedUnits.push_back(summonedUnit)
 			add_child(summonedUnit)
-			highlightPath(map.getShortestPath(map.get_hex(summonedUnit.hex_pos), map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[-1][0],mapTiles[-1][1])))))
+			var r = randi_range(0, len(mapTiles))
+			highlightPath(map.getShortestPath(map.get_hex(summonedUnit.hex_pos), map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[r][0],mapTiles[r][1])))))
 			pass
 		_:
 			pass
