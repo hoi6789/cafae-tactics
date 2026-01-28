@@ -62,15 +62,17 @@ func _on_mouse_entered() -> void:
 	pass # Replace with function body.
 
 func _on_mouse_exited() -> void:
-	surfMaterial.albedo_color = baseColour
-	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
+	if inputManager.selectorState == InputManager.InputStates.HEXES:
+		surfMaterial.albedo_color = baseColour
+		$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
 	pass # Replace with function body.
 
 
 func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == 1 and event.pressed == true and inputManager.selectorState == InputManager.InputStates.HEXES:
-			inputManager.selectorState = InputManager.InputStates.NONE
+			inputManager.setInputState(InputManager.InputStates.PENDING)
+			surfMaterial.albedo_color = baseColour
 			inputManager.chooseHex(self)
 			_on_mouse_exited()
 			pass

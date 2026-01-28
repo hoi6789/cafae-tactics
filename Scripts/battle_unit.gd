@@ -3,8 +3,8 @@ class_name BattleUnit
 
 @export var unitData: UnitStats
 
-var player: int
-var team: int
+var playerID: int
+var teamID: int
 var initMoves: Array[Node3D]
 
 var inputManager: InputManager
@@ -37,17 +37,25 @@ func setAnimation(anim: String):
 
 func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
-		if event.button_index == 1 and event.pressed == true and inputManager.selectorState == InputManager.InputStates.UNITS:
-			inputManager.createInputs(Vector2(event.position), initMoves)
-			print(event)
-			_on_mouse_exited()
-			pass
+		if event.button_index == 1 and event.pressed == true:
+			if inputManager.selectorState == InputManager.InputStates.UNITS:
+				pass
+			if inputManager.selectorState == InputManager.InputStates.PENDING:
+				inputManager.createInputs(Vector2(event.position), self)
+				print(event)
+				pass
 	pass # Replace with function body.
 
 
 func _on_mouse_entered() -> void:
+	if inputManager.selectorState == InputManager.InputStates.PENDING:
+		modulate = Color(0.59, 1.0, 0.59, 1.0)
+		pass
 	pass # Replace with function body.
 
 
 func _on_mouse_exited() -> void:
+	if inputManager.selectorState == InputManager.InputStates.PENDING:
+		modulate = Color(1, 1.0, 1, 1.0)
+		pass
 	pass # Replace with function body.

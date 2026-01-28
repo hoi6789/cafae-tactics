@@ -22,7 +22,7 @@ func _ready() -> void:
 	var noise: FastNoiseLite = FastNoiseLite.new()
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN # Set the noise type to Perlin
 	noise.seed = randi() # Set a random or fixed seed
-	noise.frequency = 0.01 # Control the scale/zoom of the noise
+	noise.frequency = 0.05 # Control the scale/zoom of the noise
 	noise.fractal_octaves = 5 # Add layers of noise for detail
 	var mapSize = 30
 	var scale: float = 4
@@ -49,7 +49,7 @@ func _ready() -> void:
 		newTile.inputManager = %InputManager
 	pass
 	var r = randi_range(0, len(mapTiles))
-	processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], 1])
+	processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], 1, 1, 1])
 
 func processInput(command: Array[int]):
 	## Big function that runs the entire game. this is gonna be a big match case i'm so sorry
@@ -62,6 +62,7 @@ func processInput(command: Array[int]):
 			var summonedUnit: BattleUnit = SceneUnit.instantiate()
 			summonedUnit.inputManager = %InputManager
 			summonedUnit.battleController = self
+			summonedUnit.playerID = command[4]
 			summonedUnit.initialize(Vector2(command[1], command[2]), summonedRes)
 			var tile: HexTile = map.get_hex(HexVector.fromCubePos(Vector2(command[1],command[2])))
 			tile.hex.storedUnits.push_back(summonedUnit)
