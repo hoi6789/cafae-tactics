@@ -71,6 +71,7 @@ mesh = SubResource("TubeTrailMesh_3iqd7")
 surface_material_override/0 = SubResource("StandardMaterial3D_2crfn")
 
 [node name="FireParticles" type="GPUParticles3D" parent="."]
+visible = false
 amount = 10
 lifetime = 1.3
 randomness = 1.0

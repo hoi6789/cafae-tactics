@@ -15,9 +15,12 @@ enum Command {
 ## Map variables
 var map: HexagonMap = HexagonMap.new()
 
-var mapTiles: Array = [[0, 0], [0, 1], [1, 0], [1, 1]]
+var mapTiles: Array = []
 
 func _ready() -> void:
+	for i in range(0, 2):
+		for j in range(0, 2):
+			mapTiles.push_back([i, j])
 	var v2_arr = []
 	for tile in mapTiles:
 		v2_arr.push_back(Vector2(tile[0], tile[1]))
@@ -50,7 +53,7 @@ func processInput(command: Array[int]):
 			var tile: HexTile = map.get_hex(HexVector.fromCubePos(Vector2(command[1],command[2])))
 			tile.hex.storedUnits.push_back(summonedUnit)
 			add_child(summonedUnit)
-			highlightPath(map.getShortestPath(map.get_hex(summonedUnit.hex_pos), map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[3][0],mapTiles[3][1])))))
+			highlightPath(map.getShortestPath(map.get_hex(summonedUnit.hex_pos), map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[-1][0],mapTiles[-1][1])))))
 			pass
 		_:
 			pass
