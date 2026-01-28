@@ -18,6 +18,7 @@ var map: HexagonMap = HexagonMap.new()
 var mapTiles: Array = []
 
 func _ready() -> void:
+	seed(100)
 	var noise: FastNoiseLite = FastNoiseLite.new()
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN # Set the noise type to Perlin
 	noise.seed = randi() # Set a random or fixed seed
