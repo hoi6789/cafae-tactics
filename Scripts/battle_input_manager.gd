@@ -112,6 +112,11 @@ func _on_end_turn_button_pressed() -> void:
 func setInputState(state: InputStates):
 	selectorState = state
 	$StateLabel.text = "Input State: " + InputStates.keys()[state]
+	if state != InputStates.PENDING:
+		doneTurnButton.disabled = true
+	else:
+		doneTurnButton.disabled = false
+		
 	pass
 
 func _on_gui_input(event: InputEvent) -> void:

@@ -35,7 +35,7 @@ func resetColour():
 func setColour(palette: HexTile.TerrainType):
 	match palette:
 		_:
-			baseColour = varyColour(Color(0.825, 0.209, 0.969, 1.0))
+			baseColour = varyColour(Color(0.737, 0.737, 0.737, 0.5))
 		
 	surfMaterial.albedo_color = baseColour
 	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
@@ -52,11 +52,12 @@ func setPosition(cubePos: Vector2):
 	print(position)
 	pass
 
-func varyColour(col: Color):
+func varyColour(col: Color, hue_deviation = 0.1):
 	var variance = 0.2
-	col.r = col.r + ((randf() * variance) - (variance / 2))
-	col.g = col.g + ((randf() * variance) - (variance / 2))
-	col.b = col.b + ((randf() * variance) - (variance / 2))
+	var base = randf()
+	col.r = col.r + ((clamp(base + hue_deviation*randf(), 0, 1) * variance) - (variance / 2))
+	col.g = col.g + ((clamp(base + hue_deviation*randf(), 0, 1) * variance) - (variance / 2))
+	col.b = col.b + ((clamp(base + hue_deviation*randf(), 0, 1) * variance) - (variance / 2))
 	return col.clamp()
 
 func _on_mouse_entered() -> void:
