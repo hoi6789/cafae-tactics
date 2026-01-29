@@ -5,7 +5,7 @@ class_name BattleUnit
 
 var playerID: int
 var teamID: int
-var initMoves: Array[Node3D]
+var initMoves: Array[BattleScript]
 
 var inputManager: InputManager
 var battleController: BattleController
@@ -13,13 +13,10 @@ var hex_pos: HexVector
 
 func initialize(cubePos: Vector2, data: Resource):
 	unitData = data
-	for move in unitData.moveset:
-		var mychild: Node3D = Node3D.new()
-		mychild.set_script(move)
-		mychild.name = mychild.moveName
-		add_child(mychild)
-		initMoves.push_back(mychild)
-		print(get_children())
+	for unitMove in unitData.moveset:
+		var move: BattleScript = unitMove.new()
+		move.user = self
+		initMoves.push_back(move)
 	setLocation(HexVector.fromCubePos(cubePos))
 	pass
 

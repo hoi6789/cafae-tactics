@@ -1,6 +1,9 @@
 extends Control
 class_name InputManager
 
+signal selected
+static var instance: InputManager
+
 @export var actionsPanel: PanelContainer
 @export var vboxContainer: VBoxContainer
 
@@ -25,6 +28,8 @@ var playerID: int = 1
 var queueCommand: int = 0
 
 var selectedUnit: BattleUnit
+var selectedHex: Hex
+var hoveredHex: Hex
 
 var CURRENT_INPUT_HEADER = 0
 
@@ -33,6 +38,7 @@ var controller: BattleController = get_parent()
 func _ready() -> void:
 	controller = get_parent()
 	players = 1 if !NetworkManager.connected else NetworkManager.player_count
+	instance = self
 
 func _on_summon_button_pressed() -> void:
 	setInputState(InputStates.HEXES)
@@ -42,12 +48,14 @@ func _on_summon_button_pressed() -> void:
 func chooseHex(hex: Hex):
 	match queueCommand:
 		5:
-			var n: Array[int] = [BattleController.Command.SUMMON, hex.data.hex_pos.q, hex.data.hex_pos.r, 1]
+			var n: Array[int] = [BattleController.Command.SUMMON, hex.data.hex_pos.q, hex.data.hex_pos.r, 1, NetworkManager.steam_id, BattleController.playerTeam]
 			print(Vector3(hex.data.hex_pos.q, hex.data.hex_pos.r, hex.data.hex_pos.s))
 			#hex.id = 2
 			addInput(n)
 		0: 
+			selectedHex = hex
 			controller.highlightPath(controller.map.getShortestPath(controller.map.get_hex(selectedUnit.hex_pos), controller.map.get_hex(hex.data.hex_pos)))
+	selected.emit()
 	pass
 
 func createInputs(pos: Vector2, unit: BattleUnit):
@@ -59,17 +67,26 @@ func createInputs(pos: Vector2, unit: BattleUnit):
 		child.queue_free()
 	for move in unit.initMoves:
 		var newButton: Button = Button.new()
-		newButton.text = move.name
+		newButton.text = move.moveName
 		newButton.set_meta("move", move)
 		newButton.pressed.connect(actionButtonPressed.bind(move))
 		vboxContainer.add_child(newButton)
-		print(move.name)
+		print(move.moveName)
 	actionsPanel.size = Vector2(0, 0)
 
 func actionButtonPressed(move: BattleScript):
 	actionsPanel.visible = false
-	setInputState(move.inputScheme)
+	await move.selection_logic(self)
 	pass
+	
+func setHoveredHex(hex: Hex):
+	hoveredHex = hex
+	if selectedUnit != null:
+		pass#controller.highlightPath(controller.map.getShortestPath(controller.map.get_hex(selectedUnit.hex_pos),hex.data))
+	
+func unsetHoveredHex(hex: Hex):
+	if hoveredHex == hex:
+		hoveredHex = null
 
 func _on_end_turn_button_pressed() -> void:
 	endTurn()

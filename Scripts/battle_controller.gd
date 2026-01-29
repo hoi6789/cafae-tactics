@@ -12,10 +12,13 @@ enum Command {
 @export var LocHexTile: PackedScene
 @export var SceneUnit: PackedScene
 
+static var playerTeam = 0
+
 ## Map variables
 var map: HexagonMap = HexagonMap.new()
 
 var mapTiles: Array = []
+var highlightedPath: Array
 
 func _ready() -> void:
 	seed(100)
@@ -77,5 +80,8 @@ func processInput(command: Array[int]):
 	pass
 
 func highlightPath(hex_path: Array[HexTile]):
+	for tile in highlightedPath:
+		tile.hex.unhighlight()
 	for tile: HexTile in hex_path:
 		tile.hex.highlight()
+	highlightedPath = hex_path

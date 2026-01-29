@@ -32,6 +32,7 @@ text = "summon unit (0/1)"
 
 [node name="ActionsPanel" type="PanelContainer" parent="InputManager"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 0
 offset_left = 500.0
 offset_top = 300.0

@@ -63,4 +63,5 @@ func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
 	for id in id_path:
 		path.push_back(hex_list[id.to])
 	
+	
 	return path

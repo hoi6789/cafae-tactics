@@ -28,14 +28,13 @@ func calc_distance():
 
 	while queue.size > 0:
 		var u: BFSNode = queue.extract()
-		
-		print(u.key, ", ", dist[u.index])
+
 		if u.key > dist[u.index]:
 			continue
 		
 		for adj in u.outward_edges:
 			var v_index = adj.to
-			print(v_index, ": ", dist[v_index], ", ", dist[u.index] + adj.weight)
+
 			if dist[v_index] > dist[u.index] + adj.weight:
 				dist[v_index] = dist[u.index] + adj.weight
 				path[v_index] = path[u.index] + [adj]

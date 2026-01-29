@@ -1,4 +1,3 @@
-extends Node3D
 class_name BattleScript
 
 var moveName: String
@@ -11,3 +10,8 @@ var moveRange: int
 var rangeType: int
 
 var damage: int
+
+var user: BattleUnit
+
+func selection_logic(manager: InputManager):
+	manager.setInputState(inputScheme)
