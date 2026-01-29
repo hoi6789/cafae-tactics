@@ -17,6 +17,15 @@ var doneTurn = false
 var userState: String = "alloweda"
 var selectorState: int = InputStates.PENDING
 
+enum ActionState {
+	NONE,
+	CANCEL,
+	FINISH
+}
+
+var actionState: ActionState
+
+
 ## none = highlight nothing, pending = waiting for input, units = highlight units, hexes = highlight hexes,
 enum InputStates {
 	DISABLED,
@@ -58,6 +67,7 @@ func chooseHex(hex: Hex):
 		0: 
 			selectedHex = hex
 			controller.highlightPath(controller.map.getShortestPath(controller.map.get_hex(selectedUnit.hex_pos), controller.map.get_hex(hex.data.hex_pos)))
+	actionState = ActionState.NONE
 	selected.emit()
 	pass
 
@@ -80,11 +90,12 @@ func createInputs(pos: Vector2, unit: BattleUnit):
 func actionButtonPressed(move: BattleScript):
 	actionsPanel.visible = false
 	await move.selection_logic(self)
-	var	input = [controller.Command.SCRIPT, move.user.unitID, scriptAtlas.get_id(move)] + move.data
-	var n: Array[int]
-	n.assign(input)
-	addInput(n)
-	pass
+	if actionState != InputManager.ActionState.CANCEL:
+		var	input = [controller.Command.SCRIPT, move.user.unitID, scriptAtlas.get_id(move)] + move.data
+		var n: Array[int]
+		n.assign(input)
+		addInput(n)
+	setInputState(InputManager.InputStates.PENDING)
 	
 func setHoveredHex(hex: Hex):
 	hoveredHex = hex
@@ -130,9 +141,12 @@ func resetTurnStatus():
 
 func executeInputs():
 	controller.removeHighlights()
+	controller.activeInputs = len(inputQueue)
 	for input in inputQueue:
 		print("running: ", input)
-		await controller.processInput(input)
+		controller.processInput(input)
+	while controller.activeInputs > 0:
+		await get_tree().process_frame
 	inputQueue = []
 	resetTurnStatus()
 
@@ -152,3 +166,11 @@ func rpc_finishTurn():
 	print(inputQueue)
 	if done == players:
 		executeInputs()
+
+func _process(delta: float) -> void:
+	if Input.is_action_just_pressed("cancel_action"):
+		actionState = ActionState.CANCEL
+		selected.emit()
+	if Input.is_action_just_pressed("finish_action"):
+		actionState = ActionState.FINISH
+		selected.emit()

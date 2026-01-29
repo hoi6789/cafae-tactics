@@ -20,6 +20,7 @@ var mapTiles: Array = []
 var highlightedPath: Array
 var scriptAtlas: ScriptAtlas
 var units: Array[BattleUnit] = []
+var activeInputs = 0
 
 func _ready() -> void:
 	scriptAtlas = load("res://Resources/Script_Atlas.tres")
@@ -92,7 +93,7 @@ func processInput(command: Array[int]):
 			pass
 			
 			pass
-	pass
+	activeInputs -= 1
 
 func removeHighlights():
 	for tile in highlightedPath:

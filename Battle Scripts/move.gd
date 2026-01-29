@@ -11,7 +11,15 @@ func selection_logic(manager: InputManager):
 	while len(path) < user.unitData.speed:
 		manager.queueCommand = 0
 		manager.setInputState(inputScheme)
+		
 		await manager.selected
+		
+		if manager.actionState == InputManager.ActionState.CANCEL:
+			path = []
+			break
+		if manager.actionState == InputManager.ActionState.FINISH:
+			break
+		
 		points.push_back(manager.selectedHex.data.hex_pos)
 		var map = manager.controller.map
 		var new_path = map.getShortestPath(map.get_hex(points[-2]),map.get_hex(points[-1]))
@@ -25,6 +33,7 @@ func selection_logic(manager: InputManager):
 	for hextile in path:
 		id_path.push_back(hextile.id)
 	data = id_path
+	manager.controller.removeHighlights()
 	
 func execute(controller: BattleController):
 	var tile_path: Array[HexTile] = []
