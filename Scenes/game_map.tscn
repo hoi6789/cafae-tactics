@@ -11,7 +11,7 @@ script = ExtResource("1_hrtji")
 LocHexTile = ExtResource("2_55amd")
 SceneUnit = ExtResource("3_qohhg")
 
-[node name="InputManager" type="Control" parent="." node_paths=PackedStringArray("actionsPanel", "vboxContainer")]
+[node name="InputManager" type="Control" parent="." node_paths=PackedStringArray("actionsPanel", "vboxContainer", "doneTurnButton")]
 unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 15
@@ -23,6 +23,7 @@ mouse_filter = 1
 script = ExtResource("4_g3l8d")
 actionsPanel = NodePath("ActionsPanel")
 vboxContainer = NodePath("ActionsPanel/VBoxContainer")
+doneTurnButton = NodePath("EndTurnButton")
 
 [node name="SummonButton" type="Button" parent="InputManager"]
 layout_mode = 0

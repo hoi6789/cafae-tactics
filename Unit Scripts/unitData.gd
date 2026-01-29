@@ -7,5 +7,6 @@ var health: int
 @export var attack: int
 @export var defense: int
 @export var speed: int
+@export var moveSpeed: int
 
 @export var moveset: Array[Script]

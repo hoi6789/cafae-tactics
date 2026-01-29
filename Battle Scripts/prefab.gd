@@ -12,6 +12,10 @@ var rangeType: int
 var damage: int
 
 var user: BattleUnit
+var data: Array = []
 
 func selection_logic(manager: InputManager):
 	manager.setInputState(inputScheme)
+
+func execute(controller: BattleController):
+	pass

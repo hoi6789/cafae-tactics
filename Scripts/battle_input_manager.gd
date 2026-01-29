@@ -6,6 +6,7 @@ static var instance: InputManager
 
 @export var actionsPanel: PanelContainer
 @export var vboxContainer: VBoxContainer
+@export var doneTurnButton: Button
 
 var inputQueue = []
 
@@ -34,8 +35,10 @@ var hoveredHex: Hex
 var CURRENT_INPUT_HEADER = 0
 
 var controller: BattleController = get_parent()
+var scriptAtlas: ScriptAtlas
 
 func _ready() -> void:
+	scriptAtlas = load("res://Resources/Script_Atlas.tres")
 	controller = get_parent()
 	players = 1 if !NetworkManager.connected else NetworkManager.player_count
 	instance = self
@@ -77,6 +80,10 @@ func createInputs(pos: Vector2, unit: BattleUnit):
 func actionButtonPressed(move: BattleScript):
 	actionsPanel.visible = false
 	await move.selection_logic(self)
+	var	input = [controller.Command.SCRIPT, move.user.unitID, scriptAtlas.get_id(move)] + move.data
+	var n: Array[int]
+	n.assign(input)
+	addInput(n)
 	pass
 	
 func setHoveredHex(hex: Hex):
@@ -115,15 +122,24 @@ func addInput(n: Array[int]):
 @rpc("any_peer","call_local")
 func rpc_pushInput(n: Array[int]):
 	inputQueue.push_back(n)
-	
+
+func resetTurnStatus():
+	doneTurn = false
+	done = 0
+	doneTurnButton.disabled = false
+
 func executeInputs():
+	controller.removeHighlights()
 	for input in inputQueue:
 		print("running: ", input)
-		controller.processInput(input)
+		await controller.processInput(input)
+	inputQueue = []
+	resetTurnStatus()
 
 func endTurn():
 	if doneTurn:
 		return
+	doneTurnButton.disabled = true
 	doneTurn = true
 	if NetworkManager.connected:
 		rpc_finishTurn.rpc()

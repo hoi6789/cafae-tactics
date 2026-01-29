@@ -21,3 +21,13 @@ func selection_logic(manager: InputManager):
 			if len(path) > user.unitData.speed:
 				path = path.slice(0,user.unitData.speed)
 			manager.controller.highlightPath(path)
+	var id_path = []
+	for hextile in path:
+		id_path.push_back(hextile.id)
+	data = id_path
+	
+func execute(controller: BattleController):
+	var tile_path: Array[HexTile] = []
+	for id in data:
+		tile_path.push_back(controller.map.hex_list[id])
+	await user.movePath(tile_path)

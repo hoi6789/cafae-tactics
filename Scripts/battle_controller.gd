@@ -4,8 +4,7 @@ class_name BattleController
 ## Enum used as a command list
 enum Command {
 	SUMMON,
-	MOVE,
-	ATTACK,
+	SCRIPT
 }
 
 ## Prefabs used for copying 
@@ -19,8 +18,12 @@ var map: HexagonMap = HexagonMap.new()
 
 var mapTiles: Array = []
 var highlightedPath: Array
+var scriptAtlas: ScriptAtlas
+var units: Array[BattleUnit] = []
 
 func _ready() -> void:
+	scriptAtlas = load("res://Resources/Script_Atlas.tres")
+	scriptAtlas.init()
 	seed(100)
 	var noise: FastNoiseLite = FastNoiseLite.new()
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN # Set the noise type to Perlin
@@ -54,6 +57,9 @@ func _ready() -> void:
 	var r = randi_range(0, len(mapTiles))
 	processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], 1, 1, 1])
 
+func getUnit(unitID: int) -> BattleUnit:
+	return units[unitID]
+
 func processInput(command: Array[int]):
 	## Big function that runs the entire game. this is gonna be a big match case i'm so sorry
 	match command[0]:
@@ -66,18 +72,32 @@ func processInput(command: Array[int]):
 			summonedUnit.inputManager = %InputManager
 			summonedUnit.battleController = self
 			summonedUnit.playerID = command[4]
-			summonedUnit.initialize(Vector2(command[1], command[2]), summonedRes)
+			summonedUnit.initialize(Vector2(command[1], command[2]), summonedRes, len(units))
+			units.push_back(summonedUnit)
 			var tile: HexTile = map.get_hex(HexVector.fromCubePos(Vector2(command[1],command[2])))
 			tile.hex.storedUnits.push_back(summonedUnit)
 			add_child(summonedUnit)
 			var r = randi_range(0, len(mapTiles))
 			highlightPath(map.getShortestPath(map.get_hex(summonedUnit.hex_pos), map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[r][0],mapTiles[r][1])))))
 			pass
+		Command.SCRIPT:
+			# [Command.SCRIPT, user, script id, data[0], data[1], data[2], ...]
+			var script: BattleScript = scriptAtlas.get_move(command[2])
+			script.user = getUnit(command[1])
+			script.data = command.slice(3)
+			await get_tree().create_timer(script.windup).timeout
+			await script.execute(self)
+			pass
 		_:
 			pass
 			
 			pass
 	pass
+
+func removeHighlights():
+	for tile in highlightedPath:
+		tile.hex.unhighlight()
+	highlightedPath = []
 
 func highlightPath(hex_path: Array[HexTile]):
 	for tile in highlightedPath:
