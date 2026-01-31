@@ -31,7 +31,7 @@ func _ready() -> void:
 	noise.seed = randi() # Set a random or fixed seed
 	noise.frequency = 0.05 # Control the scale/zoom of the noise
 	noise.fractal_octaves = 5 # Add layers of noise for detail
-	var mapSize = 30
+	var mapSize = 10
 	var scale: float = 4
 	
 	for i in range(-mapSize, mapSize):
@@ -74,6 +74,7 @@ func processInput(command: Array[int]):
 			summonedUnit.battleController = self
 			summonedUnit.playerID = command[4]
 			summonedUnit.initialize(Vector2(command[1], command[2]), summonedRes, len(units))
+			summonedUnit.unitID = units.size()
 			units.push_back(summonedUnit)
 			var tile: HexTile = map.get_hex(HexVector.fromCubePos(Vector2(command[1],command[2])))
 			tile.hex.storedUnits.push_back(summonedUnit)
@@ -86,8 +87,10 @@ func processInput(command: Array[int]):
 			var script: BattleScript = scriptAtlas.get_move(command[2])
 			script.user = getUnit(command[1])
 			script.data = command.slice(3)
-			await get_tree().create_timer(script.windup).timeout
+			print(Time.get_ticks_msec())
+			await script.user.waitWindup(script.windup)
 			await script.execute(self)
+			await get_tree().create_timer(script.backswing).timeout
 			pass
 		_:
 			pass

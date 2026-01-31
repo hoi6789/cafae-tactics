@@ -3,6 +3,7 @@ extends BattleScript
 func _init() -> void:
 	moveName = "Move"
 	inputScheme = InputManager.InputStates.HEXES
+	windup = 1
 	
 
 func selection_logic(manager: InputManager):
@@ -39,4 +40,5 @@ func execute(controller: BattleController):
 	var tile_path: Array[HexTile] = []
 	for id in data:
 		tile_path.push_back(controller.map.hex_list[id])
+	print(Time.get_ticks_msec())
 	await user.movePath(tile_path)
