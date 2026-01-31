@@ -79,7 +79,6 @@ func processInput(command: Array[int]):
 			tile.hex.storedUnits.push_back(summonedUnit)
 			add_child(summonedUnit)
 			var r = randi_range(0, len(mapTiles))
-			highlightPath(map.getShortestPath(map.get_hex(summonedUnit.hex_pos), map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[r][0],mapTiles[r][1])))))
 			pass
 		Command.SCRIPT:
 			# [Command.SCRIPT, user, script id, data[0], data[1], data[2], ...]
