@@ -16,6 +16,7 @@ var doneTurn = false
 
 var userState: String = "alloweda"
 var selectorState: int = InputStates.PENDING
+var validationState: int = ValidationStates.ALL
 
 enum ActionState {
 	NONE,
@@ -34,10 +35,17 @@ enum InputStates {
 	HEXES,
 }
 
+enum ValidationStates {
+	ALL,
+	ALLIES,
+	ENEMIES
+}
+
 var playerID: int = 1
 var queueCommand: int = 0
 
 var selectedUnit: BattleUnit
+var hoveredUnit: BattleUnit
 var selectedHex: Hex
 var hoveredHex: Hex
 
@@ -68,6 +76,20 @@ func chooseHex(hex: Hex):
 			selectedHex = hex
 			controller.highlightPath(controller.map.getShortestPath(controller.map.get_hex(selectedUnit.hex_pos), controller.map.get_hex(hex.data.hex_pos)))
 	actionState = ActionState.NONE
+	selected.emit()
+	pass
+
+func chooseUnit(unit: BattleUnit):
+	match validationState:
+		ValidationStates.ALL:
+			pass
+		ValidationStates.ALLIES:
+			# if unit.team not same as first unit's team then return null
+			pass
+		ValidationStates.ENEMIES:
+			pass
+	selectedUnit = unit
+	setInputState(InputManager.InputStates.PENDING)
 	selected.emit()
 	pass
 
@@ -106,6 +128,14 @@ func unsetHoveredHex(hex: Hex):
 	if hoveredHex == hex:
 		hoveredHex = null
 
+func setHoveredUnit(unit: BattleUnit):
+	hoveredUnit = unit
+	
+func unsetHoveredUnit(unit: BattleUnit):
+	if hoveredUnit == unit:
+		hoveredUnit.modulate = Color(1, 1, 1)
+		hoveredUnit = null
+
 func _on_end_turn_button_pressed() -> void:
 	endTurn()
 
@@ -116,8 +146,10 @@ func setInputState(state: InputStates):
 		doneTurnButton.disabled = true
 	else:
 		doneTurnButton.disabled = false
-		
-	pass
+	
+func setValidationState(state: ValidationStates):
+	validationState = state
+	$StateLabel.text += " (" + ValidationStates.keys()[state] + ")"
 
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -176,6 +208,8 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("cancel_action"):
 		actionState = ActionState.CANCEL
 		selected.emit()
+		unsetHoveredUnit(hoveredUnit)
 	if Input.is_action_just_pressed("finish_action"):
 		actionState = ActionState.FINISH
+		unsetHoveredUnit(hoveredUnit)
 		selected.emit()

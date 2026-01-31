@@ -62,7 +62,6 @@ func varyColour(col: Color, hue_deviation = 0.1):
 
 func _on_mouse_entered() -> void:
 	if inputManager.selectorState == InputManager.InputStates.HEXES:
-		pass
 		surfMaterial.albedo_color = Color(0, 1, 0, 1)
 		$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
 		inputManager.setHoveredHex(self)

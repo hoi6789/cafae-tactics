@@ -2,9 +2,10 @@ class_name BattleScript
 
 var moveName: String
 var desc: String
-var windup: int
-var backswing: int
+var windup: float
+var backswing: float
 var inputScheme: int
+var inputValidation: int
 
 var moveRange: int
 var rangeType: int

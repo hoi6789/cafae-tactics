@@ -18,6 +18,7 @@ metadata/_custom_type_script = "uid://c0xrc3yqq2vgj"
 pixel_size = 0.001
 billboard = 2
 sprite_frames = ExtResource("2_o2s4o")
+animation = &"windup"
 script = ExtResource("2_dvocn")
 unitData = SubResource("Resource_o2s4o")
 

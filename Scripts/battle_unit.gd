@@ -14,6 +14,8 @@ var hex_pos: HexVector
 var target_pos: HexVector
 var _delta = 0
 var last_position: Vector3 
+var windupTimer: float = 0
+var windupInterrupted: bool = true
 
 func initialize(cubePos: Vector2, data: Resource, _unitID: int):
 	unitID = _unitID
@@ -39,8 +41,10 @@ func setAnimation(anim: String):
 func movePath(path: Array[HexTile]):
 	for data in path:
 		await move(data.hex_pos)
+	setAnimation("default")
 
 func move(pos: HexVector):
+	setAnimation("moving")
 	target_pos = pos
 	var t = 0
 	var original_pos = hex_pos
@@ -51,10 +55,23 @@ func move(pos: HexVector):
 		await get_tree().create_timer(_delta).timeout
 	hex_pos = pos
 
+func waitWindup(duration: float):
+	setAnimation("windup")
+	windupTimer = 0
+	while windupTimer < duration: ## THIS IS LIKE THIS TO IMPLEMENT ANTI-LAG SUPER ARMOR
+		windupTimer += _delta
+		await get_tree().create_timer(_delta).timeout
+	pass
+
+func receiveDamage():
+	setAnimation("hitstun")
+	windupTimer = 0
+
 func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == 1 and event.pressed == true:
 			if inputManager.selectorState == InputManager.InputStates.UNITS:
+				inputManager.chooseUnit(self)
 				pass
 			if inputManager.selectorState == InputManager.InputStates.PENDING:
 				inputManager.createInputs(Vector2(event.position), self)
@@ -66,6 +83,11 @@ func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, n
 func _on_mouse_entered() -> void:
 	if inputManager.selectorState == InputManager.InputStates.PENDING:
 		modulate = Color(0.59, 1.0, 0.59, 1.0)
+		inputManager.setHoveredUnit(self)
+		pass
+	if inputManager.selectorState == InputManager.InputStates.UNITS:
+		modulate = Color(0.59, 1.0, 0.59, 1.0)
+		inputManager.setHoveredUnit(self)
 		pass
 	pass # Replace with function body.
 
@@ -77,9 +99,9 @@ func _on_mouse_exited() -> void:
 	pass # Replace with function body.
 
 func _process(delta: float) -> void:
+	_delta = delta
 	if hex_pos != null:
 		var y = position.y
-		_delta = delta
 		position = HexMath.axis_to_3D(hex_pos.q, hex_pos.r)
 		position.y = y
 	
