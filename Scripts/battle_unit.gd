@@ -27,6 +27,9 @@ func initialize(cubePos: Vector2, data: Resource, _unitID: int):
 	setLocation(HexVector.fromCubePos(cubePos))
 	pass
 
+func isOwned():
+	return (NetworkManager.steam_id == playerID)
+
 ## sets location. idk
 func setLocation(hex_vec: HexVector):
 	hex_pos = hex_vec
@@ -73,7 +76,7 @@ func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, n
 			if inputManager.selectorState == InputManager.InputStates.UNITS:
 				inputManager.chooseUnit(self)
 				pass
-			if inputManager.selectorState == InputManager.InputStates.PENDING:
+			if inputManager.selectorState == InputManager.InputStates.PENDING and isOwned():
 				inputManager.createInputs(Vector2(event.position), self)
 				print(event)
 				pass

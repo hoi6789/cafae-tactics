@@ -110,6 +110,8 @@ func createInputs(pos: Vector2, unit: BattleUnit):
 	actionsPanel.size = Vector2(0, 0)
 
 func actionButtonPressed(move: BattleScript):
+	if !move.user.isOwned():
+		return
 	actionsPanel.visible = false
 	await move.selection_logic(self)
 	if actionState != InputManager.ActionState.CANCEL:
