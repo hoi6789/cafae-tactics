@@ -13,7 +13,7 @@ defense = 1
 speed = 1
 metadata/_custom_type_script = "uid://c0xrc3yqq2vgj"
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_2vhx8"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_o2s4o"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_vcocj"]
 viewport_path = NodePath("Status Bar/Sprite3D/SubViewport")
@@ -31,7 +31,7 @@ hpBar = NodePath("Status Bar/Sprite3D/SubViewport/Health Bar")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
-shape = SubResource("BoxShape3D_2vhx8")
+shape = SubResource("CylinderShape3D_o2s4o")
 
 [node name="Status Bar" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3217432, 0)

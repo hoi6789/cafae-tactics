@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://8rq78fsl06je"]
+
+[ext_resource type="Texture2D" uid="uid://cwgqbnhfi4lgn" path="res://Sprites/yang.png" id="1_0oen4"]
+[ext_resource type="Script" uid="uid://dysguti3c5kf3" path="res://Scripts/bullet.gd" id="2_m4f65"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_tuf4i"]
+
+[node name="Bullet" type="Sprite3D"]
+pixel_size = 0.001
+billboard = 2
+texture = ExtResource("1_0oen4")
+script = ExtResource("2_m4f65")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_tuf4i")

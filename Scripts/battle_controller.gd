@@ -11,7 +11,7 @@ enum Command {
 @export var LocHexTile: PackedScene
 @export var SceneUnit: PackedScene
 
-static var playerTeam = 0
+static var playerTeam = 1
 
 ## Map variables
 var map: HexagonMap = HexagonMap.new()
@@ -56,7 +56,7 @@ func _ready() -> void:
 		newTile.inputManager = %InputManager
 	pass
 	var r = randi_range(0, len(mapTiles))
-	processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], 1, 1, 1])
+	processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], 1, 1, 0])
 
 func getUnit(unitID: int) -> BattleUnit:
 	return units[unitID]
@@ -73,6 +73,7 @@ func processInput(command: Array[int]):
 			summonedUnit.inputManager = %InputManager
 			summonedUnit.battleController = self
 			summonedUnit.playerID = command[4]
+			summonedUnit.teamID = command[5]
 			summonedUnit.initialize(Vector2(command[1], command[2]), summonedRes, len(units))
 			summonedUnit.unitID = units.size()
 			units.push_back(summonedUnit)

@@ -4,7 +4,7 @@ func _init() -> void:
 	moveName = "Generic Ranged Attack"
 	desc = "Hits a unit at long range. Genuinely what else would it do"
 	inputScheme = InputManager.InputStates.UNITS
-	inputValidation = InputManager.ValidationStates.ALL
+	inputValidation = InputManager.ValidationStates.ENEMIES
 	windup = 1.5
 	backswing = 0.5
 	moveRange = 3
@@ -18,6 +18,7 @@ func selection_logic(manager: InputManager):
 	pass
 	
 func execute(controller: BattleController):
-	var dmg = user.unitData.attack
-	controller.units[data[0]].receiveDamage(dmg, user)
+	var bul = load("res://Prefabs/bullet.tscn").instantiate()
+	controller.add_child(bul)
+	bul.initialize(user, controller.getUnit(data[0]), self)
 	pass

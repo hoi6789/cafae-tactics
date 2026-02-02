@@ -43,6 +43,7 @@ enum ValidationStates {
 }
 
 var playerID: int = 1
+var teamID: int = 1
 var queueCommand: int = 0
 
 var selectedUnit: BattleUnit
@@ -86,8 +87,12 @@ func chooseUnit(unit: BattleUnit):
 			pass
 		ValidationStates.ALLIES:
 			# if unit.team not same as first unit's team then return null
+			if unit.teamID != BattleController.playerTeam:
+				return null
 			pass
 		ValidationStates.ENEMIES:
+			if unit.teamID == BattleController.playerTeam:
+				return null
 			pass
 	selectedUnit = unit
 	setInputState(InputManager.InputStates.PENDING)

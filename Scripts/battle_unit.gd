@@ -76,6 +76,10 @@ func waitWindup(duration: float):
 		await get_tree().create_timer(_delta).timeout
 	pass
 
+func dealDamage(dmg: int, target: BattleUnit):
+	target.receiveDamage(dmg, self)
+	setAnimation("attacking")
+
 func receiveDamage(dmg: int, attacker: BattleUnit):
 	setAnimation("hitstun")
 	windupTimer = 0
