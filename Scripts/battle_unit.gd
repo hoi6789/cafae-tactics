@@ -2,6 +2,9 @@ extends AnimatedSprite3D
 class_name BattleUnit
 
 @export var unitData: UnitStats
+@export var hpBar: ProgressBar
+
+var stats: UnitStatLine = null
 
 var playerID: int
 var unitID: int
@@ -17,9 +20,16 @@ var last_position: Vector3
 var windupTimer: float = 0
 var windupInterrupted: bool = true
 
+var hovering = false
+var hpAnimTimer = 0
+var oldHpVal = 0
+var hpTarget = 0
+
 func initialize(cubePos: Vector2, data: Resource, _unitID: int):
 	unitID = _unitID
 	unitData = data
+	stats = UnitStatLine.new(data)
+	
 	for unitMove in unitData.moveset:
 		var move: BattleScript = unitMove.new()
 		move.user = self
@@ -66,9 +76,12 @@ func waitWindup(duration: float):
 		await get_tree().create_timer(_delta).timeout
 	pass
 
-func receiveDamage():
+func receiveDamage(dmg: int, attacker: BattleUnit):
 	setAnimation("hitstun")
 	windupTimer = 0
+	stats.hp -= UnitStats.DamageFormula(dmg, unitData)
+	if stats.hp < 0:
+		stats.hp = 0
 
 func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
@@ -84,6 +97,7 @@ func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, n
 
 
 func _on_mouse_entered() -> void:
+	hovering = true
 	if inputManager.selectorState == InputManager.InputStates.PENDING:
 		modulate = Color(0.59, 1.0, 0.59, 1.0)
 		inputManager.setHoveredUnit(self)
@@ -96,6 +110,7 @@ func _on_mouse_entered() -> void:
 
 
 func _on_mouse_exited() -> void:
+	hovering = false
 	if inputManager.selectorState == InputManager.InputStates.PENDING:
 		modulate = Color(1, 1.0, 1, 1.0)
 		pass
@@ -117,4 +132,17 @@ func _process(delta: float) -> void:
 			flip_h = (screen_vel.x > 0)
 	
 	last_position = position		
-		
+	
+	#UI
+	hpBar.visible = (isOwned() || hovering)
+	if stats != null:
+		var hpFrac = float(stats.hp)/float(stats.maxHP)
+		if abs(hpTarget - hpFrac) > 0.005:
+			oldHpVal = hpTarget
+			hpTarget = hpFrac
+			hpAnimTimer = 0
+			
+		if hpAnimTimer < 1:
+			hpAnimTimer += delta*2
+		var prog: float = sin(0.5*PI*(hpAnimTimer**0.75))
+		hpBar.value = lerp(float(oldHpVal), float(hpTarget), prog)

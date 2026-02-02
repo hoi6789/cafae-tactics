@@ -18,5 +18,6 @@ func selection_logic(manager: InputManager):
 	pass
 	
 func execute(controller: BattleController):
-	controller.units[data[0]].receiveDamage()
+	var dmg = user.unitData.attack
+	controller.units[data[0]].receiveDamage(dmg, user)
 	pass

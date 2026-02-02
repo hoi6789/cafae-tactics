@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://cn7jljtoo25cf"]
+[gd_scene load_steps=8 format=3 uid="uid://cn7jljtoo25cf"]
 
 [ext_resource type="Script" uid="uid://batkgiufupgom" path="res://Scripts/battle_unit.gd" id="2_dvocn"]
 [ext_resource type="Script" uid="uid://c0xrc3yqq2vgj" path="res://Unit Scripts/unitData.gd" id="2_m6o4e"]
 [ext_resource type="SpriteFrames" uid="uid://ht0kyqp1qa1d" path="res://Sprites/SpriteFrames/new_sprite_frames.tres" id="2_o2s4o"]
+[ext_resource type="Theme" uid="uid://bjlwyn8on7k4k" path="res://Prefabs/StatusTheme.tres" id="4_o2s4o"]
 
 [sub_resource type="Resource" id="Resource_o2s4o"]
 script = ExtResource("2_m6o4e")
@@ -14,19 +15,51 @@ metadata/_custom_type_script = "uid://c0xrc3yqq2vgj"
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2vhx8"]
 
-[node name="BattleUnit" type="AnimatedSprite3D"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_vcocj"]
+viewport_path = NodePath("Status Bar/Sprite3D/SubViewport")
+
+[node name="BattleUnit" type="AnimatedSprite3D" node_paths=PackedStringArray("hpBar")]
 pixel_size = 0.001
 billboard = 2
 sprite_frames = ExtResource("2_o2s4o")
 animation = &"windup"
 script = ExtResource("2_dvocn")
 unitData = SubResource("Resource_o2s4o")
+hpBar = NodePath("Status Bar/Sprite3D/SubViewport/Health Bar")
 
 [node name="Area3D" type="Area3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
 shape = SubResource("BoxShape3D_2vhx8")
+
+[node name="Status Bar" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3217432, 0)
+
+[node name="Sprite3D" type="Sprite3D" parent="Status Bar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6653954, 0)
+pixel_size = 0.003
+billboard = 1
+texture = SubResource("ViewportTexture_vcocj")
+
+[node name="SubViewport" type="SubViewport" parent="Status Bar/Sprite3D"]
+transparent_bg = true
+
+[node name="Health Bar" type="ProgressBar" parent="Status Bar/Sprite3D/SubViewport"]
+custom_minimum_size = Vector2(0, 50)
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 31.0
+offset_top = -182.17001
+offset_right = -31.0
+offset_bottom = -132.16953
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("4_o2s4o")
+max_value = 1.0
+value = 1.0
 
 [connection signal="input_event" from="Area3D" to="." method="_on_input_event"]
 [connection signal="mouse_entered" from="Area3D" to="." method="_on_mouse_entered"]
