@@ -20,7 +20,10 @@ func selection_logic(manager: InputManager):
 
 func execute(controller: BattleController):
 	pass
-	
+
+func onHit(controller: BattleController):
+	pass
+
 func launchMeleeAttack(controller: BattleController) -> bool:
 	user.dealDamage(damage, controller.getUnit(data[0]))
 	return true

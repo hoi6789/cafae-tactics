@@ -11,6 +11,8 @@ enum Command {
 @export var LocHexTile: PackedScene
 @export var SceneUnit: PackedScene
 
+signal projectilesGone
+
 static var playerTeam = 1
 
 ## Map variables
@@ -20,6 +22,7 @@ var mapTiles: Array = []
 var highlightedPath: Array
 var scriptAtlas: ScriptAtlas
 var units: Array[BattleUnit] = []
+var projectiles: Array[Bullet] = []
 var activeInputs = 0
 
 func _ready() -> void:
@@ -97,6 +100,18 @@ func processInput(command: Array[int]):
 			
 			pass
 	activeInputs -= 1
+
+func addProjectile(proj: Bullet):
+	projectiles.push_back(proj)
+	proj.controller = self
+	add_child(proj)
+
+func killProjectile(proj: Bullet):
+	var ind: int = projectiles.find(proj)
+	projectiles.pop_at(ind)
+	proj.queue_free()
+	if projectiles.size() == 0:
+		projectilesGone.emit()
 
 func removeHighlights():
 	for tile in highlightedPath:

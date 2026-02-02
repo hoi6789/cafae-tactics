@@ -193,6 +193,8 @@ func executeInputs():
 		controller.processInput(input)
 	while controller.activeInputs > 0:
 		await get_tree().process_frame
+	if controller.projectiles.size() > 0:
+		await controller.projectilesGone
 	inputQueue = []
 	resetTurnStatus()
 	executingInputs = false
