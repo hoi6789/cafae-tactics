@@ -1,7 +1,7 @@
 extends Sprite3D
 class_name Bullet
 
-var speed: float = 1
+var speed: float = 3.5
 var origin: BattleUnit
 var target: BattleUnit
 var batscript: BattleScript
