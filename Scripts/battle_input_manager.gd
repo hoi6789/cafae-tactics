@@ -17,6 +17,7 @@ var doneTurn = false
 var userState: String = "alloweda"
 var selectorState: int = InputStates.PENDING
 var validationState: int = ValidationStates.ALL
+var executingInputs = false
 
 enum ActionState {
 	NONE,
@@ -179,6 +180,7 @@ func resetTurnStatus():
 	doneTurnButton.disabled = false
 
 func executeInputs():
+	executingInputs = true
 	controller.removeHighlights()
 	controller.activeInputs = len(inputQueue)
 	for input in inputQueue:
@@ -188,6 +190,7 @@ func executeInputs():
 		await get_tree().process_frame
 	inputQueue = []
 	resetTurnStatus()
+	executingInputs = false
 
 func endTurn():
 	if doneTurn:

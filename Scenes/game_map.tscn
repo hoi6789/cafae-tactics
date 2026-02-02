@@ -1,10 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://dpa6fw8x117ed"]
+[gd_scene load_steps=13 format=3 uid="uid://dpa6fw8x117ed"]
 
 [ext_resource type="Script" uid="uid://bxd281ovohk1g" path="res://Scripts/battle_controller.gd" id="1_hrtji"]
 [ext_resource type="PackedScene" uid="uid://ccmqueenj03hf" path="res://Prefabs/hex_tile.tscn" id="2_55amd"]
 [ext_resource type="PackedScene" uid="uid://cn7jljtoo25cf" path="res://Prefabs/battle_unit.tscn" id="3_qohhg"]
 [ext_resource type="Script" uid="uid://cc7jvukf2h4xc" path="res://Scripts/battle_input_manager.gd" id="4_g3l8d"]
 [ext_resource type="Script" uid="uid://bgnogf41mi852" path="res://Scripts/camera_3d.gd" id="5_bq2oe"]
+[ext_resource type="Script" uid="uid://bp477csbiadkc" path="res://Battle Scripts/dual_mode_player.gd" id="6_rlp0x"]
+[ext_resource type="AudioStream" uid="uid://demj3gl183oj3" path="res://Music/5-10. Bright, Bold Sandstorm.mp3" id="7_nuwfo"]
+[ext_resource type="AudioStream" uid="uid://ctw2apbndd620" path="res://Music/4-19. Trial of Awakening.mp3" id="8_v8ky0"]
+[ext_resource type="AudioStream" uid="uid://cfltmlq661auq" path="res://Music/5-11. Bright, Bold Sandstorm (Fiery).mp3" id="8_vs6hg"]
+[ext_resource type="AudioStream" uid="uid://dapixgfreh2i3" path="res://Music/4-16. Trial of Blazing.mp3" id="9_e8upy"]
+[ext_resource type="AudioStream" uid="uid://0b0rqbwaisxe" path="res://Music/4-20. Trial of Awakening (Reignite Us).mp3" id="10_qy8qd"]
+[ext_resource type="AudioStream" uid="uid://fy73uyk844ek" path="res://Music/4-17. Trial of Blazing (Sweep Across).mp3" id="12_bcdk8"]
 
 [node name="GameMap" type="Node3D"]
 script = ExtResource("1_hrtji")
@@ -85,6 +92,17 @@ visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.31784922, 0)
 visible = false
 unitData = null
+
+[node name="Audio Player" type="Node" parent="." node_paths=PackedStringArray("calmPlayer", "activePlayer")]
+script = ExtResource("6_rlp0x")
+calmPlayer = NodePath("Calm")
+activePlayer = NodePath("Active")
+calmMusic = Array[AudioStream]([ExtResource("7_nuwfo"), ExtResource("8_v8ky0"), ExtResource("9_e8upy")])
+activeMusic = Array[AudioStream]([ExtResource("8_vs6hg"), ExtResource("10_qy8qd"), ExtResource("12_bcdk8")])
+
+[node name="Calm" type="AudioStreamPlayer" parent="Audio Player"]
+
+[node name="Active" type="AudioStreamPlayer" parent="Audio Player"]
 
 [connection signal="gui_input" from="InputManager" to="InputManager" method="_on_gui_input"]
 [connection signal="pressed" from="InputManager/SummonButton" to="InputManager" method="_on_summon_button_pressed"]

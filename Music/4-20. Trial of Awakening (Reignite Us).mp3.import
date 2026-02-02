@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://0b0rqbwaisxe"
+path="res://.godot/imported/4-20. Trial of Awakening (Reignite Us).mp3-5639ddba9f4b44e1ed9ad6fb0bd7306c.mp3str"
+
+[deps]
+
+source_file="res://Music/4-20. Trial of Awakening (Reignite Us).mp3"
+dest_files=["res://.godot/imported/4-20. Trial of Awakening (Reignite Us).mp3-5639ddba9f4b44e1ed9ad6fb0bd7306c.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
