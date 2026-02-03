@@ -23,7 +23,7 @@ func selection_logic(manager: InputManager):
 		
 		points.push_back(manager.selectedHex.data.hex_pos)
 		var map = manager.controller.map
-		var new_path = map.getShortestPath(map.get_hex(points[-2]),map.get_hex(points[-1]))
+		var new_path = await map.getShortestPath(map.get_hex(points[-2]),map.get_hex(points[-1]))
 		if len(new_path) > 0:
 			new_path.remove_at(0)
 			path += new_path

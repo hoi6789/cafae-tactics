@@ -45,13 +45,19 @@ func rebuild_graph():
 
 func _calcShortestPath(from: HexTile, to: HexTile):
 	#no a*: var solver: Djikstra = Djikstra.new(graph, from.id)
+	var solver_thread: Thread = Thread.new()
 	var solver_astar: Djikstra = Djikstra.new(graph, from.id, to.id)
-	solver_astar.calc_distance()
+	
+	solver_thread.start(solver_astar.calc_distance.bind())
+	while solver_thread.is_alive():
+		await InputManager.instance.get_tree().process_frame
+	solver_thread.wait_to_finish()
 	solutions[from.id] = solver_astar
+	
 
 func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
 	if !solutions.has(from.id):
-		_calcShortestPath(from, to)
+		await _calcShortestPath(from, to)
 	
 	var id_path: Array = solutions[from.id].path[to.id]
 	
