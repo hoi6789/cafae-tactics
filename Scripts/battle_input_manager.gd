@@ -184,13 +184,27 @@ func resetTurnStatus():
 	done = 0
 	doneTurnButton.disabled = false
 
+func executeInputChain(inputArr: Array):
+	for input in inputArr:
+		await controller.processInput(input) 
+
 func executeInputs():
 	executingInputs = true
 	controller.removeHighlights()
 	controller.activeInputs = len(inputQueue)
+	var inputChannel: Dictionary[int, Array] = {}
 	for input in inputQueue:
 		print("running: ", input)
-		controller.processInput(input)
+		if input[0] == BattleController.Command.SUMMON:
+			controller.processInput(input)
+		else:
+			if input[1] not in inputChannel:
+				inputChannel[input[1]] = []
+			
+			inputChannel[input[1]].push_back(input)
+		
+	for inputChain in inputChannel.values():
+		executeInputChain(inputChain)
 	while controller.activeInputs > 0:
 		await get_tree().process_frame
 	if controller.projectiles.size() > 0:
