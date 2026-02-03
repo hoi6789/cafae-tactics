@@ -44,9 +44,10 @@ func rebuild_graph():
 				graph.insert_edge(hex.id,adj.id,cost)
 
 func _calcShortestPath(from: HexTile, to: HexTile):
-	var solver: Djikstra = Djikstra.new(graph, from.id)
-	solver.calc_distance()
-	solutions[from.id] = solver
+	#no a*: var solver: Djikstra = Djikstra.new(graph, from.id)
+	var solver_astar: Djikstra = Djikstra.new(graph, from.id, to.id)
+	solver_astar.calc_distance()
+	solutions[from.id] = solver_astar
 
 func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
 	if !solutions.has(from.id):

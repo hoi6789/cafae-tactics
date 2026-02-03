@@ -2,16 +2,36 @@ class_name Djikstra
 
 var graph: BFSGraph
 var s = 0
+var t = -1
 var dist: Array[float] = []
 var path: Array[Array] = []
 var queue = Heap.new([],false,compare_distance)
+var destination: BFSNode = null
+
+func g(n: BFSNode):
+	return n.key
+	
+func h(n: BFSNode):
+	return (destination.pos - n.pos).length()
+	
+func f(n: BFSNode):
+	if destination == null:
+		return g(n)
+	else:
+		return g(n) + h(n)
+
 
 func compare_distance(a, b) -> bool:
-	return graph.get_node(a.index).key < graph.get_node(b.index).key
+	return f(graph.get_node(a.index)) < f(graph.get_node(b.index))
 
-func _init(_graph: BFSGraph, start_index: int):
+func _init(_graph: BFSGraph, start_index: int, end_index: int = -1):
 	graph = _graph
 	s = start_index
+	t = end_index
+	
+	if t != -1:
+		destination = graph.get_node(t)
+	
 	for i in range(graph.size):
 		dist.push_back(INF)
 		path.push_back([])
@@ -40,6 +60,9 @@ func calc_distance():
 				path[v_index] = path[u.index] + [adj]
 				graph.get_node(v_index).key = dist[v_index]
 				queue.insert(graph.get_node(v_index))
+		
+		if u == destination:
+			break
 				
 		
 
