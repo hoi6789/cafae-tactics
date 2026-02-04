@@ -4,7 +4,7 @@ var map: Dictionary[Vector2, HexTile] = {}
 var hex_list: Dictionary[int, HexTile] = {}
 var graph: BFSGraph
 var pathfinder: Djikstra
-var solutions: Dictionary[int, Djikstra] = {}
+var solutions: Dictionary[Vector2i, Djikstra] = {}
 
 func _init():
 	map = {}
@@ -52,14 +52,14 @@ func _calcShortestPath(from: HexTile, to: HexTile):
 	while solver_thread.is_alive():
 		await InputManager.instance.get_tree().process_frame
 	solver_thread.wait_to_finish()
-	solutions[from.id] = solver_astar
+	solutions[Vector2i(from.id, to.id)] = solver_astar
 	
 
 func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
 	if !solutions.has(from.id):
 		await _calcShortestPath(from, to)
 	
-	var id_path: Array = solutions[from.id].path[to.id]
+	var id_path: Array = solutions[Vector2i(from.id, to.id)].path[to.id]
 	
 	if len(id_path) == 0:
 		return []

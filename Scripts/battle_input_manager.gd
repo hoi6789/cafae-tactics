@@ -231,11 +231,11 @@ func rpc_finishTurn():
 		executeInputs()
 
 func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("cancel_action"):
+	if Input.is_action_just_pressed("cancel_action") and hoveredUnit != null:
 		actionState = ActionState.CANCEL
 		selected.emit()
 		unsetHoveredUnit(hoveredUnit)
-	if Input.is_action_just_pressed("finish_action"):
+	if Input.is_action_just_pressed("finish_action") and hoveredUnit != null:
 		actionState = ActionState.FINISH
 		unsetHoveredUnit(hoveredUnit)
 		selected.emit()
