@@ -24,13 +24,19 @@ func initialize(_data: HexTile):
 	pass
 
 func highlight():
-	surfMaterial.albedo_color = Color.CADET_BLUE
-	baseColour = surfMaterial.albedo_color
+	#surfMaterial.albedo_color = Color.CADET_BLUE
+	highlighted = true
+	resetColour()
+	#baseColour = surfMaterial.albedo_color
 func unhighlight():
+	highlighted = false
 	resetColour()
 
 func resetColour():
-	setColour(data.type)
+	if highlighted:
+		surfMaterial.albedo_color = Color.CADET_BLUE
+	else:
+		surfMaterial.albedo_color = baseColour
 
 func setColour(palette: HexTile.TerrainType):
 	match palette:
@@ -70,7 +76,7 @@ func _on_mouse_entered() -> void:
 
 func _on_mouse_exited() -> void:
 	if inputManager.selectorState == InputManager.InputStates.HEXES:
-		surfMaterial.albedo_color = baseColour
+		resetColour()
 		$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
 		inputManager.unsetHoveredHex(self)
 	pass # Replace with function body.

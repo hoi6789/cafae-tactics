@@ -183,6 +183,7 @@ func resetTurnStatus():
 	doneTurn = false
 	done = 0
 	doneTurnButton.disabled = false
+	selectorState = InputStates.PENDING
 
 func executeInputChain(inputArr: Array):
 	for input in inputArr:
@@ -216,6 +217,7 @@ func executeInputs():
 func endTurn():
 	if doneTurn:
 		return
+	selectorState = InputStates.DISABLED
 	doneTurnButton.disabled = true
 	doneTurn = true
 	if NetworkManager.connected:
