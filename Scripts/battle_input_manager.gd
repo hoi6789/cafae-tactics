@@ -76,7 +76,7 @@ func chooseHex(hex: Hex):
 			addInput(n)
 		0: 
 			selectedHex = hex
-			controller.highlightPath(await controller.map.getShortestPath(controller.map.get_hex(selectedUnit.hex_pos), controller.map.get_hex(hex.data.hex_pos)))
+			#controller.highlightPath(await controller.map.getShortestPath(controller.map.get_hex(selectedUnit.hex_pos), controller.map.get_hex(hex.data.hex_pos)))
 	actionState = ActionState.NONE
 	selected.emit()
 	pass
