@@ -54,6 +54,20 @@ func _calcShortestPath(from: HexTile, to: HexTile):
 	solver_thread.wait_to_finish()
 	solutions[Vector2i(from.id, to.id)] = solver_astar
 	
+func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
+	var arr: Array[HexTile] = []
+	for q in range(-dist, dist+1):
+		for r in range(-dist, dist+1):
+			if q == 0 and r == 0:
+				continue
+			var s = -(q+r)
+			if abs(s)>dist:
+				continue
+			var hex_pos = HexVector.add(origin, HexVector.new(q,r,s))
+			var hex = get_hex(hex_pos)
+			if hex != null:
+				arr.push_back(hex)
+	return arr
 
 func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
 	if !solutions.has(from.id):

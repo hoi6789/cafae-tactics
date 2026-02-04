@@ -59,6 +59,7 @@ func _ready() -> void:
 		newTile.inputManager = %InputManager
 	pass
 	var r = randi_range(0, len(mapTiles))
+
 	processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], 1, 1, 0])
 
 func getUnit(unitID: int) -> BattleUnit:
