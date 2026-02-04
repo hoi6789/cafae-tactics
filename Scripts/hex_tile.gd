@@ -6,17 +6,21 @@ var data: HexTile
 ## 
 var storedUnits = []
 
-## used to determine colour and other properties (terrain?)
-
 var baseColour: Color
-var surfMaterial
+var surfMaterial: Material
+var surfOverlay: Material
+var overlayColours: Array[Color]
 
 var inputManager: InputManager
+
 var highlighted: bool = false
+var hovered: bool = false
 
 func initialize(_data: HexTile):
 	## Initialization function to setup properties of a hex
 	surfMaterial = $CollisionPolygon3D/MeshInstance3D.get_surface_override_material(0).duplicate(true)
+	surfOverlay = surfMaterial.next_pass.next_pass
+	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
 	data = _data
 	data.hex = self
 	setColour(data.type)
@@ -24,18 +28,25 @@ func initialize(_data: HexTile):
 	pass
 
 func highlight():
-	surfMaterial.albedo_color = Color.CADET_BLUE
-	baseColour = surfMaterial.albedo_color
+	#surfMaterial.albedo_color = Color.CADET_BLUE
+	highlighted = true
+	resetColour()
+	#baseColour = surfMaterial.albedo_color
 func unhighlight():
+	highlighted = false
 	resetColour()
 
 func resetColour():
-	setColour(data.type)
+	surfOverlay.albedo_color = Color(0, 0, 0, 0)
+	if highlighted: overlayBlend(Color.CADET_BLUE, 0.5)
+	if hovered: overlayBlend(Color.GREEN, 0.5)
+	else:
+		surfMaterial.albedo_color = baseColour
 
 func setColour(palette: HexTile.TerrainType):
 	match palette:
 		_:
-			baseColour = varyColour(Color(0.737, 0.737, 0.737, 0.5))
+			baseColour = varyColour(Color(0.72, 0.72, 0.72, 0.50))
 		
 	surfMaterial.albedo_color = baseColour
 	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
@@ -60,18 +71,23 @@ func varyColour(col: Color, hue_deviation = 0.1):
 	col.b = col.b + ((clamp(base + hue_deviation*randf(), 0, 1) * variance) - (variance / 2))
 	return col.clamp()
 
+func overlayBlend(col: Color, alpha: float):
+	col.a = alpha
+	surfOverlay.albedo_color = surfOverlay.albedo_color.blend(col)
+
 func _on_mouse_entered() -> void:
 	if inputManager.selectorState == InputManager.InputStates.HEXES:
-		surfMaterial.albedo_color = Color(0, 1, 0, 1)
-		$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
+		hovered = true
+		#surfMaterial.albedo_color = Color(0, 1, 0, 1)
+		resetColour()
 		inputManager.setHoveredHex(self)
 		#print(id)
 	pass # Replace with function body.
 
 func _on_mouse_exited() -> void:
 	if inputManager.selectorState == InputManager.InputStates.HEXES:
-		surfMaterial.albedo_color = baseColour
-		$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
+		hovered = false
+		resetColour()
 		inputManager.unsetHoveredHex(self)
 	pass # Replace with function body.
 
@@ -79,9 +95,8 @@ func _on_mouse_exited() -> void:
 func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == 1 and event.pressed == true and inputManager.selectorState == InputManager.InputStates.HEXES:
-			inputManager.setInputState(InputManager.InputStates.PENDING)
-			surfMaterial.albedo_color = baseColour
 			inputManager.chooseHex(self)
 			_on_mouse_exited()
+			inputManager.setInputState(InputManager.InputStates.PENDING)
 			pass
 	pass # Replace with function body.

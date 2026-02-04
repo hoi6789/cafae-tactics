@@ -76,7 +76,7 @@ func chooseHex(hex: Hex):
 			addInput(n)
 		0: 
 			selectedHex = hex
-			controller.highlightPath(await controller.map.getShortestPath(controller.map.get_hex(selectedUnit.hex_pos), controller.map.get_hex(hex.data.hex_pos)))
+			#controller.highlightPath(await controller.map.getShortestPath(controller.map.get_hex(selectedUnit.hex_pos), controller.map.get_hex(hex.data.hex_pos)))
 	actionState = ActionState.NONE
 	selected.emit()
 	pass
@@ -183,6 +183,7 @@ func resetTurnStatus():
 	doneTurn = false
 	done = 0
 	doneTurnButton.disabled = false
+	selectorState = InputStates.PENDING
 
 func executeInputChain(inputArr: Array):
 	for input in inputArr:
@@ -216,6 +217,7 @@ func executeInputs():
 func endTurn():
 	if doneTurn:
 		return
+	selectorState = InputStates.DISABLED
 	doneTurnButton.disabled = true
 	doneTurn = true
 	if NetworkManager.connected:
