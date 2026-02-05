@@ -32,6 +32,7 @@ func _ready() -> void:
 	var noise: FastNoiseLite = FastNoiseLite.new()
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN # Set the noise type to Perlin
 	noise.seed = randi() # Set a random or fixed seed
+	var type_seed = randf()
 	noise.frequency = 0.05 # Control the scale/zoom of the noise
 	noise.fractal_octaves = 5 # Add layers of noise for detail
 	var mapSize = 10
@@ -42,11 +43,11 @@ func _ready() -> void:
 			var hx = HexVector.fromCubePos(Vector2(i, j))
 			var vx = HexMath.axis_to_3D(hx.q, hx.r)
 			if noise.get_noise_2d(vx.x, vx.z) < -0.05:
-				mapTiles.push_back([i, j])
+				mapTiles.push_back([i, j, noise.get_noise_2d(type_seed + vx.x, type_seed + vx.z)])
 	var v2_arr = []
 	for tile in mapTiles:
-		v2_arr.push_back(Vector2(tile[0], tile[1]))
-	map.force_generate(v2_arr)
+		v2_arr.push_back(Vector3(tile[0], tile[1], 2*abs(tile[2])))
+	map.force_generate_with_terrain_types(v2_arr)
 	
 	for hextile: HexTile in map.hex_list.values():
 		var cPos = HexVector.toCubePos(hextile.hex_pos)

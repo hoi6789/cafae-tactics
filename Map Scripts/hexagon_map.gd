@@ -19,6 +19,16 @@ func force_generate(cubePositions: Array):
 		current_id += 1
 	rebuild_graph()
 
+func force_generate_with_terrain_types(cubePositions: Array):
+	var current_id = 0
+	for pos3: Vector3 in cubePositions:
+		var pos = Vector2(pos3.x, pos3.y)
+		var hex =  HexTile.new(current_id, HexVector.fromCubePos(pos), HexTile.TerrainType.values()[(round(pos3.z))])
+		map[pos] = hex
+		hex_list[current_id] = hex
+		current_id += 1
+	rebuild_graph()
+
 func get_hex(hex_vec: HexVector) -> HexTile:
 	var cPos = HexVector.toCubePos(hex_vec)
 	if cPos in map:

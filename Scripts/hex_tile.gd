@@ -45,6 +45,8 @@ func resetColour():
 
 func setColour(palette: HexTile.TerrainType):
 	match palette:
+		HexTile.TerrainType.ROUGH: 
+			baseColour = varyColour(Color(0.857, 0.338, 0.071, 0.5))
 		_:
 			baseColour = varyColour(Color(0.72, 0.72, 0.72, 0.50))
 		

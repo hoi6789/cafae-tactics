@@ -7,7 +7,8 @@ var hex_pos: HexVector
 var hex: Hex
 enum TerrainType
 {
-	BASIC
+	BASIC,
+	ROUGH
 }
 var type: TerrainType = TerrainType.BASIC
 
@@ -20,6 +21,7 @@ func _init(_id: int, _pos: HexVector, _type: TerrainType, _hex: Hex = null):
 static func getTileTypeMovementCost(_type: HexTile.TerrainType) -> float:
 	match _type:
 		HexTile.TerrainType.BASIC: return 1
+		HexTile.TerrainType.ROUGH: return 4
 		_: return 1
 	return 0
 
