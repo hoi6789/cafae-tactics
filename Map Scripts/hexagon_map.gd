@@ -5,6 +5,7 @@ var hex_list: Dictionary[int, HexTile] = {}
 var graph: BFSGraph
 var pathfinder: Djikstra
 var solutions: Dictionary[Vector2i, Djikstra] = {}
+var floodfills: Dictionary[Vector2i, Floodfill] = {}
 
 func _init():
 	map = {}
@@ -53,6 +54,17 @@ func _calcShortestPath(from: HexTile, to: HexTile):
 		await InputManager.instance.get_tree().process_frame
 	solver_thread.wait_to_finish()
 	solutions[Vector2i(from.id, to.id)] = solver_astar
+
+func _runFloodfill(source: HexTile, dist: int):
+	#no a*: var solver: Djikstra = Djikstra.new(graph, from.id)
+	var solver_thread: Thread = Thread.new()
+	var solver: Floodfill = Floodfill.new(graph, source.id, dist)
+	
+	solver_thread.start(solver.evaluate.bind())
+	while solver_thread.is_alive():
+		await InputManager.instance.get_tree().process_frame
+	solver_thread.wait_to_finish()
+	floodfills[Vector2i(source.id, dist)] = solver
 	
 func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
 	var arr: Array[HexTile] = []
@@ -70,7 +82,7 @@ func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
 	return arr
 
 func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
-	if !solutions.has(from.id):
+	if !solutions.has(Vector2i(from.id, to.id)):
 		await _calcShortestPath(from, to)
 	
 	var id_path: Array = solutions[Vector2i(from.id, to.id)].path[to.id]
@@ -83,6 +95,19 @@ func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
 	path.push_back(hex_list[id_path[0].from])
 	for id in id_path:
 		path.push_back(hex_list[id.to])
-	
-	
 	return path
+
+func getFloodedRange(from: HexTile, flood_range: int) -> Array[HexTile]:
+	if !floodfills.has(Vector2i(from.id, flood_range)):
+		await _runFloodfill(from, flood_range)
+	
+	var id_arr: Array = floodfills[Vector2i(from.id, flood_range)].found
+	
+	if len(id_arr) == 0:
+		return []
+	
+	var arr: Array[HexTile] = []
+	
+	for id in id_arr:
+		arr.push_back(hex_list[id])
+	return arr
