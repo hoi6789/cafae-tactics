@@ -60,8 +60,6 @@ func _ready() -> void:
 	pass
 	var r = randi_range(0, len(mapTiles))
 
-	for hex in await map.getFloodedRange(map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[r][0], mapTiles[r][1]))), 2):
-		hex.hex.highlight()
 	processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], 1, 1, 0])
 
 func getUnit(unitID: int) -> BattleUnit:
