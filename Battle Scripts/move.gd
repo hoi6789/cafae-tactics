@@ -11,11 +11,11 @@ func selection_logic(manager: InputManager):
 	var path: Array[HexTile] = []
 	var effectiveLen: float = 0
 	var lastHex = user.hex_pos
+	var map = manager.controller.map
+	var litTiles: Array = await map.getHexesWithShortestPathDistance(lastHex, user.unitData.speed - effectiveLen)
 	while effectiveLen < user.unitData.speed:
 		manager.queueCommand = 0
 		manager.setInputState(inputScheme)
-		var map = manager.controller.map
-		var litTiles = await map.getHexesWithShortestPathDistance(lastHex, user.unitData.speed - effectiveLen)
 		#for item in map.getHexesInRange(user.hex_pos, user.unitData.speed - len(path)):
 		
 		for item in litTiles:
@@ -37,11 +37,16 @@ func selection_logic(manager: InputManager):
 		if len(new_path) > 0:
 			new_path.remove_at(0)
 			for tile in new_path:
-				effectiveLen += tile.getMovementCost()
-				if effectiveLen > user.unitData.speed:
+				var cost = tile.getMovementCost()
+				if effectiveLen + cost <= user.unitData.speed:
+					effectiveLen += cost
+				else:
 					break
 				path.push_back(tile)
 			manager.controller.highlightPath(path)
+		litTiles = await map.getHexesWithShortestPathDistance(lastHex, user.unitData.speed - effectiveLen)
+		if len(litTiles) == 0:
+			break
 	var id_path = []
 	for hextile in path:
 		id_path.push_back(hextile.id)
