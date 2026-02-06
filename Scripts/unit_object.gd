@@ -1,0 +1,2 @@
+extends AnimatedSprite3D
+class_name UnitObject

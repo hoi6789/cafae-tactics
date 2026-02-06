@@ -14,6 +14,7 @@ var initMoves: Array[BattleScript]
 var inputManager: InputManager
 var battleController: BattleController
 var hex_pos: HexVector
+var effective_pos: HexVector
 var target_pos: HexVector
 var _delta = 0
 var last_position: Vector3 
@@ -94,6 +95,7 @@ func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, n
 				inputManager.chooseUnit(self)
 				pass
 			if inputManager.selectorState == InputManager.InputStates.PENDING and isOwned():
+				effective_pos = hex_pos
 				inputManager.createInputs(Vector2(event.position), self)
 				print(event)
 				pass

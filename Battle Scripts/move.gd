@@ -9,11 +9,22 @@ func _init() -> void:
 func selection_logic(manager: InputManager):
 	var points = [user.hex_pos]
 	var path: Array[HexTile] = []
-	while len(path) < user.unitData.speed:
+	var effectiveLen: int = 0
+	var lastHex = user.hex_pos
+	while effectiveLen < user.unitData.speed:
 		manager.queueCommand = 0
 		manager.setInputState(inputScheme)
+		var map = manager.controller.map
+		var litTiles = await map.getFloodedRange(map.get_hex(lastHex), user.unitData.speed - effectiveLen)
+		#for item in map.getHexesInRange(user.hex_pos, user.unitData.speed - len(path)):
 		
+		for item in litTiles:
+			item.hex.rangeHighlight()
 		await manager.selected
+		
+		for item in litTiles:
+			item.hex.unrangeHighlight()
+		lastHex = manager.selectedHex.data.hex_pos
 		
 		if manager.actionState == InputManager.ActionState.CANCEL:
 			path = []
@@ -22,13 +33,14 @@ func selection_logic(manager: InputManager):
 			break
 		
 		points.push_back(manager.selectedHex.data.hex_pos)
-		var map = manager.controller.map
-		var new_path = await map.getShortestPath(map.get_hex(points[-2]),map.get_hex(points[-1]))
+		var new_path: Array[HexTile] = await map.getShortestPath(map.get_hex(points[-2]),map.get_hex(points[-1]))
 		if len(new_path) > 0:
 			new_path.remove_at(0)
-			path += new_path
-			if len(path) > user.unitData.speed:
-				path = path.slice(0,user.unitData.speed)
+			for tile in new_path:
+				effectiveLen += tile.getMovementCost()
+				if effectiveLen > user.unitData.speed:
+					break
+				path.push_back(tile)
 			manager.controller.highlightPath(path)
 	var id_path = []
 	for hextile in path:

@@ -18,10 +18,10 @@ func _init(_id: int, _pos: HexVector, _type: TerrainType, _hex: Hex = null):
 	id = _id
 	hex = _hex
 
-static func getTileTypeMovementCost(_type: HexTile.TerrainType) -> float:
+static func getTileTypeMovementCost(_type: HexTile.TerrainType) -> int:
 	match _type:
 		HexTile.TerrainType.BASIC: return 1
-		HexTile.TerrainType.ROUGH: return 4
+		HexTile.TerrainType.ROUGH: return 2
 		_: return 1
 	return 0
 

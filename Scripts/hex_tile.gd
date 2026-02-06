@@ -14,7 +14,10 @@ var overlayColours: Array[Color]
 var inputManager: InputManager
 
 var highlighted: bool = false
+var rangeHighlighted: bool = false
+var holoHighlighted: int = 0
 var hovered: bool = false
+
 
 func initialize(_data: HexTile):
 	## Initialization function to setup properties of a hex
@@ -28,16 +31,24 @@ func initialize(_data: HexTile):
 	pass
 
 func highlight():
-	#surfMaterial.albedo_color = Color.CADET_BLUE
 	highlighted = true
 	resetColour()
-	#baseColour = surfMaterial.albedo_color
+
 func unhighlight():
 	highlighted = false
+	resetColour()
+	
+func rangeHighlight():
+	rangeHighlighted = true
+	resetColour()
+	
+func unrangeHighlight():
+	rangeHighlighted = false
 	resetColour()
 
 func resetColour():
 	surfOverlay.albedo_color = Color(0, 0, 0, 0)
+	if rangeHighlighted: overlayBlend(Color.GOLD, 0.5)
 	if highlighted: overlayBlend(Color.CADET_BLUE, 0.5)
 	if hovered: overlayBlend(Color.GREEN, 0.5)
 	else:
