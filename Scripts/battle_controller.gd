@@ -35,7 +35,7 @@ func _ready() -> void:
 	var type_seed = randf()
 	noise.frequency = 0.05 # Control the scale/zoom of the noise
 	noise.fractal_octaves = 5 # Add layers of noise for detail
-	var mapSize = 10
+	var mapSize = 50
 	var scale: float = 4
 	
 	for i in range(-mapSize, mapSize):
@@ -49,11 +49,19 @@ func _ready() -> void:
 		v2_arr.push_back(Vector3(tile[0], tile[1], 2*abs(tile[2])))
 	map.force_generate_with_terrain_types(v2_arr)
 	
+	var chunk_size: int = int(ceil(0.01*(mapSize**2)))
+	var tile_index = 0
 	for hextile: HexTile in map.hex_list.values():
 		var cPos = HexVector.toCubePos(hextile.hex_pos)
 		var coordinate = [cPos.x, cPos.y]
 		print(cPos)
+		
 		var newTile: Hex = LocHexTile.instantiate()
+		
+		tile_index = (tile_index+1)%chunk_size
+		if tile_index == 0:
+			await get_tree().process_frame
+		
 		newTile.initialize(hextile)
 		add_child(newTile)
 		

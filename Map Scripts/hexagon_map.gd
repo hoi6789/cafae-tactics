@@ -5,6 +5,7 @@ var hex_list: Dictionary[int, HexTile] = {}
 var graph: BFSGraph
 var pathfinder: Djikstra
 var solutions: Dictionary[Vector2i, Djikstra] = {}
+var djikstra_solutions: Dictionary[Vector2, Djikstra] = {}
 var floodfills: Dictionary[Vector2i, Floodfill] = {}
 
 func _init():
@@ -65,6 +66,18 @@ func _calcShortestPath(from: HexTile, to: HexTile):
 	solver_thread.wait_to_finish()
 	solutions[Vector2i(from.id, to.id)] = solver_astar
 
+func _calcShortestRange(from: HexTile, limit: float): ##Shortest path with djikstra and a path limit
+	#no a*: var solver: Djikstra = Djikstra.new(graph, from.id)
+	var solver_thread: Thread = Thread.new()
+	var solver_dj: Djikstra = Djikstra.new(graph, from.id, -1)
+	solver_dj.set_limit(limit)
+	
+	solver_thread.start(solver_dj.calc_distance.bind())
+	while solver_thread.is_alive():
+		await InputManager.instance.get_tree().process_frame
+	solver_thread.wait_to_finish()
+	djikstra_solutions[Vector2(from.id, limit)] = solver_dj
+
 func _runFloodfill(source: HexTile, dist: int):
 	#no a*: var solver: Djikstra = Djikstra.new(graph, from.id)
 	var solver_thread: Thread = Thread.new()
@@ -90,6 +103,24 @@ func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
 			if hex != null:
 				arr.push_back(hex)
 	return arr
+	
+func getHexesWithShortestPathDistance(origin: HexVector, dist: int, check_limit: int = -1) -> Array[HexTile]:
+	if check_limit == -1:
+		check_limit = dist
+	var arr: Array[HexTile] = []
+	var origin_hex = get_hex(origin)
+	for q in range(-check_limit, check_limit+1):
+		for r in range(-check_limit, check_limit+1):
+			if q == 0 and r == 0:
+				continue
+			var s = -(q+r)
+			if abs(s)>check_limit:
+				continue
+			var hex_pos = HexVector.add(origin, HexVector.new(q,r,s))
+			var hex = get_hex(hex_pos)
+			if hex != null and await getShortestDistance(origin_hex, hex, check_limit) <= dist:
+				arr.push_back(hex)
+	return arr
 
 func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
 	if !solutions.has(Vector2i(from.id, to.id)):
@@ -106,6 +137,12 @@ func getShortestPath(from: HexTile, to: HexTile) -> Array[HexTile]:
 	for id in id_path:
 		path.push_back(hex_list[id.to])
 	return path
+	
+func getShortestDistance(from: HexTile, to: HexTile, limit: float) -> float:
+	if !djikstra_solutions.has(Vector2(from.id, limit)):
+		await _calcShortestRange(from, limit)
+	
+	return djikstra_solutions[Vector2(from.id, limit)].dist[to.id]
 
 func getFloodedRange(from: HexTile, flood_range: int) -> Array[HexTile]:
 	if !floodfills.has(Vector2i(from.id, flood_range)):

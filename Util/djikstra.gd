@@ -3,6 +3,7 @@ class_name Djikstra
 var graph: BFSGraph
 var s = 0
 var t = -1
+var dist_limit = INF
 var dist: Array[float] = []
 var path: Array[Array] = []
 var queue = Heap.new([],false,compare_distance)
@@ -37,6 +38,10 @@ func _init(_graph: BFSGraph, start_index: int, end_index: int = -1):
 		path.push_back([])
 	dist[s] = 0
 # Called when the node enters the scene tree for the first time.
+
+func set_limit(_lim: float): ##sets distance at which algorithm disregards path
+	dist_limit = _lim
+
 func _ready() -> void:
 	pass # Replace with function body.
 
@@ -59,7 +64,8 @@ func calc_distance():
 				dist[v_index] = dist[u.index] + adj.weight
 				path[v_index] = path[u.index] + [adj]
 				graph.get_node(v_index).key = dist[v_index]
-				queue.insert(graph.get_node(v_index))
+				if dist[v_index] <= dist_limit:
+					queue.insert(graph.get_node(v_index))
 		
 		if u == destination:
 			break

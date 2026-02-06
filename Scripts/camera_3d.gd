@@ -1,5 +1,6 @@
 extends Camera3D
 var spd = 4
+var base_spd = 4
 var mouse3Down = false
 
 var targetPosition: Vector3
@@ -17,6 +18,7 @@ func _input(event: InputEvent) -> void:
 	pass
 
 func _process(delta: float) -> void:
+	spd = base_spd*clamp(sqrt(abs(targetPosition.y)), 1, INF)
 	## controls camera movement
 	mouse3Down = Input.is_action_pressed("mouse3Down")
 	if Input.is_action_pressed("camera_panRight"):

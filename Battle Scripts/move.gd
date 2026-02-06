@@ -15,7 +15,7 @@ func selection_logic(manager: InputManager):
 		manager.queueCommand = 0
 		manager.setInputState(inputScheme)
 		var map = manager.controller.map
-		var litTiles = await map.getFloodedRange(map.get_hex(lastHex), user.unitData.speed - effectiveLen)
+		var litTiles = await map.getHexesWithShortestPathDistance(lastHex, user.unitData.speed - effectiveLen)
 		#for item in map.getHexesInRange(user.hex_pos, user.unitData.speed - len(path)):
 		
 		for item in litTiles:
