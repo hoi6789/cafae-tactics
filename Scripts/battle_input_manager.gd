@@ -32,6 +32,7 @@ var actionState: ActionState
 enum InputStates {
 	DISABLED,
 	PENDING,
+	CONFIRMATION,
 	UNITS,
 	HEXES,
 }

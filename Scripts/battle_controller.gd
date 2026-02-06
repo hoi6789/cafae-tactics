@@ -54,7 +54,6 @@ func _ready() -> void:
 	for hextile: HexTile in map.hex_list.values():
 		var cPos = HexVector.toCubePos(hextile.hex_pos)
 		var coordinate = [cPos.x, cPos.y]
-		print(cPos)
 		
 		var newTile: Hex = LocHexTile.instantiate()
 		

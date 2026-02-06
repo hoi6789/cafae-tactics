@@ -36,7 +36,7 @@ func get_hex(hex_vec: HexVector) -> HexTile:
 		return map[cPos]
 	return null
 
-func getIntermovementCost(a: HexTile, b: HexTile):
+static func getIntermovementCost(a: HexTile, b: HexTile):
 	return (a.getMovementCost() + b.getMovementCost())/2
 
 func rebuild_graph():

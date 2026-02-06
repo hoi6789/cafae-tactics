@@ -36,12 +36,18 @@ func selection_logic(manager: InputManager):
 		var new_path: Array[HexTile] = await map.getShortestPath(map.get_hex(points[-2]),map.get_hex(points[-1]))
 		if len(new_path) > 0:
 			new_path.remove_at(0)
+			var last_tile = map.get_hex(user.hex_pos)
+			if len(path) > 0:
+				last_tile = path[-1]
 			for tile in new_path:
-				var cost = tile.getMovementCost()
-				if effectiveLen + cost <= user.unitData.speed:
-					effectiveLen += cost
-				else:
-					break
+				if last_tile != null:
+					var cost = HexagonMap.getIntermovementCost(last_tile, tile)
+					print("cost: ", cost)
+					if effectiveLen + cost <= user.unitData.speed:
+						effectiveLen += cost
+					else:
+						break
+				last_tile = tile
 				path.push_back(tile)
 			manager.controller.highlightPath(path)
 		litTiles = await map.getHexesWithShortestPathDistance(lastHex, user.unitData.speed - effectiveLen)
@@ -51,6 +57,17 @@ func selection_logic(manager: InputManager):
 	for hextile in path:
 		id_path.push_back(hextile.id)
 	data = id_path
+	
+	while true:
+		if manager.actionState == InputManager.ActionState.CANCEL:
+			path = []
+			break
+		if manager.actionState == InputManager.ActionState.FINISH:
+			break
+		manager.setInputState(InputManager.InputStates.CONFIRMATION)
+		manager.controller.highlightPath(path)
+		await manager.selected
+	
 	manager.controller.removeHighlights()
 	
 func execute(controller: BattleController):

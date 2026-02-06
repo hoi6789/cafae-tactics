@@ -24,7 +24,8 @@ shader_parameter/outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2crfn"]
 next_pass = SubResource("ShaderMaterial_5stwb")
-albedo_color = Color(0.938896, 0, 0.237025, 1)
+albedo_color = Color(0.9372549, 0, 0.23529412, 1)
+proximity_fade_distance = 0.1
 
 [sub_resource type="Image" id="Image_piehg"]
 data = {
