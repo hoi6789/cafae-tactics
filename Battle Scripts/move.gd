@@ -9,7 +9,7 @@ func _init() -> void:
 func selection_logic(manager: InputManager):
 	var points = [user.hex_pos]
 	var path: Array[HexTile] = []
-	var effectiveLen: int = 0
+	var effectiveLen: float = 0
 	var lastHex = user.hex_pos
 	while effectiveLen < user.unitData.speed:
 		manager.queueCommand = 0
