@@ -10,7 +10,7 @@
 viewport_path = NodePath("Status Bar/Sprite3D/SubViewport")
 
 [node name="BattleHologram" type="AnimatedSprite3D"]
-modulate = Color(1, 1, 1, 0.39215687)
+modulate = Color(0.29411766, 0.35686275, 1, 0.6392157)
 pixel_size = 0.001
 billboard = 2
 sprite_frames = ExtResource("1_sese1")

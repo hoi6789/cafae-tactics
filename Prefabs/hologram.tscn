@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://dvbecwi7ia0ye"]
+
+[sub_resource type="GDScript" id="GDScript_hefa5"]
+script/source = "class_name BattleHologram
+extends Sprite3D
+
+@export var unit: BattleUnit
+var hex_pos: HexVector
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	if unit != null:
+		texture = unit.texture
+		flip_h = unit.flip_h
+		flip_v = unit.flip_v
+		hex_pos = unit.virtual_pos
+	visible = !HexVector._equals(unit.hex_pos, unit.virtual_pos)
+	position = HexMath.axis_to_3D(hex_pos.q, hex_pos.r) 
+	 
+"
+
+[node name="BattleUnit" type="Sprite3D"]
+modulate = Color(0.0627451, 0.43529412, 0.76862746, 0.83137256)
+pixel_size = 0.001
+billboard = 2
+script = SubResource("GDScript_hefa5")

@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://cn7jljtoo25cf"]
+[gd_scene load_steps=9 format=3 uid="uid://cn7jljtoo25cf"]
 
 [ext_resource type="Script" uid="uid://batkgiufupgom" path="res://Scripts/battle_unit.gd" id="2_dvocn"]
 [ext_resource type="Script" uid="uid://c0xrc3yqq2vgj" path="res://Unit Scripts/unitData.gd" id="2_m6o4e"]
 [ext_resource type="SpriteFrames" uid="uid://ht0kyqp1qa1d" path="res://Sprites/SpriteFrames/new_sprite_frames.tres" id="2_o2s4o"]
 [ext_resource type="Theme" uid="uid://bjlwyn8on7k4k" path="res://Prefabs/StatusTheme.tres" id="4_o2s4o"]
+[ext_resource type="PackedScene" uid="uid://dfka41tbpfqnx" path="res://Prefabs/unit_hologram.tscn" id="5_unvfl"]
 
 [sub_resource type="Resource" id="Resource_o2s4o"]
 script = ExtResource("2_m6o4e")
@@ -60,6 +61,9 @@ grow_vertical = 0
 theme = ExtResource("4_o2s4o")
 max_value = 1.0
 value = 1.0
+
+[node name="BattleHologram" parent="." node_paths=PackedStringArray("unit") instance=ExtResource("5_unvfl")]
+unit = NodePath("..")
 
 [connection signal="input_event" from="Area3D" to="." method="_on_input_event"]
 [connection signal="mouse_entered" from="Area3D" to="." method="_on_mouse_entered"]
