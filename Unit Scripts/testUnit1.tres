@@ -1,17 +1,18 @@
-[gd_resource type="Resource" script_class="UnitStats" load_steps=6 format=3 uid="uid://81ru57jc54b1"]
+[gd_resource type="Resource" script_class="UnitStats" load_steps=7 format=3 uid="uid://81ru57jc54b1"]
 
 [ext_resource type="Script" uid="uid://cpawhn2uj76hg" path="res://Battle Scripts/move.gd" id="1_tejyr"]
 [ext_resource type="Script" uid="uid://c0xrc3yqq2vgj" path="res://Unit Scripts/unitData.gd" id="2_tejyr"]
 [ext_resource type="Script" uid="uid://b5nsqadh1o6dj" path="res://Battle Scripts/p_unit_range_atk.gd" id="2_v0wxp"]
 [ext_resource type="Script" uid="uid://dmjnkbyvbno7i" path="res://Battle Scripts/p_unit_melee_atk.gd" id="3_140bi"]
 [ext_resource type="Script" uid="uid://dccqrptqetx6d" path="res://Battle Scripts/p_unit_test_triple_atk.gd" id="4_paqno"]
+[ext_resource type="Script" uid="uid://cwvba0q7uabwd" path="res://Battle Scripts/dodge.gd" id="5_wjrj1"]
 
 [resource]
 script = ExtResource("2_tejyr")
 name = "handicoot from beastieball"
 maxHealth = 5
 attack = 4
-speed = 20
-moveSpeed = 7
-moveset = Array[Script]([ExtResource("1_tejyr"), ExtResource("2_v0wxp"), ExtResource("3_140bi"), ExtResource("4_paqno")])
+speed = 10
+moveSpeed = 8
+moveset = Array[Script]([ExtResource("1_tejyr"), ExtResource("2_v0wxp"), ExtResource("3_140bi"), ExtResource("4_paqno"), ExtResource("5_wjrj1")])
 metadata/_custom_type_script = "uid://c0xrc3yqq2vgj"

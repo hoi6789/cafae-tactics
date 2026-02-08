@@ -111,7 +111,8 @@ func receiveDamage(dmg: int, attacker: BattleUnit):
 		stats.hp = 0
 
 func inRange(other: BattleUnit = inputManager.selectedUnit, range: float = inputManager.inputRange) -> bool:
-	return HexVector.dist(other.virtual_pos, hex_pos) <= range
+	var range_list = inputManager.controller.map.getHexesInRange(other.virtual_pos, range)
+	return inputManager.controller.map.get_hex(hex_pos) in range_list
 
 func canSelect() -> bool:
 	return (inputManager != null and 
