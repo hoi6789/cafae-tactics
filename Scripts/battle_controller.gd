@@ -97,9 +97,7 @@ func processInput(command: Array[int]):
 			pass
 		Command.SCRIPT:
 			# [Command.SCRIPT, user, script id, data[0], data[1], data[2], ...]
-			var script: BattleScript = scriptAtlas.get_move(command[2])
-			script.user = getUnit(command[1])
-			script.data = command.slice(3)
+			var script = inputToScript(command)
 			print(Time.get_ticks_msec())
 			await script.user.waitWindup(script.windup)
 			await script.execute(self)
@@ -110,6 +108,12 @@ func processInput(command: Array[int]):
 			
 			pass
 	activeInputs -= 1
+
+func inputToScript(input) -> BattleScript:
+	var script: BattleScript = scriptAtlas.get_move(input[2])
+	script.user = getUnit(input[1])
+	script.data = input.slice(3)
+	return script 
 
 func addProjectile(proj: Bullet):
 	projectiles.push_back(proj)

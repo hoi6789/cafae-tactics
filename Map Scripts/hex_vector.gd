@@ -18,6 +18,9 @@ func _init(_q,_r,_s):
 	r = _r
 	s = _s
 
+func copy() -> HexVector:
+	return HexVector.new(q, r, s)
+
 static func fromCubePos(cubePos: Vector2) -> HexVector:
 	var _q = cubePos.x
 	var _r = cubePos.y

@@ -14,6 +14,7 @@ var initMoves: Array[BattleScript]
 var inputManager: InputManager
 var battleController: BattleController
 var hex_pos: HexVector
+var virtual_pos: HexVector
 var effective_pos: HexVector
 var target_pos: HexVector
 var _delta = 0
@@ -26,6 +27,7 @@ var hpAnimTimer = 0
 var oldHpVal = 0
 var hpTarget = 0
 var baseColour = Color.WHITE
+var inputs: Array[Array] = []
 
 func initialize(cubePos: Vector2, data: Resource, _unitID: int):
 	unitID = _unitID
@@ -52,6 +54,19 @@ func setAnimation(anim: String):
 	animation = anim
 	position.y = (sprite_frames.get_frame_texture(anim, 0).get_size().y * pixel_size / 2) + HexMath.HEX_HEIGHT
 	pass
+
+func getVirtualPosition() -> HexVector: ##returns predicted position after applying all inputs 
+	var pos = hex_pos.copy()
+	for input in inputs:
+		pos = inputManager.controller.inputToScript(input)._transformVirtualPosition(inputManager, pos)
+	return pos
+
+func updateVirtualPosition() -> void:
+	virtual_pos = getVirtualPosition()
+
+func resetForNewTurn() -> void:
+	inputs = []
+	updateVirtualPosition()
 
 func movePath(path: Array[HexTile]):
 	var lastTile = inputManager.controller.map.get_hex(hex_pos)
@@ -95,7 +110,7 @@ func receiveDamage(dmg: int, attacker: BattleUnit):
 		stats.hp = 0
 
 func inRange(other: BattleUnit = inputManager.selectedUnit, range: float = inputManager.inputRange) -> bool:
-	return HexVector.dist(other.hex_pos, hex_pos) <= range
+	return HexVector.dist(other.virtual_pos, hex_pos) <= range
 
 func canSelect() -> bool:
 	return (inputManager != null and 

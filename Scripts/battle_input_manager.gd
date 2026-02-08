@@ -125,9 +125,11 @@ func actionButtonPressed(move: BattleScript):
 	if actionState != InputManager.ActionState.CANCEL:
 		var	input = [controller.Command.SCRIPT, move.user.unitID, scriptAtlas.get_id(move)] + move.data
 		var n: Array[int]
+		move.user.inputs.push_back(n)
 		n.assign(input)
 		addInput(n)
 	setInputState(InputManager.InputStates.PENDING)
+	move.user.updateVirtualPosition()
 	
 func setHoveredHex(hex: Hex):
 	hoveredHex = hex
@@ -190,6 +192,8 @@ func resetTurnStatus():
 	done = 0
 	doneTurnButton.disabled = false
 	selectorState = InputStates.PENDING
+	for unit: BattleUnit in controller.units:
+		unit.resetForNewTurn()
 
 func executeInputChain(inputArr: Array):
 	for input in inputArr:

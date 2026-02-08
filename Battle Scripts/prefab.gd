@@ -25,13 +25,16 @@ func selection_logic(manager: InputManager):
 	manager.controller.unHighlightRange()
 
 func _getTilesInRange(controller: BattleController) -> Array[HexTile]:
-	return await controller.map.getHexesWithShortestPathDistance(user.hex_pos,moveRange)
+	return await controller.map.getHexesWithShortestPathDistance(user.virtual_pos,moveRange)
 
 func execute(controller: BattleController):
 	pass
 
 func onHit(controller: BattleController):
 	pass
+
+func _transformVirtualPosition(manager: InputManager, p_in: HexVector) -> HexVector:
+	return p_in
 
 func launchMeleeAttack(controller: BattleController) -> bool:
 	await user.dealDamage(damage, controller.getUnit(data[0]))

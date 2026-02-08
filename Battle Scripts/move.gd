@@ -4,13 +4,18 @@ func _init() -> void:
 	moveName = "Move"
 	inputScheme = InputManager.InputStates.HEXES
 	windup = 1
-	
+
+func _transformVirtualPosition(manager: InputManager, p_in: HexVector) -> HexVector:
+	return manager.controller.map.hex_list[data[-1]].hex_pos.copy()
 
 func selection_logic(manager: InputManager):
-	var points = [user.hex_pos]
+	var origin = user.virtual_pos
+	
+	var points = [origin]
 	var path: Array[HexTile] = []
 	var effectiveLen: float = 0
-	var lastHex = user.hex_pos
+	
+	var lastHex = origin
 	var map = manager.controller.map
 	var litTiles: Array = await map.getHexesWithShortestPathDistance(lastHex, user.unitData.speed - effectiveLen)
 	while effectiveLen < user.unitData.speed:
@@ -36,7 +41,7 @@ func selection_logic(manager: InputManager):
 		var new_path: Array[HexTile] = await map.getShortestPath(map.get_hex(points[-2]),map.get_hex(points[-1]))
 		if len(new_path) > 0:
 			new_path.remove_at(0)
-			var last_tile = map.get_hex(user.hex_pos)
+			var last_tile = map.get_hex(origin)
 			if len(path) > 0:
 				last_tile = path[-1]
 			for tile in new_path:
