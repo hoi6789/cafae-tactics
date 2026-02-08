@@ -10,6 +10,7 @@ pixel_size = 0.001
 billboard = 2
 texture = ExtResource("1_0oen4")
 script = ExtResource("2_m4f65")
+speed = 15.0
 
 [node name="Area3D" type="Area3D" parent="."]
 

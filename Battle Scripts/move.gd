@@ -24,7 +24,8 @@ func selection_logic(manager: InputManager):
 		
 		for item in litTiles:
 			item.hex.unrangeHighlight()
-		lastHex = manager.selectedHex.data.hex_pos
+		if manager.selectedHex != null:
+			lastHex = manager.selectedHex.data.hex_pos
 		
 		if manager.actionState == InputManager.ActionState.CANCEL:
 			path = []
