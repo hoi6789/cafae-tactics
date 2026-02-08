@@ -16,7 +16,16 @@ var user: BattleUnit
 var data: Array = []
 
 func selection_logic(manager: InputManager):
+	manager.inputRange = moveRange
 	manager.setInputState(inputScheme)
+	manager.setValidationState(inputValidation)
+	manager.controller.highlightRange(await _getTilesInRange(manager.controller))
+	await manager.selected
+	data = [manager.selectedUnit.unitID]
+	manager.controller.unHighlightRange()
+
+func _getTilesInRange(controller: BattleController) -> Array[HexTile]:
+	return await controller.map.getHexesWithShortestPathDistance(user.hex_pos,moveRange)
 
 func execute(controller: BattleController):
 	pass
@@ -25,5 +34,5 @@ func onHit(controller: BattleController):
 	pass
 
 func launchMeleeAttack(controller: BattleController) -> bool:
-	user.dealDamage(damage, controller.getUnit(data[0]))
+	await user.dealDamage(damage, controller.getUnit(data[0]))
 	return true

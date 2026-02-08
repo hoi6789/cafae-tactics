@@ -9,13 +9,6 @@ func _init() -> void:
 	backswing = 0.5
 	moveRange = 3
 	damage = 1
-
-func selection_logic(manager: InputManager):
-	manager.setInputState(inputScheme)
-	manager.setValidationState(inputValidation)
-	await manager.selected
-	data = [manager.selectedUnit.unitID]
-	pass
 	
 func execute(controller: BattleController):
 	var bul = load("res://Prefabs/bullet.tscn").instantiate()

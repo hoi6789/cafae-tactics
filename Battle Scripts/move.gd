@@ -18,8 +18,7 @@ func selection_logic(manager: InputManager):
 		manager.setInputState(inputScheme)
 		#for item in map.getHexesInRange(user.hex_pos, user.unitData.speed - len(path)):
 		
-		for item in litTiles:
-			item.hex.rangeHighlight()
+		manager.controller.highlightRange(litTiles)
 		await manager.selected
 		
 		for item in litTiles:

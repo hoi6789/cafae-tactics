@@ -18,6 +18,7 @@ var userState: String = "alloweda"
 var selectorState: int = InputStates.PENDING
 var validationState: int = ValidationStates.ALL
 var executingInputs = false
+var inputRange = INF
 
 enum ActionState {
 	NONE,
@@ -155,6 +156,10 @@ func setInputState(state: InputStates):
 		doneTurnButton.disabled = true
 	else:
 		doneTurnButton.disabled = false
+	
+	
+	for unit in controller.units:
+		unit.updateModulation()
 	
 func setValidationState(state: ValidationStates):
 	validationState = state

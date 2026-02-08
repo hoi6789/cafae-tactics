@@ -44,3 +44,6 @@ static func mult(a: HexVector, c: float) -> HexVector:
 
 static func sub(a: HexVector, b: HexVector) -> HexVector:
 	return add(a,mult(b,-1))
+
+static func dist(a: HexVector, b: HexVector) -> float:
+	return (toCubePos(a) - toCubePos(b)).length()

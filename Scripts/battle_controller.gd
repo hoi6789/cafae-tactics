@@ -19,7 +19,8 @@ static var playerTeam = 1
 var map: HexagonMap = HexagonMap.new()
 
 var mapTiles: Array = []
-var highlightedPath: Array
+var highlightedPath: Array = []
+var highlightedRange: Array = []
 var scriptAtlas: ScriptAtlas
 var units: Array[BattleUnit] = []
 var projectiles: Array[Bullet] = []
@@ -35,7 +36,7 @@ func _ready() -> void:
 	var type_seed = randf()
 	noise.frequency = 0.05 # Control the scale/zoom of the noise
 	noise.fractal_octaves = 5 # Add layers of noise for detail
-	var mapSize = 50
+	var mapSize = 20
 	var scale: float = 4
 	
 	for i in range(-mapSize, mapSize):
@@ -133,3 +134,14 @@ func highlightPath(hex_path: Array[HexTile]):
 	for tile: HexTile in hex_path:
 		tile.hex.highlight()
 	highlightedPath = hex_path
+
+func highlightRange(hex_range: Array[HexTile]):
+	unHighlightRange()
+	for tile in hex_range:
+		tile.hex.rangeHighlight()
+		highlightedRange.push_back(tile)
+		
+func unHighlightRange():
+	for tile in highlightedRange:
+		tile.hex.unrangeHighlight()
+	highlightedRange = []

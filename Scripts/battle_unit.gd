@@ -25,6 +25,7 @@ var hovering = false
 var hpAnimTimer = 0
 var oldHpVal = 0
 var hpTarget = 0
+var baseColour = Color.WHITE
 
 func initialize(cubePos: Vector2, data: Resource, _unitID: int):
 	unitID = _unitID
@@ -53,11 +54,16 @@ func setAnimation(anim: String):
 	pass
 
 func movePath(path: Array[HexTile]):
+	var lastTile = inputManager.controller.map.get_hex(hex_pos)
 	for data in path:
-		await move(data.hex_pos)
+		var cost: float = 1
+		if lastTile != null:
+			cost = inputManager.controller.map.getIntermovementCost(lastTile, data)
+		lastTile = data
+		await move(data.hex_pos, 1.0/cost)
 	setAnimation("default")
 
-func move(pos: HexVector):
+func move(pos: HexVector, speed_scaler: float):
 	setAnimation("moving")
 	target_pos = pos
 	var t = 0
@@ -65,7 +71,7 @@ func move(pos: HexVector):
 	
 	while t < 1:
 		hex_pos = HexVector.lerp(original_pos, pos, t)
-		t += _delta*unitData.moveSpeed
+		t += _delta*unitData.moveSpeed*speed_scaler
 		await get_tree().create_timer(_delta).timeout
 	hex_pos = pos
 
@@ -88,13 +94,22 @@ func receiveDamage(dmg: int, attacker: BattleUnit):
 	if stats.hp < 0:
 		stats.hp = 0
 
+func inRange(other: BattleUnit = inputManager.selectedUnit, range: float = inputManager.inputRange) -> bool:
+	return HexVector.dist(other.hex_pos, hex_pos) <= range
+
+func canSelect() -> bool:
+	return (inputManager != null and 
+	inputManager.selectorState == InputManager.InputStates.UNITS and 
+	inputManager.selectedUnit != null and inputManager.selectedUnit != self and 
+	inRange())
+
 func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == 1 and event.pressed == true:
-			if inputManager.selectorState == InputManager.InputStates.UNITS:
+			if canSelect():
 				inputManager.chooseUnit(self)
 				pass
-			if inputManager.selectorState == InputManager.InputStates.PENDING and isOwned():
+			elif inputManager.selectorState == InputManager.InputStates.PENDING and isOwned():
 				effective_pos = hex_pos
 				inputManager.createInputs(Vector2(event.position), self)
 				print(event)
@@ -108,22 +123,37 @@ func _on_mouse_entered() -> void:
 		modulate = Color(0.59, 1.0, 0.59, 1.0)
 		inputManager.setHoveredUnit(self)
 		pass
-	if inputManager.selectorState == InputManager.InputStates.UNITS:
-		modulate = Color(0.59, 1.0, 0.59, 1.0)
+	if canSelect():
+		modulate = Color(1.0, 0.236, 0.092, 1.0)
 		inputManager.setHoveredUnit(self)
 		pass
 	pass # Replace with function body.
 
+func getAtk() -> float:
+	return unitData.attack
+	
+func getDef() -> float:
+	return unitData.defense
 
 func _on_mouse_exited() -> void:
 	hovering = false
-	if inputManager.selectorState == InputManager.InputStates.PENDING:
-		modulate = Color(1, 1.0, 1, 1.0)
+	if inputManager.selectorState == InputManager.InputStates.PENDING or inputManager.selectorState == InputManager.InputStates.UNITS:
+		modulate = baseColour
 		pass
 	pass # Replace with function body.
 
+func updateBaseColour() -> void:
+	baseColour = Color(1.0, 0.865, 0.584, 1.0) if canSelect() else Color.WHITE
+
+func updateModulation() -> void:
+	updateBaseColour()
+	modulate = baseColour
+
 func _process(delta: float) -> void:
 	_delta = delta
+	
+	
+	
 	if hex_pos != null:
 		var y = position.y
 		position = HexMath.axis_to_3D(hex_pos.q, hex_pos.r)
