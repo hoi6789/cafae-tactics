@@ -101,6 +101,7 @@ func waitWindup(duration: float):
 func dealDamage(dmg: int, target: BattleUnit):
 	target.receiveDamage(dmg, self)
 	setAnimation("attacking")
+	await get_tree().create_timer(0.5).timeout
 
 func receiveDamage(dmg: int, attacker: BattleUnit):
 	setAnimation("hitstun")

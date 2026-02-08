@@ -36,6 +36,8 @@ func onHit(controller: BattleController):
 func _transformVirtualPosition(manager: InputManager, p_in: HexVector) -> HexVector:
 	return p_in
 
-func launchMeleeAttack(controller: BattleController) -> bool:
-	await user.dealDamage(damage, controller.getUnit(data[0]))
+func launchMeleeAttack(controller: BattleController, _bypass_range = false) -> bool:
+	var target = controller.getUnit(data[0])
+	if _bypass_range or target.inRange(user, moveRange):
+		await user.dealDamage(damage, target)
 	return true

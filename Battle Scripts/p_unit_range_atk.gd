@@ -17,4 +17,4 @@ func execute(controller: BattleController):
 	pass
 
 func onHit(controller: BattleController):
-	launchMeleeAttack(controller)
+	launchMeleeAttack(controller, true)
