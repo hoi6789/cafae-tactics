@@ -2,6 +2,7 @@ class_name HexTile
 
 const JUMP_COST = 4
 const JUMP_COST_MOD = 0
+const JUMP_COST_BIAS = 0#0.5
 
 var id = 0
 

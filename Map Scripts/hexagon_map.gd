@@ -26,7 +26,11 @@ func force_generate_with_terrain_types(cubePositions: Array):
 	var current_id = 0
 	for pos3: Array in cubePositions:
 		var pos = Vector2(pos3[0], pos3[1])
-		var hex =  HexTile.new(current_id, HexVector.fromCubePos(pos), round(5*pos3[2]), HexTile.TerrainType.values()[(round(pos3[3]))])
+		
+		var h = 5*pos3[2]
+		if h <= 0:
+			h *= 5
+		var hex =  HexTile.new(current_id, HexVector.fromCubePos(pos), round(h), HexTile.TerrainType.values()[(round(pos3[3]))])
 		map[pos] = hex
 		hex_list[current_id] = hex
 		current_id += 1
@@ -39,7 +43,7 @@ func get_hex(hex_vec: HexVector) -> HexTile:
 	return null
 
 static func getIntermovementCost(a: HexTile, b: HexTile):
-	var hCost = HexTile.JUMP_COST_MOD*HexTile.JUMP_COST*HexTile.getHeightDifference(a, b)
+	var hCost = HexTile.JUMP_COST_MOD*HexTile.JUMP_COST*HexTile.getHeightDifference(a, b) + HexTile.JUMP_COST_BIAS*sign(HexTile.getHeightDifference(a, b))
 	return hCost+(a.getMovementCost() + b.getMovementCost())/2
 
 func rebuild_graph():
