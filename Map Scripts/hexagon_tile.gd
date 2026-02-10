@@ -1,5 +1,8 @@
 class_name HexTile
 
+const JUMP_COST = 4
+const JUMP_COST_MOD = 0
+
 var id = 0
 
 ## coordinates of the hex in cube space (q + r + s = 0)

@@ -39,7 +39,8 @@ func get_hex(hex_vec: HexVector) -> HexTile:
 	return null
 
 static func getIntermovementCost(a: HexTile, b: HexTile):
-	return (a.getMovementCost() + b.getMovementCost())/2
+	var hCost = HexTile.JUMP_COST_MOD*HexTile.JUMP_COST*HexTile.getHeightDifference(a, b)
+	return hCost+(a.getMovementCost() + b.getMovementCost())/2
 
 func rebuild_graph():
 	graph = BFSGraph.new()
