@@ -44,7 +44,7 @@ func _ready() -> void:
 		for j in range(-mapSize, mapSize):
 			var hx = HexVector.fromCubePos(Vector2(i, j))
 			var vx = HexMath.axis_to_3D(hx.q, hx.r)
-			if noise.get_noise_2d(vx.x, vx.z) < -0.05:
+			if noise.get_noise_2d(vx.x, vx.z) >-0.3:
 				mapTiles.push_back([i, j, noise.get_noise_2d(height_seed + vx.x, height_seed + vx.z), noise.get_noise_2d(type_seed + vx.x, type_seed + vx.z)])
 	var v2_arr = []
 	for tile in mapTiles:
