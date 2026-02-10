@@ -59,7 +59,7 @@ func rebuild_graph():
 			var nextpos = HexVector.add(hex.hex_pos, dir)
 			var adj: HexTile = get_hex(nextpos)
 			
-			if adj != null and HexTile.getHeightDifference(hex, adj) <= HEIGHT_STEP_MAX:
+			if adj != null and adj.height-hex.height <= HEIGHT_STEP_MAX:
 				var cost = getIntermovementCost(hex, adj)
 				graph.insert_edge(hex.id,adj.id,cost)
 
