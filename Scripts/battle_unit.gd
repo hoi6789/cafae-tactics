@@ -55,7 +55,6 @@ func setLocation(hex_vec: HexVector, _height: int):
 
 func setAnimation(anim: String):
 	animation = anim
-	position.y = (sprite_frames.get_frame_texture(anim, 0).get_size().y * pixel_size / 2) + HexMath.HEX_HEIGHT
 	pass
 
 func getVirtualPosition() -> HexVector: ##returns predicted position after applying all inputs 
