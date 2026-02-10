@@ -34,6 +34,7 @@ func _ready() -> void:
 	noise.noise_type = FastNoiseLite.TYPE_PERLIN # Set the noise type to Perlin
 	noise.seed = randi() # Set a random or fixed seed
 	var type_seed = randf()
+	var height_seed = randf()
 	noise.frequency = 0.05 # Control the scale/zoom of the noise
 	noise.fractal_octaves = 5 # Add layers of noise for detail
 	var mapSize = 20
@@ -44,10 +45,10 @@ func _ready() -> void:
 			var hx = HexVector.fromCubePos(Vector2(i, j))
 			var vx = HexMath.axis_to_3D(hx.q, hx.r)
 			if noise.get_noise_2d(vx.x, vx.z) < -0.05:
-				mapTiles.push_back([i, j, noise.get_noise_2d(type_seed + vx.x, type_seed + vx.z)])
+				mapTiles.push_back([i, j, noise.get_noise_2d(height_seed + vx.x, height_seed + vx.z), noise.get_noise_2d(type_seed + vx.x, type_seed + vx.z)])
 	var v2_arr = []
 	for tile in mapTiles:
-		v2_arr.push_back(Vector3(tile[0], tile[1], 2*abs(tile[2])))
+		v2_arr.push_back([tile[0], tile[1], tile[2], 2*abs(tile[3])])
 	map.force_generate_with_terrain_types(v2_arr)
 	
 	var chunk_size: int = int(ceil(0.01*(mapSize**2)))
@@ -69,7 +70,7 @@ func _ready() -> void:
 	pass
 	var r = randi_range(0, len(mapTiles))
 
-	processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], 1, 1, 0])
+	#processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[r][0],mapTiles[r][1]))).height, 1, 1, 0])
 
 func getUnit(unitID: int) -> BattleUnit:
 	return units[unitID]
@@ -77,17 +78,17 @@ func getUnit(unitID: int) -> BattleUnit:
 func processInput(command: Array[int]):
 	## Big function that runs the entire game. this is gonna be a big match case i'm so sorry
 	match command[0]:
-		Command.SUMMON: ## summons a unit at a target hex. params: q of hex, r of hex, id of unit, controller of unit, team of unit
+		Command.SUMMON: ## summons a unit at a target hex. params: q of hex, r of hex, h of hex tile, id of unit, controller of unit, team of unit
 			var summonedRes: Resource
-			match command[3]:
+			match command[4]:
 				1: summonedRes = load("res://Unit Scripts/testUnit1.tres")
 				_: summonedRes = load("res://Unit Scripts/testUnit1.tres")
 			var summonedUnit: BattleUnit = SceneUnit.instantiate()
 			summonedUnit.inputManager = %InputManager
 			summonedUnit.battleController = self
-			summonedUnit.playerID = command[4]
-			summonedUnit.teamID = command[5]
-			summonedUnit.initialize(Vector2(command[1], command[2]), summonedRes, len(units))
+			summonedUnit.playerID = command[5]
+			summonedUnit.teamID = command[6]
+			summonedUnit.initialize(Vector2(command[1], command[2]), command[3], summonedRes, len(units))
 			summonedUnit.unitID = units.size()
 			units.push_back(summonedUnit)
 			var tile: HexTile = map.get_hex(HexVector.fromCubePos(Vector2(command[1],command[2])))

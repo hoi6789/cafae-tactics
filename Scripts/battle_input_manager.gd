@@ -72,7 +72,7 @@ func _on_summon_button_pressed() -> void:
 func chooseHex(hex: Hex):
 	match queueCommand:
 		5:
-			var n: Array[int] = [BattleController.Command.SUMMON, hex.data.hex_pos.q, hex.data.hex_pos.r, 1, NetworkManager.steam_id, BattleController.playerTeam]
+			var n: Array[int] = [BattleController.Command.SUMMON, hex.data.hex_pos.q, hex.data.hex_pos.r, hex.data.height, 1, NetworkManager.steam_id, BattleController.playerTeam]
 			print(Vector3(hex.data.hex_pos.q, hex.data.hex_pos.r, hex.data.hex_pos.s))
 			#hex.id = 2
 			addInput(n)

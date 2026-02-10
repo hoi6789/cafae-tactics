@@ -1,6 +1,8 @@
 extends StaticBody3D
 class_name Hex
 
+const TILE_HEIGHT = 0.2
+
 ## tile data
 var data: HexTile 
 ## 
@@ -65,12 +67,17 @@ func setColour(palette: HexTile.TerrainType):
 	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
 	pass
 
+func getWorldPosition() -> Vector3:
+	var xz = HexMath.axis_to_3D(data.hex_pos.q, data.hex_pos.r)
+	xz += Vector3(0, data.height*TILE_HEIGHT, 0)
+	return xz
+
 func setPosition(cubePos: Vector2):
 	## Hexes use "axial" coordinates described in https://www.redblobgames.com/grids/hexagons/
 	## i.e. they are defined on a plane where q + r + s = 0
 	data.hex_pos = HexVector.fromCubePos(cubePos)
 	
-	position = HexMath.axis_to_3D(data.hex_pos.q, data.hex_pos.r)
+	position = getWorldPosition()
 	if HexMath.FLAT_HEXES:
 		rotation.y = PI/2
 	print(position)

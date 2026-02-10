@@ -3,7 +3,9 @@ class_name HexTile
 var id = 0
 
 ## coordinates of the hex in cube space (q + r + s = 0)
-var hex_pos: HexVector 
+var hex_pos: HexVector
+var height: int = 0
+ 
 var hex: Hex
 enum TerrainType
 {
@@ -12,9 +14,10 @@ enum TerrainType
 }
 var type: TerrainType = TerrainType.BASIC
 
-func _init(_id: int, _pos: HexVector, _type: TerrainType, _hex: Hex = null):
+func _init(_id: int, _pos: HexVector, _height: int, _type: TerrainType, _hex: Hex = null):
 	type = _type
 	hex_pos = _pos
+	height = _height
 	id = _id
 	hex = _hex
 
@@ -27,3 +30,6 @@ static func getTileTypeMovementCost(_type: HexTile.TerrainType) -> int:
 
 func getMovementCost() -> float:
 	return getTileTypeMovementCost(type)
+
+static func getHeightDifference(a: HexTile , b: HexTile):
+	return abs(a.height - b.height)

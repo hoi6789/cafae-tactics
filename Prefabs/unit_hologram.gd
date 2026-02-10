@@ -41,8 +41,8 @@ func _process(delta: float) -> void:
 		flip_v = unit.flip_v
 		hex_pos = unit.virtual_pos
 		visible = !HexVector._equals(unit.hex_pos, unit.virtual_pos)
-		global_position = unit.get_parent().global_position + HexMath.axis_to_3D(hex_pos.q, hex_pos.r) 
-		global_position.y = unit.get_parent().global_position.y + unit.position.y
+		if unit.inputManager.controller.map.get_hex(unit.virtual_pos) != null:
+			global_position = unit.get_parent().global_position + unit.getPosition(unit.virtual_pos,unit.inputManager.controller.map.get_hex(unit.virtual_pos).height)
 	else:
 		visible = false
 	

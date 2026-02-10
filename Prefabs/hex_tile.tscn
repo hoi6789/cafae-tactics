@@ -63,6 +63,7 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0
 script = ExtResource("1_2crfn")
 
 [node name="CollisionPolygon3D" type="CollisionPolygon3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.1)
 depth = 0.2
 polygon = PackedVector2Array(-0.00170231, 0.502532, -0.438432, 0.247913, -0.434344, -0.248619, -0.00656223, -0.500344, 0.436951, -0.251898, 0.4327, 0.250075)
 

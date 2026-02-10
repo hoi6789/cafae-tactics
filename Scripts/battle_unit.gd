@@ -14,6 +14,7 @@ var initMoves: Array[BattleScript]
 var inputManager: InputManager
 var battleController: BattleController
 var hex_pos: HexVector
+var hex_height: float
 var virtual_pos: HexVector
 var effective_pos: HexVector
 var target_pos: HexVector
@@ -28,8 +29,9 @@ var oldHpVal = 0
 var hpTarget = 0
 var baseColour = Color.WHITE
 var inputs: Array[Array] = []
+var spriteHeight: float = 1
 
-func initialize(cubePos: Vector2, data: Resource, _unitID: int):
+func initialize(cubePos: Vector2, height: int, data: Resource, _unitID: int):
 	unitID = _unitID
 	unitData = data
 	stats = UnitStatLine.new(data)
@@ -38,15 +40,16 @@ func initialize(cubePos: Vector2, data: Resource, _unitID: int):
 		var move: BattleScript = unitMove.new()
 		move.user = self
 		initMoves.push_back(move)
-	setLocation(HexVector.fromCubePos(cubePos))
+	setLocation(HexVector.fromCubePos(cubePos), height)
 	pass
 
 func isOwned():
 	return (NetworkManager.steam_id == playerID)
 
 ## sets location. idk
-func setLocation(hex_vec: HexVector):
+func setLocation(hex_vec: HexVector, _height: int):
 	hex_pos = hex_vec
+	hex_height = _height
 	setAnimation("default")
 	pass
 
@@ -75,21 +78,37 @@ func movePath(path: Array[HexTile]):
 		if lastTile != null:
 			cost = inputManager.controller.map.getIntermovementCost(lastTile, data)
 		lastTile = data
-		await move(data.hex_pos, 1.0/cost)
+		await move(data, 1.0/cost)
 	setAnimation("default")
 
-func move(pos: HexVector, speed_scaler: float):
+func jump_parabola(h0:float,h1:float,v:float, t:float):
+	var b = 4*(v-h0)+h0-h1
+	var c = h0
+	var a = h1-h0-b
+	t = clampf(t, 0, 1)
+	return a*t**2+b*t+c
+
+func move(tile: HexTile, speed_scaler: float):
+	print("moving")
 	setAnimation("moving")
-	target_pos = pos
+	target_pos = tile.hex_pos
 	var t = 0
+	var original_height = hex_height
 	var original_pos = hex_pos
+	var parabola_scale = 0
+	
+	if original_height != tile.height:
+		speed_scaler = 0.5
 	
 	while t < 1:
-		hex_pos = HexVector.lerp(original_pos, pos, t)
+		hex_pos = HexVector.lerp(original_pos, tile.hex_pos, t)
+		if original_height != tile.height:
+			hex_height = jump_parabola(original_height, tile.height, tile.height+1, t)
 		t += _delta*unitData.moveSpeed*speed_scaler
 		await get_tree().create_timer(_delta).timeout
-	hex_pos = pos
-
+	hex_pos = target_pos
+	hex_height = tile.height
+	
 func waitWindup(duration: float):
 	setAnimation("windup")
 	windupTimer = 0
@@ -166,15 +185,27 @@ func updateModulation() -> void:
 	updateBaseColour()
 	modulate = baseColour
 
+func getPosition(_hvec: HexVector, _height: float):
+	var newSH =  sprite_frames.get_frame_texture(animation, frame).get_height()*pixel_size
+	if newSH != spriteHeight:
+		spriteHeight = newSH
+		print("nSH: ", newSH)
+	
+	var hpos: Vector3 = HexMath.axis_to_3D(_hvec.q, _hvec.r)
+	hpos.y = 0
+	return hpos + Vector3(0,(_height)*Hex.TILE_HEIGHT + spriteHeight/2,0)
+
 func _process(delta: float) -> void:
 	_delta = delta
 	
 	
 	
 	if hex_pos != null:
-		var y = position.y
-		position = HexMath.axis_to_3D(hex_pos.q, hex_pos.r)
-		position.y = y
+		
+		position = getPosition(hex_pos, hex_height)
+		if position.y != last_position.y:
+			print(position.y)
+		
 	
 	if last_position != position:
 		var tranform_matrix = get_viewport().get_camera_3d().global_transform.affine_inverse()

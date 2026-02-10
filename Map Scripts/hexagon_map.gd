@@ -1,5 +1,7 @@
 class_name HexagonMap
 
+const HEIGHT_STEP_MAX = 1 ##maximum height that a unit can naturally step up
+
 var map: Dictionary[Vector2, HexTile] = {}
 var hex_list: Dictionary[int, HexTile] = {}
 var graph: BFSGraph
@@ -14,7 +16,7 @@ func _init():
 func force_generate(cubePositions: Array):
 	var current_id = 0
 	for pos: Vector2 in cubePositions:
-		var hex =  HexTile.new(current_id, HexVector.fromCubePos(pos), HexTile.TerrainType.BASIC)
+		var hex =  HexTile.new(current_id, HexVector.fromCubePos(pos), 0, HexTile.TerrainType.BASIC)
 		map[pos] = hex
 		hex_list[current_id] = hex
 		current_id += 1
@@ -22,9 +24,9 @@ func force_generate(cubePositions: Array):
 
 func force_generate_with_terrain_types(cubePositions: Array):
 	var current_id = 0
-	for pos3: Vector3 in cubePositions:
-		var pos = Vector2(pos3.x, pos3.y)
-		var hex =  HexTile.new(current_id, HexVector.fromCubePos(pos), HexTile.TerrainType.values()[(round(pos3.z))])
+	for pos3: Array in cubePositions:
+		var pos = Vector2(pos3[0], pos3[1])
+		var hex =  HexTile.new(current_id, HexVector.fromCubePos(pos), round(5*pos3[2]), HexTile.TerrainType.values()[(round(pos3[3]))])
 		map[pos] = hex
 		hex_list[current_id] = hex
 		current_id += 1
@@ -51,7 +53,8 @@ func rebuild_graph():
 		for dir in HexVector.DIRECTIONS:
 			var nextpos = HexVector.add(hex.hex_pos, dir)
 			var adj: HexTile = get_hex(nextpos)
-			if adj != null:
+			
+			if adj != null and HexTile.getHeightDifference(hex, adj) <= HEIGHT_STEP_MAX:
 				var cost = getIntermovementCost(hex, adj)
 				graph.insert_edge(hex.id,adj.id,cost)
 
