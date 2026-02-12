@@ -95,6 +95,15 @@ func getPosition(_hvec: HexVector, _height: float):
 	hpos.y = 0
 	return hpos + Vector3(0,(_height)*Hex.TILE_HEIGHT + spriteHeight/2,0)
 
+func getCurrentHexTile() -> HexTile:
+	if inputManager == null:
+		return null
+	return inputManager.controller.map.get_hex(hex_pos)
+
+func canSee() -> bool:
+	var hex: HexTile = getCurrentHexTile()
+	return (hex != null) and hex.hex.can_see
+
 func update(delta: float):
 	_delta = delta
 	if hex_pos != null:
@@ -107,5 +116,7 @@ func update(delta: float):
 		var screen_vel = cube_end - cube_start
 		if screen_vel.x != 0:
 			flip_h = (screen_vel.x > 0)
+	
+	visible = canSee()
 	
 	last_position = position	
