@@ -13,7 +13,7 @@ static var UNIT_QS: HexVector = HexVector.new(-1, 0, 1)
 static var DIRECTIONS = [UNIT_Q,UNIT_QR,UNIT_R,UNIT_RS,UNIT_S,UNIT_QS]
 
 
-func _init(_q,_r,_s):
+func _init(_q,_r,_s=-_q-_r):
 	q = _q
 	r = _r
 	s = _s

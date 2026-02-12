@@ -26,6 +26,8 @@ var units: Array[BattleUnit] = []
 var projectiles: Array[Bullet] = []
 var activeInputs = 0
 
+var teamSightTiles: Dictionary[int, Array] = {}
+
 func _ready() -> void:
 	scriptAtlas = load("res://Resources/Script_Atlas.tres")
 	scriptAtlas.init()
@@ -150,3 +152,24 @@ func unHighlightRange():
 	for tile in highlightedRange:
 		tile.hex.unrangeHighlight()
 	highlightedRange = []
+
+func updateTeamSight(teamID: int):
+	if teamID not in teamSightTiles:
+		teamSightTiles[teamID] = []
+	
+	for tile: HexTile in teamSightTiles[teamID]:
+		tile.hex.setSight(false)
+	
+	teamSightTiles[teamID] = await getTeamSight(teamID)
+	
+	for tile: HexTile in teamSightTiles[teamID]:
+		tile.hex.setSight(true)
+
+func getTeamSight(teamID: int) -> Array[HexTile]:
+	var sightTiles: Array[HexTile]
+	for unit in units:
+		if unit.teamID == teamID:
+			while unit._calculating_sight:
+				await get_tree().process_frame
+			sightTiles += unit.sight + ([map.get_hex(unit.hex_pos)] as Array[HexTile])
+	return sightTiles

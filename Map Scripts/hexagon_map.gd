@@ -35,12 +35,55 @@ func force_generate_with_terrain_types(cubePositions: Array):
 		hex_list[current_id] = hex
 		current_id += 1
 	rebuild_graph()
+	
+func snap_hex(hex_vec: HexVector) -> HexVector:
+	return HexVector.new(round(hex_vec.q),round(hex_vec.r))
 
 func get_hex(hex_vec: HexVector) -> HexTile:
-	var cPos = HexVector.toCubePos(hex_vec)
+	var cPos = HexVector.toCubePos(snap_hex(hex_vec))
 	if cPos in map:
 		return map[cPos]
 	return null
+
+func _shape_thread(shape: Array[Vector2], output: Array, hex: HexTile):
+	if PolyMath.PointInPoly(HexMath.axis_to_2D(hex.hex_pos),shape):
+			output.push_back(hex)
+
+func get_hex_in_shape(shape: Array[HexVector], sight_point: HexTile, origin: HexVector = null) -> Array[HexTile]:
+	var inside: Array[HexTile] = []
+	var cart_shape: Array[Vector2]
+	var max_dist: float = 0
+	if origin == null:
+		origin = HexMath.average(shape)
+	var cart_origin = HexMath.axis_to_2D(origin)
+		
+	for vert in shape:
+		max_dist = max(max_dist, HexVector.dist(origin, vert))
+		var v = HexMath.axis_to_2D(vert)
+		v += (v - cart_origin).normalized()*0.5
+		cart_shape.push_back(v)
+	var t1 = Time.get_ticks_msec()
+	var hexes = getHexesInRange(origin, ceil(max_dist))
+	var origin_hex = get_hex(origin)
+	if origin_hex != null:
+		hexes += [origin_hex]
+	print("hexes: ", Time.get_ticks_msec()-t1)
+	var threads: Array[Thread] = []
+	t1 = Time.get_ticks_msec()
+
+	for hex in hexes:
+		if blocksLOS(hex, sight_point):
+			continue
+		var copy_arr: Array[Vector2] = []
+		copy_arr.assign(cart_shape)
+		
+		var thread: Thread = Thread.new()
+		thread.start(_shape_thread.bind(copy_arr,inside,hex))
+		threads.push_back(thread)
+	for t in threads:
+		t.wait_to_finish()
+	print("shape filling: ", Time.get_ticks_msec()-t1)
+	return inside
 
 static func getIntermovementCost(a: HexTile, b: HexTile):
 	var hCost = HexTile.JUMP_COST_MOD*HexTile.JUMP_COST*HexTile.getHeightDifference(a, b) + HexTile.JUMP_COST_BIAS*sign(HexTile.getHeightDifference(a, b))
@@ -96,7 +139,8 @@ func _runFloodfill(source: HexTile, dist: int):
 		await InputManager.instance.get_tree().process_frame
 	solver_thread.wait_to_finish()
 	floodfills[Vector2i(source.id, dist)] = solver
-	
+
+
 func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
 	var arr: Array[HexTile] = []
 	for q in range(-dist, dist+1):
@@ -111,6 +155,50 @@ func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
 			if hex != null:
 				arr.push_back(hex)
 	return arr
+
+func getSight(origin: HexVector, dist: int) -> Array:
+	var steps = 30
+	var poly: Array[HexVector] = []
+	for i in range(steps):
+		poly.push_back(raycast(origin,i*2*PI/steps,float(dist),1.0).hex_pos)
+	var t: Thread = Thread.new()
+	t.start(get_hex_in_shape.bind(poly, get_hex(origin)))
+	while t.is_alive():
+		await InputManager.instance.get_tree().process_frame
+	return t.wait_to_finish()
+	#return [arr, sightPower]
+
+func blocksLOS(tile: HexTile, origin: HexTile):
+	return tile.height > origin.height+1
+
+func raycast(origin: HexVector, angle: float, distance: float, resolution: float = 0.1) -> HexTile:
+	var t = 0
+	var cart_dir = Vector2(cos(angle),sin(angle))*HexMath.GLOBAL_OFFSET
+	
+	var cart_origin_3d = HexMath.axis_to_3D(origin.q, origin.r)
+	var cart_origin = Vector2(cart_origin_3d.x, cart_origin_3d.z)
+	var origin_hex = get_hex(origin)
+	var current_hex: HexTile = origin_hex
+	var last_found_hex = origin_hex
+	var arr: Array[HexTile] = [current_hex]
+	
+	var current_pos: HexVector = origin
+	
+	while t < distance:
+		var pos: Vector2 = cart_origin + cart_dir*t
+		var hex_pos: HexVector = HexMath._2D_to_axis(pos)
+		var grid_hex: HexVector = snap_hex(hex_pos)
+		
+		if !HexVector._equals(grid_hex, current_pos):
+			current_pos = grid_hex
+			current_hex = get_hex(grid_hex)
+			
+			if current_hex != null:
+				last_found_hex = current_hex
+			if current_hex != null and blocksLOS(current_hex, origin_hex):
+				break
+		t += resolution
+	return last_found_hex
 	
 func getHexesWithShortestPathDistance(origin: HexVector, dist: int, check_limit: int = -1) -> Array[HexTile]:
 	if check_limit == -1:

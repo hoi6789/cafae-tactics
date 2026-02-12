@@ -10,6 +10,7 @@ var playerID: int
 var unitID: int
 var teamID: int
 var initMoves: Array[BattleScript]
+var sight: Array[HexTile]
 
 var inputManager: InputManager
 var battleController: BattleController
@@ -31,6 +32,8 @@ var baseColour = Color.WHITE
 var inputs: Array[Array] = []
 var spriteHeight: float = 1
 
+var _calculating_sight = false
+
 func initialize(cubePos: Vector2, height: int, data: Resource, _unitID: int):
 	unitID = _unitID
 	unitData = data
@@ -51,6 +54,7 @@ func setLocation(hex_vec: HexVector, _height: int):
 	hex_pos = hex_vec
 	hex_height = _height
 	setAnimation("default")
+	updateSight()
 	pass
 
 func setAnimation(anim: String):
@@ -90,6 +94,7 @@ func jump_parabola(h0:float,h1:float,v:float, t:float):
 func move(tile: HexTile, speed_scaler: float):
 	print("moving")
 	setAnimation("moving")
+	
 	target_pos = tile.hex_pos
 	var t = 0
 	var original_height = hex_height
@@ -105,8 +110,11 @@ func move(tile: HexTile, speed_scaler: float):
 			hex_height = jump_parabola(original_height, tile.height, tile.height+2, t)
 		t += _delta*unitData.moveSpeed*speed_scaler
 		await get_tree().create_timer(_delta).timeout
+	
+	updateSight()
 	hex_pos = target_pos
 	hex_height = tile.height
+	
 	
 func waitWindup(duration: float):
 	setAnimation("windup")
@@ -194,6 +202,14 @@ func getPosition(_hvec: HexVector, _height: float):
 	hpos.y = 0
 	return hpos + Vector3(0,(_height)*Hex.TILE_HEIGHT + spriteHeight/2,0)
 
+func updateSight(pos = hex_pos):
+	if _calculating_sight:
+		return
+	_calculating_sight = true
+	sight = await inputManager.controller.map.getSight(pos,10)
+	_calculating_sight = false
+	inputManager.controller.updateTeamSight(teamID)
+
 func _process(delta: float) -> void:
 	_delta = delta
 	
@@ -202,8 +218,6 @@ func _process(delta: float) -> void:
 	if hex_pos != null:
 		
 		position = getPosition(hex_pos, hex_height)
-		if position.y != last_position.y:
-			print(position.y)
 		
 	
 	if last_position != position:

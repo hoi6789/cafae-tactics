@@ -12,6 +12,8 @@ var baseColour: Color
 var surfMaterial: Material
 var surfOverlay: Material
 var overlayColours: Array[Color]
+const FOW_TINT: float = 0.2
+var tint = FOW_TINT
 
 var inputManager: InputManager
 
@@ -19,6 +21,9 @@ var highlighted: bool = false
 var rangeHighlighted: bool = false
 var holoHighlighted: int = 0
 var hovered: bool = false
+var can_see = false
+var tint_anim_active = false
+var global_tint_targ = 1
 
 
 func initialize(_data: HexTile):
@@ -31,6 +36,37 @@ func initialize(_data: HexTile):
 	setColour(data.type)
 	setPosition(HexVector.toCubePos(data.hex_pos))
 	pass
+
+func setTint(targ: float, _duration: float = 1.0):
+	global_tint_targ = targ
+	if tint_anim_active:
+		return
+	tint_anim_active = true
+	var timer: Timer = Timer.new()
+	add_child(timer)
+	var orig = tint
+	var t = 0
+	while t < 1:
+		if targ != global_tint_targ:
+			targ = global_tint_targ
+			t = 0
+			orig = tint
+		tint = orig + (targ - orig)*PolyMath.smooth(t)
+		tint = clamp(tint, 0, 1)
+
+		resetColour()
+		var dt = 1.0/Engine.get_frames_per_second()
+		timer.start(dt)
+		await timer.timeout
+		t += dt/_duration
+	tint_anim_active = false
+	timer.queue_free()
+
+func setSight(_can_see: bool):
+	can_see = _can_see
+	setTint(1 if can_see else FOW_TINT, 0.075)
+	resetColour()
+		
 
 func highlight():
 	highlighted = true
@@ -48,13 +84,16 @@ func unrangeHighlight():
 	rangeHighlighted = false
 	resetColour()
 
+func getTintFactor():
+	return tint
+
 func resetColour():
 	surfOverlay.albedo_color = Color(0, 0, 0, 0)
 	if rangeHighlighted: overlayBlend(Color.GOLD, 0.5)
 	if highlighted: overlayBlend(Color.CADET_BLUE, 0.5)
 	if hovered: overlayBlend(Color.GREEN, 0.5)
 	else:
-		surfMaterial.albedo_color = baseColour
+		surfMaterial.albedo_color = baseColour*getTintFactor()
 
 func setColour(palette: HexTile.TerrainType):
 	match palette:
@@ -63,7 +102,7 @@ func setColour(palette: HexTile.TerrainType):
 		_:
 			baseColour = varyColour(Color(0.72, 0.72, 0.72, 0.50))
 		
-	surfMaterial.albedo_color = baseColour
+	surfMaterial.albedo_color = baseColour*getTintFactor()
 	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
 	pass
 
