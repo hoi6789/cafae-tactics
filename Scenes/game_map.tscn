@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dpa6fw8x117ed"]
+[gd_scene load_steps=17 format=3 uid="uid://dpa6fw8x117ed"]
 
 [ext_resource type="Script" uid="uid://bxd281ovohk1g" path="res://Scripts/battle_controller.gd" id="1_hrtji"]
 [ext_resource type="PackedScene" uid="uid://ccmqueenj03hf" path="res://Prefabs/hex_tile.tscn" id="2_55amd"]
@@ -10,8 +10,12 @@
 [ext_resource type="AudioStream" uid="uid://ctw2apbndd620" path="res://Music/4-19. Trial of Awakening.mp3" id="8_v8ky0"]
 [ext_resource type="AudioStream" uid="uid://cfltmlq661auq" path="res://Music/5-11. Bright, Bold Sandstorm (Fiery).mp3" id="8_vs6hg"]
 [ext_resource type="AudioStream" uid="uid://dapixgfreh2i3" path="res://Music/4-16. Trial of Blazing.mp3" id="9_e8upy"]
+[ext_resource type="AudioStream" uid="uid://dqpnb83mbiv61" path="res://Music/2-07. Trial of Echoes.mp3" id="10_e6p2l"]
 [ext_resource type="AudioStream" uid="uid://0b0rqbwaisxe" path="res://Music/4-20. Trial of Awakening (Reignite Us).mp3" id="10_qy8qd"]
+[ext_resource type="AudioStream" uid="uid://b3msur5iidne1" path="res://Music/5-21. Trial of Fates.mp3" id="11_jumj3"]
 [ext_resource type="AudioStream" uid="uid://fy73uyk844ek" path="res://Music/4-17. Trial of Blazing (Sweep Across).mp3" id="12_bcdk8"]
+[ext_resource type="AudioStream" uid="uid://bh237j6e8so1b" path="res://Music/2-08. Trial of Echoes (Care for Us).mp3" id="15_mbdl7"]
+[ext_resource type="AudioStream" uid="uid://cnp724kik3c5c" path="res://Music/5-22. Trial of Fates (Bare Your Fangs).mp3" id="16_bei53"]
 
 [node name="GameMap" type="Node3D"]
 script = ExtResource("1_hrtji")
@@ -97,8 +101,8 @@ unitData = null
 script = ExtResource("6_rlp0x")
 calmPlayer = NodePath("Calm")
 activePlayer = NodePath("Active")
-calmMusic = Array[AudioStream]([ExtResource("7_nuwfo"), ExtResource("8_v8ky0"), ExtResource("9_e8upy")])
-activeMusic = Array[AudioStream]([ExtResource("8_vs6hg"), ExtResource("10_qy8qd"), ExtResource("12_bcdk8")])
+calmMusic = Array[AudioStream]([ExtResource("7_nuwfo"), ExtResource("8_v8ky0"), ExtResource("9_e8upy"), ExtResource("10_e6p2l"), ExtResource("11_jumj3")])
+activeMusic = Array[AudioStream]([ExtResource("8_vs6hg"), ExtResource("10_qy8qd"), ExtResource("12_bcdk8"), ExtResource("15_mbdl7"), ExtResource("16_bei53")])
 
 [node name="Calm" type="AudioStreamPlayer" parent="Audio Player"]
 

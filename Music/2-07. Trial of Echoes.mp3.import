@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dqpnb83mbiv61"
+path="res://.godot/imported/2-07. Trial of Echoes.mp3-3b3f0db7811e9ada0c84a03d2e59b3fa.mp3str"
+
+[deps]
+
+source_file="res://Music/2-07. Trial of Echoes.mp3"
+dest_files=["res://.godot/imported/2-07. Trial of Echoes.mp3-3b3f0db7811e9ada0c84a03d2e59b3fa.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

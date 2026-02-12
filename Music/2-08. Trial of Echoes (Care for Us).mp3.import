@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bh237j6e8so1b"
+path="res://.godot/imported/2-08. Trial of Echoes (Care for Us).mp3-a6f28012f1934ae5200c6ca722bf78dc.mp3str"
+
+[deps]
+
+source_file="res://Music/2-08. Trial of Echoes (Care for Us).mp3"
+dest_files=["res://.godot/imported/2-08. Trial of Echoes (Care for Us).mp3-a6f28012f1934ae5200c6ca722bf78dc.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
