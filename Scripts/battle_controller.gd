@@ -171,5 +171,7 @@ func getTeamSight(teamID: int) -> Array[HexTile]:
 		if unit.teamID == teamID:
 			while unit._calculating_sight:
 				await get_tree().process_frame
-			sightTiles += unit.sight + ([map.get_hex(unit.hex_pos)] as Array[HexTile])
+			for tile in unit.sight:
+				if tile not in sightTiles:
+					sightTiles.push_back(tile)
 	return sightTiles
