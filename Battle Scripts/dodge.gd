@@ -51,4 +51,4 @@ func execute(controller: BattleController):
 	for id in data:
 		tile_path.push_back(controller.map.hex_list[id])
 	print(Time.get_ticks_msec())
-	await user.movePath(tile_path)
+	await user.movePath(tile_path, user.unitData.moveSpeed*2)

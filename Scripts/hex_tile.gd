@@ -47,10 +47,6 @@ func setTint(targ: float, _duration: float = 1.0):
 	var orig = tint
 	var t = 0
 	while t < 1:
-		if targ != global_tint_targ:
-			targ = global_tint_targ
-			t = 0
-			orig = tint
 		tint = orig + (targ - orig)*PolyMath.smooth(t)
 		tint = clamp(tint, 0, 1)
 
@@ -59,6 +55,10 @@ func setTint(targ: float, _duration: float = 1.0):
 		timer.start(dt)
 		await timer.timeout
 		t += dt/_duration
+		if targ != global_tint_targ:
+			targ = global_tint_targ
+			t = 0
+			orig = tint
 	tint_anim_active = false
 	timer.queue_free()
 
