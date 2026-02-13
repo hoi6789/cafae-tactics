@@ -54,7 +54,7 @@ func get_hex_in_shape(shape: Array[HexVector], sight_point: HexTile, origin: Hex
 	var cart_shape: Array[Vector2]
 	var max_dist: float = 0
 	if origin == null:
-		origin = HexMath.average(shape)
+		origin = snap_hex(HexMath.average(shape))
 	var cart_origin = HexMath.axis_to_2D(origin)
 		
 	for vert in shape:
@@ -63,17 +63,20 @@ func get_hex_in_shape(shape: Array[HexVector], sight_point: HexTile, origin: Hex
 		v += (v - cart_origin).normalized()*0.5
 		cart_shape.push_back(v)
 	var t1 = Time.get_ticks_msec()
-	var hexes = getHexesInRange(origin, ceil(max_dist))
-	var origin_hex = get_hex(origin)
+	var hexes: Array[HexTile] = getHexesInRange(origin, ceil(max_dist))
+	var origin_hex: HexTile = get_hex(origin)
 	if origin_hex != null:
 		hexes += [origin_hex]
 	print("hexes: ", Time.get_ticks_msec()-t1)
 	var threads: Array[Thread] = []
 	t1 = Time.get_ticks_msec()
-
+	var MAX_THREADS = 16
 	for hex in hexes:
 		if blocksLOS(hex, sight_point):
 			continue
+		while len(threads) >= MAX_THREADS:
+			threads[0].wait_to_finish()
+			threads.remove_at(0)
 		var copy_arr: Array[Vector2] = []
 		copy_arr.assign(cart_shape)
 		
@@ -143,6 +146,7 @@ func _runFloodfill(source: HexTile, dist: int):
 
 func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
 	var arr: Array[HexTile] = []
+	print("dist: ",dist)
 	for q in range(-dist, dist+1):
 		for r in range(-dist, dist+1):
 			if q == 0 and r == 0:
@@ -151,6 +155,7 @@ func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
 			if abs(s)>dist:
 				continue
 			var hex_pos = HexVector.add(origin, HexVector.new(q,r,s))
+			print(hex_pos.q,",",hex_pos.r)
 			var hex = get_hex(hex_pos)
 			if hex != null:
 				arr.push_back(hex)

@@ -74,7 +74,7 @@ func _ready() -> void:
 	var ht = HexVector.fromCubePos(Vector2(mapTiles[r][0],mapTiles[r][1]))
 	var h: HexTile = map.get_hex(ht)
 	var hex = h.hex
-	var n: Array[int] = [BattleController.Command.SUMMON, hex.data.hex_pos.q, hex.data.hex_pos.r, hex.data.height, 1, NetworkManager.steam_id, 2]
+	var n: Array[int] = [BattleController.Command.SUMMON, hex.data.hex_pos.q, hex.data.hex_pos.r, hex.data.height, 1, -2, 2]
 	InputManager.instance.addInput(n)
 
 	#processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[r][0],mapTiles[r][1]))).height, 1, 1, 0])
