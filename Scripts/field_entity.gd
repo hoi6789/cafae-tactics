@@ -20,6 +20,11 @@ var spriteHeight: float = 1
 
 func isOwned():
 	return (NetworkManager.steam_id == playerID)
+
+func onPlayerTeam():
+	if inputManager == null:
+		return false
+	return teamID == inputManager.controller.playerTeam
 	
 func setAnimation(anim: String):
 	animation = anim
@@ -101,6 +106,8 @@ func getCurrentHexTile() -> HexTile:
 	return inputManager.controller.map.get_hex(hex_pos)
 
 func canSee() -> bool:
+	if onPlayerTeam():
+		return true
 	var hex: HexTile = getCurrentHexTile()
 	return (hex != null) and hex.hex.can_see
 
