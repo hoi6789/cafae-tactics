@@ -60,8 +60,12 @@ func get_hex_in_shape(shape: Array[HexVector], sight_point: HexTile, origin: Hex
 	for vert in shape:
 		max_dist = max(max_dist, HexVector.dist(origin, vert))
 		var v = HexMath.axis_to_2D(vert)
-		v += (v - cart_origin).normalized()*0.5
+		print("old length: ", (v - cart_origin).length())
+		#v += (v - cart_origin).normalized()*0.5
+		print("new length: ", (v - cart_origin).length())
 		cart_shape.push_back(v)
+	#InputManager.instance.last_shape = cart_shape
+	#InputManager.instance.drawY = sight_point.height*HexMath.HEX_HEIGHT
 	var t1 = Time.get_ticks_msec()
 	var hexes: Array[HexTile] = getHexesInRange(origin, ceil(max_dist))
 	var origin_hex: HexTile = get_hex(origin)
@@ -162,12 +166,12 @@ func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
 	return arr
 
 func getSight(origin: HexVector, dist: int) -> Array:
-	var steps = 30
+	var steps = 100
 	var poly: Array[HexVector] = []
 	for i in range(steps):
 		poly.push_back(raycast(origin,i*2*PI/steps,float(dist),1.0).hex_pos)
 	var t: Thread = Thread.new()
-	t.start(get_hex_in_shape.bind(poly, get_hex(origin)))
+	t.start(get_hex_in_shape.bind(poly, get_hex(origin),snap_hex(origin)))
 	while t.is_alive():
 		await InputManager.instance.get_tree().process_frame
 	return t.wait_to_finish()

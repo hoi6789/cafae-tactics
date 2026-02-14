@@ -58,6 +58,16 @@ var CURRENT_INPUT_HEADER = 0
 var controller: BattleController = get_parent()
 var scriptAtlas: ScriptAtlas
 
+var last_shape: Array[Vector2] = []
+var drawY = 0.5
+func draw3d():
+	for i in range(len(last_shape)):
+		var p0 = last_shape[i]
+		var p1 = last_shape[(i+1)%len(last_shape)]
+		DebugDraw3D.draw_line(Vector3(p0.x,drawY,p0.y),Vector3(p1.x,drawY,p1.y))
+	pass
+
+
 func _ready() -> void:
 	scriptAtlas = load("res://Resources/Script_Atlas.tres")
 	controller = get_parent()
@@ -244,6 +254,7 @@ func rpc_finishTurn():
 		executeInputs()
 
 func _process(delta: float) -> void:
+	#draw3d()
 	if Input.is_action_just_pressed("cancel_action"):
 		actionState = ActionState.CANCEL
 		selected.emit()

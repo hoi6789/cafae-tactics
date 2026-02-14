@@ -10,6 +10,9 @@ static func PointInPoly(p: Vector2, polygon: Array[Vector2]):
 		var p0 = polygon[i]
 		var p1 = polygon[(i+1)%n]
 		
+		if p == p0:
+			return true
+		
 		if p.y > min(p0.y, p1.y) and p.y <= max(p0.y, p1.y) and p.x <= max(p0.x, p1.x):
 			var xInt = (p.y - p0.y)*(p1.x - p0.x)/(p1.y - p0.y) + p0.x
 			if p0.x == p1.x or p.x <= xInt:
