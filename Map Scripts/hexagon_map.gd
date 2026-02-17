@@ -178,7 +178,9 @@ func getSight(origin: HexVector, dist: int) -> Array:
 	#return [arr, sightPower]
 
 func blocksLOS(tile: HexTile, origin: HexTile):
-	return tile.height > origin.height+1
+	var dy = tile.height-origin.height
+	var dr = HexVector.dist(origin.hex_pos, tile.hex_pos)
+	return !(dy<=2 and abs(atan2(dy, dr)) < deg_to_rad(45))
 
 func raycast(origin: HexVector, angle: float, distance: float, resolution: float = 0.1) -> HexTile:
 	var t = 0
