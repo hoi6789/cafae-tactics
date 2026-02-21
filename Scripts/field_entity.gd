@@ -68,11 +68,13 @@ func move(tile: HexTile, move_speed: float, speed_scaler: float):
 	if original_height != tile.height:
 		speed_scaler = 1.0/float(HexTile.JUMP_COST)
 	
+	var vert_offset = 2
+	var vertex = max(tile.height, original_height) + vert_offset
 	while t < 1:
 		var dt = 1.0/Engine.get_frames_per_second()
 		hex_pos = HexVector.lerp(original_pos, tile.hex_pos, t)
 		if original_height != tile.height:
-			hex_height = jump_parabola(original_height, tile.height, tile.height+2, t)
+			hex_height = jump_parabola(original_height, tile.height, vertex, t)
 		t += dt*move_speed*speed_scaler
 		await get_tree().create_timer(dt).timeout
 	
