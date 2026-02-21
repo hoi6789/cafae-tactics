@@ -1,0 +1,3 @@
+[gd_scene format=3 uid="uid://cekxslbqfkwii"]
+
+[node name="MapCreator" type="Node3D"]
