@@ -76,7 +76,7 @@ func get_hex_in_shape(shape: Array[HexVector], sight_point: HexTile, origin: Hex
 	t1 = Time.get_ticks_msec()
 	var MAX_THREADS = 16
 	for hex in hexes:
-		if blocksLOS(hex, sight_point):
+		if blocksLOS(hex, sight_point) or !inLOSAngle(hex, sight_point):
 			continue
 		while len(threads) >= MAX_THREADS:
 			threads[0].wait_to_finish()
@@ -177,10 +177,14 @@ func getSight(origin: HexVector, dist: int) -> Array:
 	return t.wait_to_finish()
 	#return [arr, sightPower]
 
-func blocksLOS(tile: HexTile, origin: HexTile):
-	var dy = tile.height-origin.height
+func inLOSAngle(tile: HexTile, origin: HexTile):
+	var dy = (tile.height-origin.height)*HexMath.HEX_HEIGHT
 	var dr = HexVector.dist(origin.hex_pos, tile.hex_pos)
-	return !(dy<=2 and abs(atan2(dy, dr)) < deg_to_rad(45))
+	return abs(atan2(dy, dr)) < deg_to_rad(30)
+
+func blocksLOS(tile: HexTile, origin: HexTile):
+	var dy_unscaled = (tile.height-origin.height)
+	return dy_unscaled > 2
 
 func raycast(origin: HexVector, angle: float, distance: float, resolution: float = 0.1) -> HexTile:
 	var t = 0
