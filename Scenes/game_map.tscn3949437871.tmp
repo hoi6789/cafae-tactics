@@ -44,7 +44,6 @@ text = "summon unit (0/1)"
 
 [node name="ActionsPanel" type="Panel" parent="InputManager"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 0
 offset_left = 500.0
 offset_top = 300.0
@@ -67,11 +66,10 @@ text = "penis "
 
 [node name="TooltipPanel" type="Panel" parent="InputManager/ActionsPanel"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 0)
 layout_mode = 0
 offset_left = 141.0
 offset_top = 1.0
-offset_right = 241.0
+offset_right = 299.0
 offset_bottom = 177.0
 
 [node name="Title" type="RichTextLabel" parent="InputManager/ActionsPanel/TooltipPanel"]

@@ -4,9 +4,10 @@ class_name InputManager
 signal selected
 static var instance: InputManager
 
-@export var actionsPanel: PanelContainer
+@export var actionsPanel: Panel
 @export var vboxContainer: VBoxContainer
 @export var doneTurnButton: Button
+@export var tooltipPanel: Panel
 
 var inputQueue = []
 
@@ -112,9 +113,11 @@ func chooseUnit(unit: BattleUnit):
 	pass
 
 func createInputs(pos: Vector2, unit: BattleUnit):
-	actionsPanel.visible = true
-	actionsPanel.position = pos
+	actionsPanel.position = pos + Vector2(5, 5)
 	selectedUnit = unit
+	var maxWidth: float = 0
+	var maxHeight: float = 0
+	var maxSize: Vector2
 	for child in vboxContainer.get_children():
 		vboxContainer.remove_child(child)
 		child.queue_free()
@@ -123,9 +126,19 @@ func createInputs(pos: Vector2, unit: BattleUnit):
 		newButton.text = move.moveName
 		newButton.set_meta("move", move)
 		newButton.pressed.connect(actionButtonPressed.bind(move))
+		newButton.mouse_entered.connect(actionButtonHovered.bind(move, newButton))
 		vboxContainer.add_child(newButton)
 		print(move.moveName)
-	actionsPanel.size = Vector2(0, 0)
+		maxWidth = max(newButton.size.x, maxWidth)
+		maxHeight += newButton.size.y + vboxContainer.get_theme_constant("separation")
+	maxHeight -= vboxContainer.get_theme_constant("separation")
+	maxSize = Vector2(maxWidth, maxHeight)
+	print(maxSize)
+	%TooltipPanel.position = Vector2(maxWidth, 0)
+	%TooltipPanel.size = Vector2(200, maxHeight)
+	actionsPanel.size = maxSize
+	actionsPanel.visible = true
+	
 
 func actionButtonPressed(move: BattleScript):
 	if !move.user.isOwned():
@@ -140,7 +153,12 @@ func actionButtonPressed(move: BattleScript):
 		addInput(n)
 	setInputState(InputManager.InputStates.PENDING)
 	move.user.updateVirtualPosition()
+
+func actionButtonHovered(move: BattleScript, button: Button):
+	%TooltipPanel/Title.text = move.moveName
+	%TooltipPanel.size.x = button.size.x
 	
+
 func setHoveredHex(hex: Hex):
 	hoveredHex = hex
 	if selectedUnit != null:
@@ -214,6 +232,7 @@ func executeInputs():
 	executingInputs = true
 	controller.removeHighlights()
 	controller.activeInputs = len(inputQueue)
+	print(inputQueue)
 	var inputChannel: Dictionary[int, Array] = {}
 	for input in inputQueue:
 		print("running: ", input)
