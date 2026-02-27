@@ -7,7 +7,8 @@ static var instance: InputManager
 @export var actionsPanel: Panel
 @export var vboxContainer: VBoxContainer
 @export var doneTurnButton: Button
-@export var tooltipPanel: Panel
+@export var actionsView: VBoxContainer
+var loadedLabel: Label
 
 var inputQueue = []
 
@@ -151,6 +152,19 @@ func actionButtonPressed(move: BattleScript):
 		move.user.inputs.push_back(n)
 		n.assign(input)
 		addInput(n)
+		
+		var actionLabel: Label = Label.new()
+		actionLabel.text = "Unit ID " + str(move.user.unitID) + " using action " + move.moveName + " with data " + str(move.data)
+		actionLabel.horizontal_alignment =HORIZONTAL_ALIGNMENT_RIGHT
+		actionLabel.autowrap_mode =TextServer.AUTOWRAP_WORD_SMART
+		actionLabel.mouse_filter = Control.MOUSE_FILTER_PASS
+		actionLabel.set_meta("user", move.user)
+		actionLabel.set_meta("userMove", move.user.inputs[-1])
+		actionLabel.set_meta("globalMove", inputQueue[-1])
+		actionLabel.set_meta("id", inputQueue.size())
+		actionLabel.mouse_entered.connect(actionLabelHovered.bind(actionLabel))
+		actionLabel.mouse_exited.connect(actionLabelUnhovered.bind(actionLabel))
+		actionsView.add_child(actionLabel)
 	setInputState(InputManager.InputStates.PENDING)
 	move.user.updateVirtualPosition()
 
@@ -158,6 +172,15 @@ func actionButtonHovered(move: BattleScript, button: Button):
 	%TooltipPanel/Title.text = move.moveName
 	%TooltipPanel.size.x = button.size.x
 	
+func actionLabelHovered(label: Label):
+	label.modulate = Color(1, 0, 0)
+	loadedLabel = label
+	pass
+	
+func actionLabelUnhovered(label: Label):
+	label.modulate = Color(1, 1, 1)
+	loadedLabel = null
+	pass
 
 func setHoveredHex(hex: Hex):
 	hoveredHex = hex
@@ -203,6 +226,13 @@ func _on_gui_input(event: InputEvent) -> void:
 				print("l")
 				actionsPanel.visible = false
 				pass
+			if loadedLabel:
+				for label in actionsView.get_children():
+					if label.get_meta("id") >= loadedLabel.get_meta("id") and label.get_meta("user") == loadedLabel.get_meta("user"):
+						removeInput(label.get_meta("globalMove"))
+						label.get_meta("user").inputs.erase(label.get_meta("userMove"))
+						label.get_meta("user").updateVirtualPosition()
+						label.queue_free()
 	pass # Replace with function body.
 
 
@@ -215,6 +245,16 @@ func addInput(n: Array[int]):
 @rpc("any_peer","call_local")
 func rpc_pushInput(n: Array[int]):
 	inputQueue.push_back(n)
+
+func removeInput(n: Array[int]):
+	if NetworkManager.connected:
+		rpc_pushInput.rpc(n)
+	else:
+		rpc_deleteInput(n)
+
+@rpc("any_peer","call_local")
+func rpc_deleteInput(n: Array[int]):
+	inputQueue.erase(n)
 
 func resetTurnStatus():
 	doneTurn = false
@@ -229,6 +269,8 @@ func executeInputChain(inputArr: Array):
 		await controller.processInput(input) 
 
 func executeInputs():
+	for child in actionsView.get_children():
+		child.queue_free()
 	executingInputs = true
 	controller.removeHighlights()
 	controller.activeInputs = len(inputQueue)
