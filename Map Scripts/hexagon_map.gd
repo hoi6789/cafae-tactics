@@ -60,9 +60,9 @@ func get_hex_in_shape(shape: Array[HexVector], sight_point: HexTile, origin: Hex
 	for vert in shape:
 		max_dist = max(max_dist, HexVector.dist(origin, vert))
 		var v = HexMath.axis_to_2D(vert)
-		print("old length: ", (v - cart_origin).length())
+		##print("old length: ", (v - cart_origin).length())
 		#v += (v - cart_origin).normalized()*0.5
-		print("new length: ", (v - cart_origin).length())
+		##print("new length: ", (v - cart_origin).length())
 		cart_shape.push_back(v)
 	#InputManager.instance.last_shape = cart_shape
 	#InputManager.instance.drawY = sight_point.height*HexMath.HEX_HEIGHT
@@ -159,7 +159,7 @@ func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
 			if abs(s)>dist:
 				continue
 			var hex_pos = HexVector.add(origin, HexVector.new(q,r,s))
-			print(hex_pos.q,",",hex_pos.r)
+			##print(hex_pos.q,",",hex_pos.r)
 			var hex = get_hex(hex_pos)
 			if hex != null:
 				arr.push_back(hex)
