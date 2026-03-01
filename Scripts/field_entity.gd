@@ -71,7 +71,7 @@ func move(tile: HexTile, move_speed: float, speed_scaler: float):
 	var vert_offset = 2
 	var vertex = max(tile.height, original_height) + vert_offset
 	while t < 1:
-		var dt = 1.0/Engine.get_frames_per_second()
+		var dt = max(_delta, 1.0/Engine.get_frames_per_second())
 		hex_pos = HexVector.lerp(original_pos, tile.hex_pos, t)
 		if original_height != tile.height:
 			hex_height = jump_parabola(original_height, tile.height, vertex, t)

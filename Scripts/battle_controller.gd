@@ -173,6 +173,8 @@ func updateTeamSight(teamID: int):
 	
 	if teamID == playerTeam:
 		for tile: HexTile in teamSightTiles[teamID]:
+			if tile == null:
+				continue
 			tile.hex.setSight(true)
 
 func getTeamSight(teamID: int) -> Array[HexTile]:
