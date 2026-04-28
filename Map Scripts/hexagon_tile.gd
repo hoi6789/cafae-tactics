@@ -25,6 +25,9 @@ func _init(_id: int, _pos: HexVector, _height: int, _type: TerrainType, _hex: He
 	id = _id
 	hex = _hex
 
+func clone() -> HexTile:
+	return HexTile.new(id, hex_pos, height, type, hex)
+
 static func getTileTypeMovementCost(_type: HexTile.TerrainType) -> int:
 	match _type:
 		HexTile.TerrainType.BASIC: return 1

@@ -41,13 +41,13 @@ func _process(delta: float) -> void:
 		targetPosition.z += cos(rotation.y) * delta * spd
 		pass
 		
-	if Input.is_action_just_pressed("mouseWheelUp"):
+	if Input.is_action_just_pressed("mouseWheelUp") and !Input.is_action_pressed("aux"):
 		#print("a")
 		targetPosition -= basis.z
 		if targetPosition.y < 0.5: targetPosition.y = 0.5
 		pass
 		
-	if Input.is_action_just_pressed("mouseWheelDown"):
+	if Input.is_action_just_pressed("mouseWheelDown") and !Input.is_action_pressed("aux"):
 		#print("a")
 		targetPosition += basis.z
 		if targetPosition.y < 0.5: targetPosition.y = 0.5

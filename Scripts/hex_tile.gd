@@ -25,6 +25,11 @@ var can_see = false
 var tint_anim_active = false
 var global_tint_targ = 1
 
+func inMapEditor() -> bool:
+	return !validIM()
+
+func validIM() -> bool:
+	return inputManager != null
 
 func initialize(_data: HexTile):
 	## Initialization function to setup properties of a hex
@@ -65,6 +70,10 @@ func setTint(targ: float, _duration: float = 1.0):
 func setSight(_can_see: bool):
 	can_see = _can_see
 	setTint(1 if can_see else FOW_TINT, 0.075)
+	resetColour()
+
+func forceTint(targ: float):
+	tint = targ
 	resetColour()
 		
 
@@ -135,7 +144,7 @@ func overlayBlend(col: Color, alpha: float):
 	surfOverlay.albedo_color = surfOverlay.albedo_color.blend(col)
 
 func _on_mouse_entered() -> void:
-	if inputManager.selectorState == InputManager.InputStates.HEXES:
+	if validIM() and inputManager.selectorState == InputManager.InputStates.HEXES:
 		hovered = true
 		#surfMaterial.albedo_color = Color(0, 1, 0, 1)
 		resetColour()
@@ -144,7 +153,7 @@ func _on_mouse_entered() -> void:
 	pass # Replace with function body.
 
 func _on_mouse_exited() -> void:
-	if inputManager.selectorState == InputManager.InputStates.HEXES:
+	if validIM() and inputManager.selectorState == InputManager.InputStates.HEXES:
 		hovered = false
 		resetColour()
 		inputManager.unsetHoveredHex(self)
@@ -153,7 +162,7 @@ func _on_mouse_exited() -> void:
 
 func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
-		if event.button_index == 1 and event.pressed == true and inputManager.selectorState == InputManager.InputStates.HEXES:
+		if validIM() and event.button_index == 1 and event.pressed == true and inputManager.selectorState == InputManager.InputStates.HEXES:
 			inputManager.chooseHex(self)
 			_on_mouse_exited()
 			inputManager.setInputState(InputManager.InputStates.PENDING)

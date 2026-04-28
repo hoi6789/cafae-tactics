@@ -60,7 +60,7 @@ func move(tile: HexTile, move_speed: float, speed_scaler: float):
 	setAnimation("moving")
 	
 	target_pos = tile.hex_pos
-	var t = 0
+	var t: float = 0
 	var original_height = hex_height
 	var original_pos = hex_pos
 	var parabola_scale = 0
@@ -71,12 +71,12 @@ func move(tile: HexTile, move_speed: float, speed_scaler: float):
 	var vert_offset = 2
 	var vertex = max(tile.height, original_height) + vert_offset
 	while t < 1:
-		var dt = max(_delta, 1.0/Engine.get_frames_per_second())
+		var dt: float = max(0.01, _delta)
 		hex_pos = HexVector.lerp(original_pos, tile.hex_pos, t)
 		if original_height != tile.height:
 			hex_height = jump_parabola(original_height, tile.height, vertex, t)
 		t += dt*move_speed*speed_scaler
-		await get_tree().create_timer(dt).timeout
+		await get_tree().create_timer(dt, true, true).timeout
 	
 	updateSight()
 	hex_pos = target_pos

@@ -76,7 +76,7 @@ func get_hex_in_shape(shape: Array[HexVector], sight_point: HexTile, origin: Hex
 	t1 = Time.get_ticks_msec()
 	var MAX_THREADS = 16
 	for hex in hexes:
-		if blocksLOS(hex, sight_point) or !inLOSAngle(hex, sight_point):
+		if hex == null or blocksLOS(hex, sight_point) or !inLOSAngle(hex, sight_point):
 			continue
 		while len(threads) >= MAX_THREADS:
 			threads[0].wait_to_finish()
