@@ -10,6 +10,8 @@ enum Command {
 ## Prefabs used for copying 
 @export var LocHexTile: PackedScene
 @export var SceneUnit: PackedScene
+@export var hexData: HexData
+@export_multiline var mapString: String
 
 signal projectilesGone
 
@@ -18,7 +20,7 @@ static var playerTeam = 1
 ## Map variables
 var map: HexagonMap = HexagonMap.new()
 
-var mapTiles: Array = []
+
 var highlightedPath: Array = []
 var highlightedRange: Array = []
 var scriptAtlas: ScriptAtlas
@@ -42,39 +44,16 @@ func _ready() -> void:
 	var mapSize = 20
 	var scale: float = 4
 	
-	for i in range(-mapSize, mapSize):
-		for j in range(-mapSize, mapSize):
-			var hx = HexVector.fromCubePos(Vector2(i, j))
-			var vx = HexMath.axis_to_3D(hx.q, hx.r)
-			var h = noise.get_noise_2d(height_seed + vx.x, height_seed + vx.z)
-			if i == 0 and j == 0:
-				h = 3
-			if noise.get_noise_2d(vx.x, vx.z) >-0.3:
-				mapTiles.push_back([i, j, h, noise.get_noise_2d(type_seed + vx.x, type_seed + vx.z)])
-	var v2_arr = []
-	for tile in mapTiles:
-		v2_arr.push_back([tile[0], tile[1], tile[2], 2*abs(tile[3])])
-	map.force_generate_with_terrain_types(v2_arr)
-	
 	var chunk_size: int = int(ceil(0.01*(mapSize**2)))
 	var tile_index = 0
-	for hextile: HexTile in map.hex_list.values():
-		var cPos = HexVector.toCubePos(hextile.hex_pos)
-		var coordinate = [cPos.x, cPos.y]
-		
-		var newTile: Hex = LocHexTile.instantiate()
-		
+	map.construct_using_string_form(mapString, hexData)
+	for hex in map.map.values():
+		map.spawn_hex(hex, LocHexTile, self).inputManager = %InputManager
 		tile_index = (tile_index+1)%chunk_size
 		if tile_index == 0:
 			await get_tree().process_frame
-		
-		newTile.initialize(hextile)
-		add_child(newTile)
-		
-		newTile.inputManager = %InputManager
-	pass
-	var r = randi_range(0, len(mapTiles))
-	var ht = HexVector.fromCubePos(Vector2(mapTiles[r][0],mapTiles[r][1]))
+
+	var ht = HexVector.fromCubePos(map.map.keys()[0])
 	var h: HexTile = map.get_hex(ht)
 	var hex = h.hex
 	var n: Array[int] = [BattleController.Command.SUMMON, hex.data.hex_pos.q, hex.data.hex_pos.r, hex.data.height, 1, -2, 2]
@@ -104,7 +83,6 @@ func processInput(command: Array[int]):
 			var tile: HexTile = map.get_hex(HexVector.fromCubePos(Vector2(command[1],command[2])))
 			tile.hex.storedUnits.push_back(summonedUnit)
 			add_child(summonedUnit)
-			var r = randi_range(0, len(mapTiles))
 			pass
 		Command.SCRIPT:
 			# [Command.SCRIPT, user, script id, data[0], data[1], data[2], ...]

@@ -20,37 +20,50 @@ func _input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	spd = base_spd*clamp(sqrt(abs(targetPosition.y)), 1, INF)
 	## controls camera movement
-	mouse3Down = Input.is_action_pressed("mouse3Down")
-	if Input.is_action_pressed("camera_panRight"):
-		targetPosition.x += cos(rotation.y) * delta * spd
-		targetPosition.z += -sin(rotation.y) * delta * spd
-		pass
+	if Input.is_action_just_pressed("cancel_action"):
+		get_viewport().gui_release_focus()
+	
+	var focus = get_viewport().gui_get_focus_owner()
+	if !(focus is TextEdit or focus is LineEdit):
+		mouse3Down = Input.is_action_pressed("mouse3Down")
+		if Input.is_action_pressed("camera_panRight"):
+			targetPosition.x += cos(rotation.y) * delta * spd
+			targetPosition.z += -sin(rotation.y) * delta * spd
+			pass
+			
+		if Input.is_action_pressed("camera_panLeft"):
+			targetPosition.x += -cos(rotation.y) * delta * spd
+			targetPosition.z += sin(rotation.y) * delta * spd
+			pass
+			
+		if Input.is_action_pressed("camera_panUp"):
+			targetPosition.x += -sin(rotation.y) * delta * spd
+			targetPosition.z += -cos(rotation.y) * delta * spd
+			pass
+			
+		if Input.is_action_pressed("camera_panDown"):
+			targetPosition.x += sin(rotation.y) * delta * spd
+			targetPosition.z += cos(rotation.y) * delta * spd
+			pass
 		
-	if Input.is_action_pressed("camera_panLeft"):
-		targetPosition.x += -cos(rotation.y) * delta * spd
-		targetPosition.z += sin(rotation.y) * delta * spd
-		pass
+		if Input.is_action_pressed("camera_panZ-"):
+			targetPosition.y += -delta * spd
+			pass
 		
-	if Input.is_action_pressed("camera_panUp"):
-		targetPosition.x += -sin(rotation.y) * delta * spd
-		targetPosition.z += -cos(rotation.y) * delta * spd
-		pass
-		
-	if Input.is_action_pressed("camera_panDown"):
-		targetPosition.x += sin(rotation.y) * delta * spd
-		targetPosition.z += cos(rotation.y) * delta * spd
-		pass
-		
-	if Input.is_action_just_pressed("mouseWheelUp") and !Input.is_action_pressed("aux"):
-		#print("a")
-		targetPosition -= basis.z
-		if targetPosition.y < 0.5: targetPosition.y = 0.5
-		pass
-		
-	if Input.is_action_just_pressed("mouseWheelDown") and !Input.is_action_pressed("aux"):
-		#print("a")
-		targetPosition += basis.z
-		if targetPosition.y < 0.5: targetPosition.y = 0.5
-		pass
+		if Input.is_action_pressed("camera_panZ+"):
+			targetPosition.y += delta * spd
+			pass
+			
+		if Input.is_action_just_pressed("mouseWheelUp") and !Input.is_action_pressed("aux"):
+			#print("a")
+			targetPosition -= basis.z
+			if targetPosition.y < 0.5: targetPosition.y = 0.5
+			pass
+			
+		if Input.is_action_just_pressed("mouseWheelDown") and !Input.is_action_pressed("aux"):
+			#print("a")
+			targetPosition += basis.z
+			if targetPosition.y < 0.5: targetPosition.y = 0.5
+			pass
 	
 	position = lerp(position, targetPosition, delta*8)

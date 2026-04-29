@@ -8,6 +8,7 @@ static var singleton: MapCreator
 @export var tileGrid: GridContainer
 @export var data: HexData
 @export var cam: Camera3D
+@export var outputText: TextEdit
 
 var lastMousePos: Vector2
 var hex_inst #last known intersection between mouse raycast and height plane
@@ -21,7 +22,7 @@ class GhostHex:
 	var ghost_hex_targ: Vector2
 	
 	func _init(activeHex: HexTile) -> void:
-		ghost_hex = MapCreator.singleton.spawn_hex(MapCreator.singleton.data.get_data(0), -1)
+		ghost_hex = MapCreator.singleton.spawn_hex(MapCreator.singleton.data.get_data(0), -1, false)
 		ghost_hex.collider.disabled = true
 		ghost_hex_pos = HexVector.toCubePos(activeHex.hex_pos)
 	
@@ -133,12 +134,20 @@ func create_hex_at_pos(pos: Vector2, height: int, data_id: int):
 	hextile.height = height
 	place_hex(hextile)
 
+func generate_from_map() -> void:
+	for hex in hexmap.map.values():
+		register_hex(hex)
+
 func place_hex(to_place: HexTile) -> void:
+	var cubePos = HexVector.toCubePos(to_place.hex_pos)
+	hexmap.map[cubePos] = to_place
+	register_hex(to_place)
+
+##place_hex without adding it to hex map
+func register_hex(to_place: HexTile): 
 	var cubePos = HexVector.toCubePos(to_place.hex_pos)
 	to_place.id = MAX_HEX_ID
 	MAX_HEX_ID += 1
-	
-	hexmap.map[cubePos] = to_place
 	id_lookup[cubePos] = to_place.id
 
 	spawn_hex(to_place, to_place.id)
@@ -146,16 +155,19 @@ func place_hex(to_place: HexTile) -> void:
 func remove_hex(to_remove: HexTile) -> void:
 	var cubePos = HexVector.toCubePos(to_remove.hex_pos)
 	hexmap.map.erase(cubePos)
+	id_lookup.erase(cubePos)
+	hextile_lookup.erase(cubePos)
 	
 	despawn_hex(to_remove.id)
 
-func spawn_hex(hextile: HexTile, id: int) -> Hex:
+func spawn_hex(hextile: HexTile, id: int, add_to_lookup = true) -> Hex:
 	var cPos = HexVector.toCubePos(hextile.hex_pos)
 	var coordinate = [cPos.x, cPos.y]
 	
 	var newTile: Hex = HexTilePrefab.instantiate()
 	
-	hextile_lookup[id] = newTile
+	if add_to_lookup:
+		hextile_lookup[id] = newTile
 	
 	newTile.initialize(hextile)
 	newTile.forceTint(1)
@@ -180,10 +192,13 @@ func valid_placement(hexpos: HexVector):
 	return true
 
 
-
+func set_selection_mode(mode: PlacementData.SelectionMode):
+	placementData.selectionMode = mode
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if Input.is_action_just_pressed("cancel_action"):
+		set_selection_mode(PlacementData.SelectionMode.NONE)
 	#change height
 	if inMenu and placementData.selectionMode == PlacementData.SelectionMode.HEX:
 		#set visibility
@@ -256,6 +271,12 @@ func _input(event) -> void:
 				place_hex(placementData.current_hex.clone())
 	pass # Replace with function body.
 
+func clear() -> void:
+	for hex in hextile_lookup.values():
+		remove_hex(hex.data)
+	hextile_lookup = {}
+	id_lookup = {}
+	MAX_HEX_ID = 0
 
 func _on_tilemenu_mouse_entered() -> void:
 	inMenu = true
@@ -263,3 +284,14 @@ func _on_tilemenu_mouse_entered() -> void:
 
 func _on_tilemenu_mouse_exited() -> void:
 	inMenu = false
+
+
+func _on_load() -> void:
+	clear()
+	hexmap.construct_using_string_form(outputText.text, data)
+	generate_from_map()
+		
+
+
+func _on_save() -> void:
+	outputText.text = hexmap.string_form()

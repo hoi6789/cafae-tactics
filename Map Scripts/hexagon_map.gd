@@ -13,6 +13,13 @@ var floodfills: Dictionary[Vector2i, Floodfill] = {}
 func _init():
 	map = {}
 
+func reset():
+	map = {}
+	hex_list = {}
+	solutions = {}
+	djikstra_solutions = {}
+	floodfills = {}
+
 func force_generate(cubePositions: Array):
 	var current_id = 0
 	for pos: Vector2 in cubePositions:
@@ -30,10 +37,13 @@ func force_generate_with_terrain_types(cubePositions: Array):
 		var h = 5*pos3[2]
 		if h <= 0:
 			h *= 5
-		var hex =  HexTile.new(current_id, HexVector.fromCubePos(pos), round(h), HexTile.TerrainType.values()[(round(pos3[3]))])
+		var dI = (round(pos3[3]))
+		var hex =  HexTile.new(current_id, HexVector.fromCubePos(pos), round(h), HexTile.TerrainType.values()[dI])
+		hex.data_index = dI
 		map[pos] = hex
 		hex_list[current_id] = hex
 		current_id += 1
+	print(string_form())
 	rebuild_graph()
 	
 func snap_hex(hex_vec: HexVector) -> HexVector:
@@ -269,3 +279,100 @@ func getFloodedRange(from: HexTile, flood_range: int) -> Array[HexTile]:
 	for id in id_arr:
 		arr.push_back(hex_list[id])
 	return arr
+
+#data management
+func hex_string(h: HexTile) -> String:
+	var s: String = ""
+	s += str(int(h.data_index)) + "," + str(int(h.height))
+	return s
+
+func hex_from_string(s: String, data: HexData) -> HexTile:
+	var hex_data = s.split(",")
+	
+	var ind = int(hex_data[0])
+	var height = int(hex_data[1])
+	
+	var hex: HexTile = data.get_data(ind)
+	hex.height = height
+	return hex
+
+func string_form() -> String:
+	var bounds_minX = INF
+	var bounds_maxX = -INF
+	var bounds_minY = INF
+	var bounds_maxY = -INF
+	
+	for pos in map:
+		if pos.x < bounds_minX:
+			bounds_minX = pos.x
+		if pos.x > bounds_maxX:
+			bounds_maxX = pos.x
+		if pos.y < bounds_minY:
+			bounds_minY = pos.y
+		if pos.y > bounds_maxY:
+			bounds_maxY = pos.y
+	var header = str(bounds_minX)+","+str(bounds_maxX)+" "+str(bounds_minY)+","+str(bounds_maxY)
+	var form = header+"\n"
+	for x in range(bounds_minX, bounds_maxX+1):
+		for y in range(bounds_minY, bounds_maxY+1):
+			var subpos = Vector2(x, y)
+			if subpos in map:
+				form += hex_string(map[subpos])+"|"
+			else:
+				form += "x|"
+			
+	return form
+
+func construct_using_string_form(form: String, hex_atlas: HexData) -> void:
+	reset()
+	var lines = form.split("\n")
+	
+	var header = lines[0]
+	var map_data = lines[1].split("|")
+	
+	var bounds = header.split(" ")
+	var xBounds = bounds[0].split(",")
+	var yBounds = bounds[1].split(",")
+	
+	var bounds_minX = int(xBounds[0])
+	var bounds_maxX = int(xBounds[1])
+	var bounds_minY = int(yBounds[0])
+	var bounds_maxY = int(yBounds[1])
+	
+	var data_index = 0
+	var current_id = 0
+	
+	for x in range(bounds_minX, bounds_maxX+1):
+		for y in range(bounds_minY, bounds_maxY+1):
+			var dat = map_data[data_index]
+			data_index += 1
+			
+			if dat == "x" or dat == "":
+				continue
+			
+			var hex_str = dat
+			var subpos = Vector2(x, y)
+			
+			var hex: HexTile = hex_from_string(hex_str, hex_atlas)
+			hex.hex_pos = HexVector.fromCubePos(subpos)
+			hex.id = current_id
+			
+			map[subpos] = hex
+			hex_list[current_id] = hex
+			
+			current_id += 1
+	
+	rebuild_graph()
+
+#map instantiation
+func spawn_hex(hextile: HexTile, prefab: PackedScene, parent: Node) -> Hex:
+	var cPos = HexVector.toCubePos(hextile.hex_pos)
+	var coordinate = [cPos.x, cPos.y]
+	
+	var newTile: Hex = prefab.instantiate()
+	
+	newTile.initialize(hextile)
+
+	parent.add_child(newTile)
+	
+	return newTile

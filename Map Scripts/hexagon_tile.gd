@@ -5,6 +5,7 @@ const JUMP_COST_MOD = 0
 const JUMP_COST_BIAS = 0#0.5
 
 var id = 0
+var data_index = 0
 
 ## coordinates of the hex in cube space (q + r + s = 0)
 var hex_pos: HexVector
@@ -28,7 +29,9 @@ func _init(_id: int, _pos: HexVector, _height: int, _type: TerrainType, _hex: He
 	name = _name
 
 func clone() -> HexTile:
-	return HexTile.new(id, hex_pos, height, type, hex, name)
+	var cl = HexTile.new(id, hex_pos, height, type, hex, name)
+	cl.data_index = data_index
+	return cl
 
 static func getTileTypeMovementCost(_type: HexTile.TerrainType) -> int:
 	match _type:
