@@ -1,18 +1,28 @@
-[gd_scene load_steps=5 format=3 uid="uid://cekxslbqfkwii"]
+[gd_scene load_steps=9 format=3 uid="uid://cekxslbqfkwii"]
 
 [ext_resource type="Script" uid="uid://dlsio6usk6vfy" path="res://Map Scripts/map_creation_manager.gd" id="1_fp0w0"]
 [ext_resource type="PackedScene" uid="uid://ccmqueenj03hf" path="res://Prefabs/hex_tile.tscn" id="2_jfcuv"]
 [ext_resource type="Resource" uid="uid://dyu3k6a8ajr5w" path="res://Resources/Hex_Data.tres" id="3_m8hym"]
 [ext_resource type="Script" uid="uid://bgnogf41mi852" path="res://Scripts/camera_3d.gd" id="4_jfcuv"]
+[ext_resource type="PackedScene" uid="uid://b5gce3re2p4wx" path="res://Prefabs/tile_icon.tscn" id="5_m8hym"]
+[ext_resource type="Script" uid="uid://badgcn3n4cs12" path="res://Map Scripts/single_mode_player.gd" id="6_cnvfd"]
+[ext_resource type="AudioStream" uid="uid://bkeusrkojlxda" path="res://Music/Cruising - Xploshi - Topic (128k).mp3" id="7_wmhan"]
 
-[node name="MapCreator" type="Node3D" node_paths=PackedStringArray("cam")]
+[sub_resource type="Environment" id="Environment_jfcuv"]
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 2.04
+
+[node name="MapCreator" type="Node3D" node_paths=PackedStringArray("tileGrid", "cam")]
 script = ExtResource("1_fp0w0")
 HexTilePrefab = ExtResource("2_jfcuv")
+TileIconPrefab = ExtResource("5_m8hym")
+tileGrid = NodePath("UI/Panel/GridContainer")
 data = ExtResource("3_m8hym")
 cam = NodePath("Camera3D")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.960342, 0.278823, 0, -0.278823, 0.960342, 0, 1.69987, 2.42782)
+environment = SubResource("Environment_jfcuv")
 current = true
 script = ExtResource("4_jfcuv")
 
@@ -23,6 +33,17 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
+
+[node name="Main Panel" type="Panel" parent="UI"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
 
 [node name="Control Instructions" type="RichTextLabel" parent="UI"]
 layout_mode = 1
@@ -32,8 +53,46 @@ anchor_bottom = 1.0
 offset_top = -123.0
 offset_right = 460.0
 grow_vertical = 0
+mouse_filter = 1
 text = "Left Click: Place Tile
 Ctrl + Mouse Wheel: Change Tile Height
 
 WASD: Move Camera
 Middle Click: Rotate Camera"
+
+[node name="Panel" type="Panel" parent="UI"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -200.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="GridContainer" type="GridContainer" parent="UI/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 4
+
+[node name="Audio Player" type="Node" parent="." node_paths=PackedStringArray("player")]
+script = ExtResource("6_cnvfd")
+player = NodePath("AudioStreamPlayer")
+music = Array[AudioStream]([ExtResource("7_wmhan")])
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Audio Player"]
+volume_db = -20.0
+
+[connection signal="mouse_entered" from="UI/Main Panel" to="." method="_on_tilemenu_mouse_entered"]
+[connection signal="mouse_exited" from="UI/Main Panel" to="." method="_on_tilemenu_mouse_exited"]

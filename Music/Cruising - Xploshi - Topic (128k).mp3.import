@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bkeusrkojlxda"
+path="res://.godot/imported/Cruising - Xploshi - Topic (128k).mp3-325f11b3e73794e8f37423936f361622.mp3str"
+
+[deps]
+
+source_file="res://Music/Cruising - Xploshi - Topic (128k).mp3"
+dest_files=["res://.godot/imported/Cruising - Xploshi - Topic (128k).mp3-325f11b3e73794e8f37423936f361622.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

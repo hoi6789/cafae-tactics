@@ -58,9 +58,10 @@ billboard_mode = 1
 material = SubResource("StandardMaterial3D_rbisy")
 size = Vector3(0.1, 0.1, 0.1)
 
-[node name="HexTile" type="StaticBody3D"]
+[node name="HexTile" type="StaticBody3D" node_paths=PackedStringArray("collider")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -100, 0, 1, -4.371139e-06, 0, 0, 0)
 script = ExtResource("1_2crfn")
+collider = NodePath("CollisionPolygon3D")
 metadata/_edit_group_ = true
 
 [node name="CollisionPolygon3D" type="CollisionPolygon3D" parent="."]

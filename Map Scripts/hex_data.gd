@@ -5,7 +5,7 @@ extends Resource
 
 
 func fromDataElement(ele: HexDataElement) -> HexTile:
-	return HexTile.new(0, HexVector.fromCubePos(Vector2(0, 0)), 0, ele.type)
+	return HexTile.new(0, HexVector.fromCubePos(Vector2(0, 0)), 0, ele.type, null, ele.name)
 
 func get_data(ind: int) -> HexTile:
 	return fromDataElement(data_list[ind])

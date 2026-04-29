@@ -1,6 +1,8 @@
 extends StaticBody3D
 class_name Hex
 
+@export var collider: CollisionPolygon3D
+
 const TILE_HEIGHT = 0.2
 
 ## tile data
@@ -128,7 +130,6 @@ func setPosition(cubePos: Vector2):
 	position = getWorldPosition()
 	if HexMath.FLAT_HEXES:
 		rotation.y = PI/2
-	print(position)
 	pass
 
 func varyColour(col: Color, hue_deviation = 0.1):
@@ -160,11 +161,15 @@ func _on_mouse_exited() -> void:
 	pass # Replace with function body.
 
 
+@warning_ignore("unused_parameter")
 func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
 		if validIM() and event.button_index == 1 and event.pressed == true and inputManager.selectorState == InputManager.InputStates.HEXES:
 			inputManager.chooseHex(self)
 			_on_mouse_exited()
 			inputManager.setInputState(InputManager.InputStates.PENDING)
+			pass
+		if inMapEditor() and event.button_index == 2 and event.pressed == true:
+			MapCreator.singleton.remove_hex(data)
 			pass
 	pass # Replace with function body.

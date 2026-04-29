@@ -9,6 +9,7 @@ var id = 0
 ## coordinates of the hex in cube space (q + r + s = 0)
 var hex_pos: HexVector
 var height: int = 0
+var name: String = "Null"
  
 var hex: Hex
 enum TerrainType
@@ -18,15 +19,16 @@ enum TerrainType
 }
 var type: TerrainType = TerrainType.BASIC
 
-func _init(_id: int, _pos: HexVector, _height: int, _type: TerrainType, _hex: Hex = null):
+func _init(_id: int, _pos: HexVector, _height: int, _type: TerrainType, _hex: Hex = null, _name: String = "Null"):
 	type = _type
 	hex_pos = _pos
 	height = _height
 	id = _id
 	hex = _hex
+	name = _name
 
 func clone() -> HexTile:
-	return HexTile.new(id, hex_pos, height, type, hex)
+	return HexTile.new(id, hex_pos, height, type, hex, name)
 
 static func getTileTypeMovementCost(_type: HexTile.TerrainType) -> int:
 	match _type:
