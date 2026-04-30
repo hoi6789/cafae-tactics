@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://ccmqueenj03hf"]
+[gd_scene load_steps=17 format=3 uid="uid://ccmqueenj03hf"]
 
 [ext_resource type="Script" uid="uid://dvlx1svnevvvp" path="res://Scripts/hex_tile.gd" id="1_2crfn"]
 [ext_resource type="Shader" uid="uid://dccvicwqy06ru" path="res://Shaders/outline.gdshader" id="2_pmlg5"]
@@ -27,11 +27,18 @@ shader_parameter/depth_threshold = 0.05
 shader_parameter/depth_artifact_correction_coef = 2.0
 shader_parameter/outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_xc77w"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_f3qfx"]
+noise = SubResource("FastNoiseLite_xc77w")
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f3qfx"]
 render_priority = 0
 next_pass = SubResource("ShaderMaterial_i0ob0")
 shader = ExtResource("5_xc77w")
+shader_parameter/noise = SubResource("NoiseTexture2D_f3qfx")
 shader_parameter/color = Color(0.9372549, 0, 0.23529412, 1)
+shader_parameter/active = false
 
 [sub_resource type="Image" id="Image_i0ob0"]
 data = {

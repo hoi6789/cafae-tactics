@@ -116,11 +116,11 @@ func resetColour():
 func setColour(palette: HexTile.TerrainType):
 	match palette:
 		HexTile.TerrainType.ROUGH: 
-			baseColour = varyColour(Color(0.857, 0.338, 0.071, 0.5))
+			baseColour = varyColour(Color(0.934, 0.586, 0.254, 0.5))
 		HexTile.TerrainType.WATER:
 			baseColour = varyColour(Color(0.26, 0.675, 0.801, 0.5),0.1, 0.05)
 		_:
-			baseColour = varyColour(Color(0.72, 0.72, 0.72, 0.50))
+			baseColour = varyColour(Color(0.41, 0.842, 0.0, 0.5))
 		
 	surfMaterial.set_shader_parameter("color", baseColour*getTintFactor());
 	wallMaterial.albedo_color = baseColour*getTintFactor();

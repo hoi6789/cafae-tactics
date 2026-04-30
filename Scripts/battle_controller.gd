@@ -145,6 +145,8 @@ func updateTeamSight(teamID: int):
 	
 	if teamID == playerTeam:
 		for tile: HexTile in teamSightTiles[teamID]:
+			if tile == null:
+				continue
 			tile.hex.setSight(false)
 	
 	teamSightTiles[teamID] = await getTeamSight(teamID)
