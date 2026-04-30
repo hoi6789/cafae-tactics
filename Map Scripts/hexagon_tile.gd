@@ -16,7 +16,8 @@ var hex: Hex
 enum TerrainType
 {
 	BASIC,
-	ROUGH
+	ROUGH,
+	WATER
 }
 var type: TerrainType = TerrainType.BASIC
 
@@ -37,8 +38,18 @@ static func getTileTypeMovementCost(_type: HexTile.TerrainType) -> int:
 	match _type:
 		HexTile.TerrainType.BASIC: return 1
 		HexTile.TerrainType.ROUGH: return 2
+		HexTile.TerrainType.WATER: return 500
 		_: return 1
 	return 0
+
+static func typeIsLiquid(_type: HexTile.TerrainType) -> int:
+	match _type:
+		HexTile.TerrainType.WATER: return true
+		_: return false
+	return false
+
+func isLiquid():
+	return typeIsLiquid(type)
 
 func getMovementCost() -> float:
 	return getTileTypeMovementCost(type)

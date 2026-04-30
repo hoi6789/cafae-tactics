@@ -2,6 +2,8 @@ extends StaticBody3D
 class_name Hex
 
 @export var collider: CollisionPolygon3D
+@export var surface: MeshInstance3D
+@export var walls: MeshInstance3D
 
 const TILE_HEIGHT = 0.2
 
@@ -12,6 +14,7 @@ var storedUnits = []
 
 var baseColour: Color
 var surfMaterial: Material
+var wallMaterial: Material
 var surfOverlay: Material
 var overlayColours: Array[Color]
 const FOW_TINT: float = 0.2
@@ -35,11 +38,14 @@ func validIM() -> bool:
 
 func initialize(_data: HexTile):
 	## Initialization function to setup properties of a hex
-	surfMaterial = $CollisionPolygon3D/MeshInstance3D.get_surface_override_material(0).duplicate(true)
+	surfMaterial = surface.get_surface_override_material(0).duplicate(true)
+	wallMaterial = walls.get_surface_override_material(0).duplicate(true)
 	surfOverlay = surfMaterial.next_pass.next_pass
-	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
+	surface.set_surface_override_material(0, surfMaterial)
+	walls.set_surface_override_material(0, wallMaterial)
 	data = _data
 	data.hex = self
+	surfMaterial.set_shader_parameter("active", data.isLiquid()) 
 	setColour(data.type)
 	setPosition(HexVector.toCubePos(data.hex_pos))
 	pass
@@ -99,22 +105,25 @@ func getTintFactor():
 	return tint
 
 func resetColour():
-	surfOverlay.albedo_color = Color(0, 0, 0, 0)
-	if rangeHighlighted: overlayBlend(Color.GOLD, 0.5)
-	if highlighted: overlayBlend(Color.CADET_BLUE, 0.5)
+	surfMaterial.set_shader_parameter("color", baseColour*getTintFactor());
 	if hovered: overlayBlend(Color.GREEN, 0.5)
+	elif highlighted: overlayBlend(Color.CADET_BLUE, 0.5)
+	elif rangeHighlighted: overlayBlend(Color.GOLD, 0.5)
 	else:
-		surfMaterial.albedo_color = baseColour*getTintFactor()
+		surfMaterial.set_shader_parameter("color", baseColour*getTintFactor());
 
 func setColour(palette: HexTile.TerrainType):
 	match palette:
 		HexTile.TerrainType.ROUGH: 
 			baseColour = varyColour(Color(0.857, 0.338, 0.071, 0.5))
+		HexTile.TerrainType.WATER:
+			baseColour = varyColour(Color(0.26, 0.675, 0.801, 0.5),0.1, 0.05)
 		_:
 			baseColour = varyColour(Color(0.72, 0.72, 0.72, 0.50))
 		
-	surfMaterial.albedo_color = baseColour*getTintFactor()
-	$CollisionPolygon3D/MeshInstance3D.set_surface_override_material(0, surfMaterial)
+	surfMaterial.set_shader_parameter("color", baseColour*getTintFactor());
+	wallMaterial.albedo_color = baseColour*getTintFactor();
+	surface.set_surface_override_material(0, surfMaterial)
 	pass
 
 func getWorldPosition() -> Vector3:
@@ -132,8 +141,7 @@ func setPosition(cubePos: Vector2):
 		rotation.y = PI/2
 	pass
 
-func varyColour(col: Color, hue_deviation = 0.1):
-	var variance = 0.2
+func varyColour(col: Color, hue_deviation = 0.1, variance = 0.2):
 	var base = randf()
 	col.r = col.r + ((clamp(base + hue_deviation*randf(), 0, 1) * variance) - (variance / 2))
 	col.g = col.g + ((clamp(base + hue_deviation*randf(), 0, 1) * variance) - (variance / 2))
@@ -142,7 +150,8 @@ func varyColour(col: Color, hue_deviation = 0.1):
 
 func overlayBlend(col: Color, alpha: float):
 	col.a = alpha
-	surfOverlay.albedo_color = surfOverlay.albedo_color.blend(col)
+	print(surfMaterial.get_shader_parameter("color").blend(col))
+	surfMaterial.set_shader_parameter("color", surfMaterial.get_shader_parameter("color").blend(col));
 
 func _on_mouse_entered() -> void:
 	if validIM() and inputManager.selectorState == InputManager.InputStates.HEXES:

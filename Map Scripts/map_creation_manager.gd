@@ -51,9 +51,8 @@ class PlacementData:
 		var new_hex: HexTile = MapCreator.singleton.data.get_data(id)
 		new_hex.height = current_hex.height
 		new_hex.hex_pos = current_hex.hex_pos
-		
-		ghost.ghost_hex.data = new_hex.clone()
-		ghost.ghost_hex.setColour(ghost.ghost_hex.data.type)
+
+		ghost.ghost_hex.initialize(new_hex.clone())
 		
 		current_hex = new_hex
 	

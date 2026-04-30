@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="HexDataElement" load_steps=2 format=3 uid="uid://bmoqf1cl4ao0m"]
+
+[ext_resource type="Script" uid="uid://bgo6n1tfoefxb" path="res://Map Scripts/hex_element.gd" id="1_l2orv"]
+
+[resource]
+script = ExtResource("1_l2orv")
+type = 2
+name = "Lake"
+metadata/_custom_type_script = "uid://bgo6n1tfoefxb"
