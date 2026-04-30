@@ -106,6 +106,7 @@ func getTintFactor():
 
 func resetColour():
 	surfMaterial.set_shader_parameter("color", baseColour*getTintFactor());
+	wallMaterial.albedo_color = baseColour*getTintFactor();
 	if hovered: overlayBlend(Color.GREEN, 0.5)
 	elif highlighted: overlayBlend(Color.CADET_BLUE, 0.5)
 	elif rangeHighlighted: overlayBlend(Color.GOLD, 0.5)
