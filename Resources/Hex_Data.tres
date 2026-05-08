@@ -1,12 +1,15 @@
-[gd_resource type="Resource" script_class="HexData" load_steps=6 format=3 uid="uid://dyu3k6a8ajr5w"]
+[gd_resource type="Resource" script_class="HexData" load_steps=9 format=3 uid="uid://dyu3k6a8ajr5w"]
 
 [ext_resource type="Script" uid="uid://bgo6n1tfoefxb" path="res://Map Scripts/hex_element.gd" id="1_nrlxy"]
 [ext_resource type="Resource" uid="uid://c2iyhb05uaxvl" path="res://Resources/Tiles/Tile_Basic.tres" id="2_nrlxy"]
 [ext_resource type="Script" uid="uid://benil1ikfi4im" path="res://Map Scripts/hex_data.gd" id="2_t47qr"]
 [ext_resource type="Resource" uid="uid://d06mvpi1d7chf" path="res://Resources/Tiles/Tile_Rough.tres" id="3_wu8ot"]
 [ext_resource type="Resource" uid="uid://bmoqf1cl4ao0m" path="res://Resources/Tiles/Tile_Water.tres" id="4_wu8ot"]
+[ext_resource type="Resource" uid="uid://2b8o4q8xu2f3" path="res://Resources/Tiles/Tile_Mud.tres" id="5_nwayq"]
+[ext_resource type="Resource" uid="uid://bs8r2n3c0oh6x" path="res://Resources/Tiles/Tile_Mountain.tres" id="6_neg5u"]
+[ext_resource type="Resource" uid="uid://c6rbqjrb6syxm" path="res://Resources/Tiles/Tile_Tunnel.tres" id="7_e78sg"]
 
 [resource]
 script = ExtResource("2_t47qr")
-data_list = Array[ExtResource("1_nrlxy")]([ExtResource("2_nrlxy"), ExtResource("3_wu8ot"), ExtResource("4_wu8ot")])
+data_list = Array[ExtResource("1_nrlxy")]([ExtResource("2_nrlxy"), ExtResource("3_wu8ot"), ExtResource("4_wu8ot"), ExtResource("5_nwayq"), ExtResource("6_neg5u"), ExtResource("7_e78sg")])
 metadata/_custom_type_script = "uid://benil1ikfi4im"

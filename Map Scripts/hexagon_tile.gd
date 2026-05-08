@@ -17,7 +17,10 @@ enum TerrainType
 {
 	BASIC,
 	ROUGH,
-	WATER
+	WATER,
+	MUD,
+	TUNNEL,
+	MOUNTAIN
 }
 var type: TerrainType = TerrainType.BASIC
 
@@ -37,7 +40,10 @@ func clone() -> HexTile:
 static func getTileTypeMovementCost(_type: HexTile.TerrainType) -> int:
 	match _type:
 		HexTile.TerrainType.BASIC: return 1
+		HexTile.TerrainType.MOUNTAIN: return 1
+		HexTile.TerrainType.TUNNEL: return 1
 		HexTile.TerrainType.ROUGH: return 2
+		HexTile.TerrainType.MUD: return 3
 		HexTile.TerrainType.WATER: return 500
 		_: return 1
 	return 0

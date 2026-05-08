@@ -115,6 +115,12 @@ func resetColour():
 
 func setColour(palette: HexTile.TerrainType):
 	match palette:
+		HexTile.TerrainType.MOUNTAIN: 
+			baseColour = varyColour(Color(0.585, 0.585, 0.585, 0.502))
+		HexTile.TerrainType.MUD: 
+			baseColour = varyColour(Color(0.226, 0.097, 0.0, 0.5))
+		HexTile.TerrainType.TUNNEL: 
+			baseColour = varyColour(Color(0.844, 0.611, 0.485, 0.5))
 		HexTile.TerrainType.ROUGH: 
 			baseColour = varyColour(Color(0.934, 0.586, 0.254, 0.5))
 		HexTile.TerrainType.WATER:
