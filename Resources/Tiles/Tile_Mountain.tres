@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="HexDataElement" load_steps=2 format=3 uid="uid://bs8r2n3c0oh6x"]
+
+[ext_resource type="Script" uid="uid://bgo6n1tfoefxb" path="res://Map Scripts/hex_element.gd" id="1_t2n1s"]
+
+[resource]
+script = ExtResource("1_t2n1s")
+type = 5
+name = "Mountain"
+metadata/_custom_type_script = "uid://bgo6n1tfoefxb"
