@@ -65,7 +65,6 @@ func get_hex_in_shape(shape: Array[HexVector], sight_point: HexTile, origin: Hex
 	var max_dist: float = 0
 	if origin == null:
 		origin = snap_hex(HexMath.average(shape))
-	var cart_origin = HexMath.axis_to_2D(origin)
 		
 	for vert in shape:
 		max_dist = max(max_dist, HexVector.dist(origin, vert))
@@ -88,9 +87,12 @@ func get_hex_in_shape(shape: Array[HexVector], sight_point: HexTile, origin: Hex
 	for hex in hexes:
 		if hex == null or blocksLOS(hex, sight_point) or !inLOSAngle(hex, sight_point):
 			continue
-		while len(threads) >= MAX_THREADS:
-			threads[0].wait_to_finish()
-			threads.remove_at(0)
+		for i in len(threads):
+			if len(threads) < MAX_THREADS:
+				break
+			if len(threads) > 0:
+				threads[0].wait_to_finish()
+				threads.remove_at(0)
 		var copy_arr: Array[Vector2] = []
 		copy_arr.assign(cart_shape)
 		
@@ -205,7 +207,6 @@ func raycast(origin: HexVector, angle: float, distance: float, resolution: float
 	var origin_hex = get_hex(origin)
 	var current_hex: HexTile = origin_hex
 	var last_found_hex = origin_hex
-	var arr: Array[HexTile] = [current_hex]
 	
 	var current_pos: HexVector = origin
 	
@@ -367,7 +368,6 @@ func construct_using_string_form(form: String, hex_atlas: HexData) -> void:
 #map instantiation
 func spawn_hex(hextile: HexTile, prefab: PackedScene, parent: Node) -> Hex:
 	var cPos = HexVector.toCubePos(hextile.hex_pos)
-	var coordinate = [cPos.x, cPos.y]
 	
 	var newTile: Hex = prefab.instantiate()
 	

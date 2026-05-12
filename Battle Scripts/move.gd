@@ -6,6 +6,8 @@ func _init() -> void:
 	windup = 1
 
 func _transformVirtualPosition(manager: InputManager, p_in: HexVector) -> HexVector:
+	if len(data) == 0:
+		return p_in
 	return manager.controller.map.hex_list[data[-1]].hex_pos.copy()
 
 func selection_logic(manager: InputManager):
