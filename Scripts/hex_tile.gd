@@ -10,7 +10,7 @@ const TILE_HEIGHT = 0.2
 ## tile data
 var data: HexTile 
 ## 
-var storedUnits = []
+var storedEntities = []
 
 var baseColour: Color
 var surfMaterial: Material

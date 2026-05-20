@@ -85,7 +85,7 @@ func get_hex_in_shape(shape: Array[HexVector], sight_point: HexTile, origin: Hex
 	t1 = Time.get_ticks_msec()
 	var MAX_THREADS = 16
 	for hex in hexes:
-		if hex == null or blocksLOS(hex, sight_point) or !inLOSAngle(hex, sight_point):
+		if hex == null or blocksLOS(hex, sight_point) or blocksLOSExclusive(hex, sight_point) or !inLOSAngle(hex, sight_point):
 			continue
 		for i in len(threads):
 			if len(threads) < MAX_THREADS:
@@ -162,7 +162,7 @@ func _runFloodfill(source: HexTile, dist: int):
 
 func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
 	var arr: Array[HexTile] = []
-	print("dist: ",dist)
+
 	for q in range(-dist, dist+1):
 		for r in range(-dist, dist+1):
 			if q == 0 and r == 0:
@@ -177,7 +177,28 @@ func getHexesInRange(origin: HexVector, dist: int) -> Array[HexTile]:
 				arr.push_back(hex)
 	return arr
 
-func getSight(origin: HexVector, dist: int) -> Array:
+func getSight(origin: HexVector, dist: int) -> Array[HexTile]:
+	var poly: Array[HexTile] = getHexesInRange(origin, dist) 
+	poly.push_back(get_hex(origin))
+	var seen: Array[HexTile] = []
+	
+	var originv2: Vector2 = HexMath.axis_to_2D(origin)
+	var origintile: HexTile = get_hex(origin)
+	
+	for hex in poly:
+		if blocksLOS(hex, origintile):
+			continue
+		var dir = HexMath.axis_to_2D(hex.hex_pos) - originv2
+		var angle = atan2(dir.y, dir.x)
+		
+		var rtile = raycast(origin, angle, float(dist), 0.1, hex)
+
+		if rtile.id != hex.id:
+			continue
+		seen.push_back(hex)
+	return seen
+
+func getSight_old(origin: HexVector, dist: int) -> Array:
 	var steps = 100
 	var poly: Array[HexVector] = []
 	for i in range(steps):
@@ -196,9 +217,19 @@ func inLOSAngle(tile: HexTile, origin: HexTile):
 
 func blocksLOS(tile: HexTile, origin: HexTile):
 	var dy_unscaled = (tile.height-origin.height)
+	
 	return dy_unscaled > 2
+	
+func blocksLOSExclusive(tile: HexTile, origin: HexTile):
+	print("en count:",len(tile.hex.storedEntities))
+	for obj in tile.hex.storedEntities:
+		var o = (obj as FieldEntity)
+		if !o.canSeeThrough() and o.hex_height >= origin.height:
+			return true
+	
+	return false
 
-func raycast(origin: HexVector, angle: float, distance: float, resolution: float = 0.1) -> HexTile:
+func raycast(origin: HexVector, angle: float, distance: float, resolution: float = 0.1, finalHex: HexTile = null) -> HexTile:
 	var t = 0
 	var cart_dir = Vector2(cos(angle),sin(angle))*HexMath.GLOBAL_OFFSET
 	
@@ -210,6 +241,10 @@ func raycast(origin: HexVector, angle: float, distance: float, resolution: float
 	
 	var current_pos: HexVector = origin
 	
+	#initial check
+	if finalHex != null and current_hex == finalHex:
+		return last_found_hex
+	
 	while t < distance:
 		var pos: Vector2 = cart_origin + cart_dir*t
 		var hex_pos: HexVector = HexMath._2D_to_axis(pos)
@@ -220,8 +255,11 @@ func raycast(origin: HexVector, angle: float, distance: float, resolution: float
 			current_hex = get_hex(grid_hex)
 			
 			if current_hex != null:
+				var double_last_found_hex = last_found_hex
 				last_found_hex = current_hex
-			if current_hex != null and blocksLOS(current_hex, origin_hex):
+				if finalHex != null and current_hex == finalHex:
+					break
+			if current_hex != null and (blocksLOS(current_hex, origin_hex) or blocksLOSExclusive(current_hex, origin_hex)):
 				break
 		t += resolution
 	return last_found_hex
@@ -351,8 +389,11 @@ func construct_using_string_form(form: String, hex_atlas: HexData) -> void:
 			if dat == "x" or dat == "":
 				continue
 			
-			var hex_str = dat
+			var hex_dat = dat.split(";")
+			
+			var hex_str = hex_dat[0]
 			var subpos = Vector2(x, y)
+			
 			
 			var hex: HexTile = hex_from_string(hex_str, hex_atlas)
 			hex.hex_pos = HexVector.fromCubePos(subpos)
@@ -364,6 +405,54 @@ func construct_using_string_form(form: String, hex_atlas: HexData) -> void:
 			current_id += 1
 	
 	rebuild_graph()
+
+func construct_entities_using_string_form(form: String, hex_atlas: HexData, controller: BattleController, inputManager: InputManager = null, root: Node3D = null, entityData: FieldEntityAtlas = null) -> void:
+	var lines = form.split("\n")
+	
+	var header = lines[0]
+	var map_data = lines[1].split("|")
+	
+	var bounds = header.split(" ")
+	var xBounds = bounds[0].split(",")
+	var yBounds = bounds[1].split(",")
+	
+	var bounds_minX = int(xBounds[0])
+	var bounds_maxX = int(xBounds[1])
+	var bounds_minY = int(yBounds[0])
+	var bounds_maxY = int(yBounds[1])
+	
+	var data_index = 0
+	var current_id = 0
+	
+	for x in range(bounds_minX, bounds_maxX+1):
+		for y in range(bounds_minY, bounds_maxY+1):
+			var dat = map_data[data_index]
+			data_index += 1
+			
+			if dat == "x" or dat == "":
+				continue
+			
+			var hex_dat = dat.split(";")
+			
+			var hex_str = hex_dat[0]
+			var subpos = Vector2(x, y)
+			
+			
+			var hex: HexTile = hex_from_string(hex_str, hex_atlas)
+			var hpos: HexVector = HexVector.fromCubePos(subpos)
+			hex.id = current_id
+			
+			if len(hex_dat) > 1:
+				var str_entity = hex_dat[1] 
+				##summons an entity at a target hex. params: entity type id, q of hex, r of hex, h of hex tile, controller of unit, team of unit
+				var entity_command: Array[int] = [BattleController.Command.SUMMON_ENTITY, int(str_entity), hpos.q, hpos.r, hpos.s, hex.height, -1, -1]
+				if controller != null:
+					controller.processInput(entity_command)
+				else:
+					var entity = BattleController.createEntity(entity_command, entityData, 0, self, inputManager)
+					root.add_child(entity)
+			
+			current_id += 1
 
 #map instantiation
 func spawn_hex(hextile: HexTile, prefab: PackedScene, parent: Node) -> Hex:

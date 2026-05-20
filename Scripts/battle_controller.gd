@@ -3,7 +3,8 @@ class_name BattleController
 
 ## Enum used as a command list
 enum Command {
-	SUMMON,
+	SUMMON_ENTITY,
+	SUMMON_UNIT,
 	SCRIPT
 }
 
@@ -11,11 +12,13 @@ enum Command {
 @export var LocHexTile: PackedScene
 @export var SceneUnit: PackedScene
 @export var hexData: HexData
+@export var entityData: FieldEntityAtlas
 @export_multiline var mapString: String
 
 signal projectilesGone
 
 static var playerTeam = 1
+static var teams = 10
 
 ## Map variables
 var map: HexagonMap = HexagonMap.new()
@@ -25,6 +28,7 @@ var highlightedPath: Array = []
 var highlightedRange: Array = []
 var scriptAtlas: ScriptAtlas
 var units: Array[BattleUnit] = []
+var entities: Array[FieldEntity] = []
 var projectiles: Array[Bullet] = []
 var activeInputs = 0
 
@@ -52,22 +56,49 @@ func _ready() -> void:
 		tile_index = (tile_index+1)%chunk_size
 		if tile_index == 0:
 			await get_tree().process_frame
+	map.construct_entities_using_string_form(mapString, hexData, self)
+	
+	for i in range(teams):
+		updateTeamSight(i)
 
 	var ht = HexVector.fromCubePos(map.map.keys()[0])
 	var h: HexTile = map.get_hex(ht)
 	var hex = h.hex
-	var n: Array[int] = [BattleController.Command.SUMMON, hex.data.hex_pos.q, hex.data.hex_pos.r, hex.data.height, 1, -2, 2]
+	var n: Array[int] = [BattleController.Command.SUMMON_UNIT, hex.data.hex_pos.q, hex.data.hex_pos.r, hex.data.height, 1, -2, 2]
 	InputManager.instance.addInput(n)
 
-	#processInput([Command.SUMMON, mapTiles[r][0], mapTiles[r][1], map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[r][0],mapTiles[r][1]))).height, 1, 1, 0])
+	#processInput([Command.SUMMON_UNIT, mapTiles[r][0], mapTiles[r][1], map.get_hex(HexVector.fromCubePos(Vector2(mapTiles[r][0],mapTiles[r][1]))).height, 1, 1, 0])
+
+func getEntity(unitID: int) -> FieldEntity:
+	return entities[unitID]
 
 func getUnit(unitID: int) -> BattleUnit:
-	return units[unitID]
+	return getEntity(unitID)
+
+static func createEntity(command: Array[int], entityData: FieldEntityAtlas, unitID: int, map: HexagonMap, inputManager: InputManager) -> FieldEntity:
+	var entity: FieldEntity = entityData.get_entity(command[1])
+	
+	entity.setLocation(HexVector.new(command[2],command[3],command[4]), command[5])
+	
+	entity.unitID = unitID
+	entity.playerID = command[6]
+	entity.teamID = command[7]
+	entity.inputManager = inputManager
+	
+	var tile: HexTile = map.get_hex(entity.hex_pos)
+	if tile != null:
+		print("storing: ", tile.hex.name)
+		tile.hex.storedEntities.push_back(entity)
+	return entity
 
 func processInput(command: Array[int]):
 	## Big function that runs the entire game. this is gonna be a big match case i'm so sorry
 	match command[0]:
-		Command.SUMMON: ## summons a unit at a target hex. params: q of hex, r of hex, h of hex tile, id of unit, controller of unit, team of unit
+		Command.SUMMON_ENTITY: ##summons an entity at a target hex. params: entity type id, q of hex, r of hex, h of hex tile, controller of unit, team of unit
+			var entity: FieldEntity = createEntity(command, entityData, entities.size(), map, %InputManager)
+			add_child(entity)
+			entities.push_back(entity)
+		Command.SUMMON_UNIT: ## summons a unit at a target hex. params: q of hex, r of hex, h of hex tile, id of unit, controller of unit, team of unit
 			var summonedRes: Resource
 			match command[4]:
 				1: summonedRes = load("res://Unit Scripts/testUnit1.tres")
@@ -78,11 +109,13 @@ func processInput(command: Array[int]):
 			summonedUnit.playerID = command[5]
 			summonedUnit.teamID = command[6]
 			summonedUnit.initialize(Vector2(command[1], command[2]), command[3], summonedRes, len(units))
-			summonedUnit.unitID = units.size()
+			summonedUnit.unitID = entities.size()
 			units.push_back(summonedUnit)
+			entities.push_back(summonedUnit)
 			var tile: HexTile = map.get_hex(HexVector.fromCubePos(Vector2(command[1],command[2])))
-			tile.hex.storedUnits.push_back(summonedUnit)
+			tile.hex.storedEntities.push_back(summonedUnit)
 			add_child(summonedUnit)
+			updateTeamSight(summonedUnit.teamID)
 			pass
 		Command.SCRIPT:
 			# [Command.SCRIPT, user, script id, data[0], data[1], data[2], ...]

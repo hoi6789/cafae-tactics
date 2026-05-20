@@ -27,6 +27,7 @@ animation = &"windup"
 script = ExtResource("2_dvocn")
 unitData = SubResource("Resource_o2s4o")
 hpBar = NodePath("Status Bar/Sprite3D/SubViewport/Health Bar")
+see_through = true
 
 [node name="Area3D" type="Area3D" parent="."]
 

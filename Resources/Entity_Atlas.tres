@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="FieldEntityAtlas" load_steps=3 format=3 uid="uid://cphuplsft35ye"]
+
+[ext_resource type="Script" uid="uid://byfdcfqourcvu" path="res://Scripts/field_entity_atlas.gd" id="1_570nh"]
+[ext_resource type="PackedScene" uid="uid://j50q8hbick6g" path="res://Entities/Bush.tscn" id="1_ylh1n"]
+
+[resource]
+script = ExtResource("1_570nh")
+entityList = Array[PackedScene]([ExtResource("1_ylh1n")])
+metadata/_custom_type_script = "uid://byfdcfqourcvu"

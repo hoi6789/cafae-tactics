@@ -1,5 +1,9 @@
 extends AnimatedSprite3D
 class_name FieldEntity
+
+@export var name_id: String
+@export var see_through: bool
+
 var hex_pos: HexVector
 var hex_height: float
 var virtual_pos: HexVector
@@ -9,7 +13,7 @@ var unitID: int
 var teamID: int
 
 var _calculating_sight = false
-var sightRange = 0
+@export var sightRange = 0
 var sight: Array[HexTile]
 
 var target_pos: HexVector
@@ -34,9 +38,13 @@ func setAnimation(anim: String):
 func setLocation(hex_vec: HexVector, _height: int):
 	hex_pos = hex_vec
 	hex_height = _height
+	print("loc for ", name_id)
 	setAnimation("default")
 	updateSight()
 	pass
+
+func canSeeThrough() -> bool:
+	return see_through
 
 func movePath(path: Array[HexTile], speed: float):
 	var lastTile = inputManager.controller.map.get_hex(hex_pos)
@@ -116,8 +124,11 @@ func canSee() -> bool:
 
 func update(delta: float):
 	_delta = delta
+	
 	if hex_pos != null:
 		position = getPosition(hex_pos, hex_height)
+	
+	
 	
 	if last_position != position:
 		var tranform_matrix = get_viewport().get_camera_3d().global_transform.affine_inverse()

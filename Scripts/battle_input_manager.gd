@@ -84,7 +84,7 @@ func _on_summon_button_pressed() -> void:
 func chooseHex(hex: Hex):
 	match queueCommand:
 		5:
-			var n: Array[int] = [BattleController.Command.SUMMON, hex.data.hex_pos.q, hex.data.hex_pos.r, hex.data.height, 1, NetworkManager.steam_id, BattleController.playerTeam]
+			var n: Array[int] = [BattleController.Command.SUMMON_UNIT, hex.data.hex_pos.q, hex.data.hex_pos.r, hex.data.height, 1, NetworkManager.steam_id, BattleController.playerTeam]
 			print(Vector3(hex.data.hex_pos.q, hex.data.hex_pos.r, hex.data.hex_pos.s))
 			#hex.id = 2
 			addInput(n)
@@ -278,7 +278,7 @@ func executeInputs():
 	var inputChannel: Dictionary[int, Array] = {}
 	for input in inputQueue:
 		print("running: ", input)
-		if input[0] == BattleController.Command.SUMMON:
+		if input[0] == BattleController.Command.SUMMON_UNIT:
 			controller.processInput(input)
 		else:
 			if input[1] not in inputChannel:
