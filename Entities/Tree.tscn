@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://bb0wa33raa6a2"]
+
+[ext_resource type="Texture2D" uid="uid://dlsieqkfrrjnw" path="res://Sprites/Bush/Tree_Transparent_Background.png" id="1_wxwka"]
+[ext_resource type="Script" uid="uid://c8vsge1nvttxu" path="res://Scripts/stationary_unit.gd" id="2_w044s"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yygbb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_wxwka")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Tree" type="AnimatedSprite3D"]
+pixel_size = 0.0003
+billboard = 2
+sprite_frames = SubResource("SpriteFrames_yygbb")
+script = ExtResource("2_w044s")
+name_id = "tree"
+unit_height = 3

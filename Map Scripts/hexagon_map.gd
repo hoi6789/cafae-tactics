@@ -224,7 +224,7 @@ func blocksLOSExclusive(tile: HexTile, origin: HexTile) -> float:
 	print("en count:",len(tile.hex.storedEntities))
 	for obj in tile.hex.storedEntities:
 		var o = (obj as FieldEntity)
-		if !o.canSeeThrough() and o.hex_height >= origin.height:
+		if !o.canSeeThrough() and o.hex_height >= (origin.height - o.unit_height + 1):
 			return o.getSightBlockFactor()
 	
 	return 0

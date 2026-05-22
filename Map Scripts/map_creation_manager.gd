@@ -284,7 +284,7 @@ func select_hex_type(id: int):
 
 func select_entity_type(id: int):
 	placementData.selectionMode = PlacementData.SelectionMode.ENTITY
-	placementData.set_type(id)
+	placementData.set_entity_type(id)
 	
 func place_entity(tile: HexTile, id: int = placementData.current_entity_id):
 	var entity_command: Array[int] = [BattleController.Command.SUMMON_ENTITY, id, tile.hex_pos.q, tile.hex_pos.r, tile.hex_pos.s, tile.height, -1, -1]
