@@ -85,7 +85,7 @@ func get_hex_in_shape(shape: Array[HexVector], sight_point: HexTile, origin: Hex
 	t1 = Time.get_ticks_msec()
 	var MAX_THREADS = 16
 	for hex in hexes:
-		if hex == null or blocksLOS(hex, sight_point) or blocksLOSExclusive(hex, sight_point) or !inLOSAngle(hex, sight_point):
+		if hex == null or blocksLOS(hex, sight_point) or blocksLOSExclusive(hex, sight_point) > 0 or !inLOSAngle(hex, sight_point):
 			continue
 		for i in len(threads):
 			if len(threads) < MAX_THREADS:
@@ -220,14 +220,14 @@ func blocksLOS(tile: HexTile, origin: HexTile):
 	
 	return dy_unscaled > 2
 	
-func blocksLOSExclusive(tile: HexTile, origin: HexTile):
+func blocksLOSExclusive(tile: HexTile, origin: HexTile) -> float:
 	print("en count:",len(tile.hex.storedEntities))
 	for obj in tile.hex.storedEntities:
 		var o = (obj as FieldEntity)
 		if !o.canSeeThrough() and o.hex_height >= origin.height:
-			return true
+			return o.getSightBlockFactor()
 	
-	return false
+	return 0
 
 func raycast(origin: HexVector, angle: float, distance: float, resolution: float = 0.1, finalHex: HexTile = null) -> HexTile:
 	var t = 0
@@ -240,6 +240,8 @@ func raycast(origin: HexVector, angle: float, distance: float, resolution: float
 	var last_found_hex = origin_hex
 	
 	var current_pos: HexVector = origin
+	var block_factor = 0
+	var max_block_factor = 1
 	
 	#initial check
 	if finalHex != null and current_hex == finalHex:
@@ -255,11 +257,12 @@ func raycast(origin: HexVector, angle: float, distance: float, resolution: float
 			current_hex = get_hex(grid_hex)
 			
 			if current_hex != null:
+				block_factor += blocksLOSExclusive(current_hex, origin_hex)
 				var double_last_found_hex = last_found_hex
 				last_found_hex = current_hex
 				if finalHex != null and current_hex == finalHex:
 					break
-			if current_hex != null and (blocksLOS(current_hex, origin_hex) or blocksLOSExclusive(current_hex, origin_hex)):
+			if current_hex != null and (blocksLOS(current_hex, origin_hex) or block_factor >= max_block_factor):
 				break
 		t += resolution
 	return last_found_hex

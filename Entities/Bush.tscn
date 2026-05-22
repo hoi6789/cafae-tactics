@@ -20,3 +20,4 @@ billboard = 2
 sprite_frames = SubResource("SpriteFrames_yygbb")
 script = ExtResource("2_vvrme")
 name_id = "bush"
+sight_block_factor = 0.5

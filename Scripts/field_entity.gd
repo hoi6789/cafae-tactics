@@ -3,6 +3,7 @@ class_name FieldEntity
 
 @export var name_id: String
 @export var see_through: bool
+@export var sight_block_factor: float = 1
 
 var hex_pos: HexVector
 var hex_height: float
@@ -29,6 +30,9 @@ func onPlayerTeam():
 	if inputManager == null:
 		return false
 	return teamID == inputManager.controller.playerTeam
+
+func getSightBlockFactor() -> float:
+	return sight_block_factor
 	
 func setAnimation(anim: String):
 	animation = anim
