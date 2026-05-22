@@ -1,11 +1,14 @@
-[gd_scene load_steps=10 format=3 uid="uid://cekxslbqfkwii"]
+[gd_scene load_steps=13 format=3 uid="uid://cekxslbqfkwii"]
 
 [ext_resource type="Script" uid="uid://dlsio6usk6vfy" path="res://Map Scripts/map_creation_manager.gd" id="1_fp0w0"]
 [ext_resource type="PackedScene" uid="uid://ccmqueenj03hf" path="res://Prefabs/hex_tile.tscn" id="2_jfcuv"]
 [ext_resource type="Resource" uid="uid://dyu3k6a8ajr5w" path="res://Resources/Hex_Data.tres" id="3_m8hym"]
+[ext_resource type="PackedScene" uid="uid://cqqmle3r6irf7" path="res://Prefabs/entity_icon.tscn" id="4_0a8h2"]
 [ext_resource type="Script" uid="uid://bgnogf41mi852" path="res://Scripts/camera_3d.gd" id="4_jfcuv"]
 [ext_resource type="PackedScene" uid="uid://b5gce3re2p4wx" path="res://Prefabs/tile_icon.tscn" id="5_m8hym"]
+[ext_resource type="Resource" uid="uid://cphuplsft35ye" path="res://Resources/Entity_Atlas.tres" id="5_xe21m"]
 [ext_resource type="Script" uid="uid://badgcn3n4cs12" path="res://Map Scripts/single_mode_player.gd" id="6_cnvfd"]
+[ext_resource type="Script" uid="uid://s7k7t6lffaq" path="res://Scripts/tab_menu.gd" id="6_wmhan"]
 [ext_resource type="AudioStream" uid="uid://bkeusrkojlxda" path="res://Music/Cruising - Xploshi - Topic (128k).mp3" id="7_wmhan"]
 
 [sub_resource type="Environment" id="Environment_jfcuv"]
@@ -15,12 +18,15 @@ ambient_light_energy = 2.04
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cnvfd"]
 bg_color = Color(0.3515629, 0.35156292, 0.35156274, 1)
 
-[node name="MapCreator" type="Node3D" node_paths=PackedStringArray("tileGrid", "cam", "outputText")]
+[node name="MapCreator" type="Node3D" node_paths=PackedStringArray("tileGrid", "entityGrid", "cam", "outputText")]
 script = ExtResource("1_fp0w0")
 HexTilePrefab = ExtResource("2_jfcuv")
 TileIconPrefab = ExtResource("5_m8hym")
-tileGrid = NodePath("UI/Panel/GridContainer")
+EntityIconPrefab = ExtResource("4_0a8h2")
+tileGrid = NodePath("UI/Placement Container/Tile Panel/GridContainer")
+entityGrid = NodePath("UI/Placement Container/Entity Panel/GridContainer")
 data = ExtResource("3_m8hym")
+entityData = ExtResource("5_xe21m")
 cam = NodePath("Camera3D")
 outputText = NodePath("UI/Output Panel/TextEdit")
 
@@ -54,30 +60,72 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -142.0
+offset_top = -162.0
 offset_right = 460.0
 grow_vertical = 0
 mouse_filter = 1
-text = "Left Click: Place Tile
+text = "Left Click: Place Tile/Entity on Tile
 Ctrl + Mouse Wheel: Change Tile Height
 
 W/A/S/D: Move Camera
 E/Q: Raise/Lower Camera
-Middle Click: Rotate Camera"
+Middle Click: Rotate Camera
+Right Click: Delete Tile/Entity on Tile"
 
-[node name="Panel" type="Panel" parent="UI"]
+[node name="Placement Container" type="VFlowContainer" parent="UI" node_paths=PackedStringArray("tabs", "panels")]
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -200.0
+offset_left = -201.0
+offset_top = 6.0
+offset_right = -1.0
 offset_bottom = -288.0
 grow_horizontal = 0
 grow_vertical = 2
+theme_override_constants/v_separation = 0
+script = ExtResource("6_wmhan")
+tabs = NodePath("TabBar")
+panels = [NodePath("Tile Panel"), NodePath("Entity Panel")]
+
+[node name="TabBar" type="TabBar" parent="UI/Placement Container"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+current_tab = 0
+tab_count = 2
+tab_0/title = "Tiles"
+tab_1/title = "Entities"
+
+[node name="Tile Panel" type="Panel" parent="UI/Placement Container"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_vertical = 3
 mouse_filter = 1
 
-[node name="GridContainer" type="GridContainer" parent="UI/Panel"]
+[node name="GridContainer" type="GridContainer" parent="UI/Placement Container/Tile Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 4
+
+[node name="Entity Panel" type="Panel" parent="UI/Placement Container"]
+visible = false
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+
+[node name="GridContainer" type="GridContainer" parent="UI/Placement Container/Entity Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -148,5 +196,6 @@ volume_db = -20.0
 
 [connection signal="mouse_entered" from="UI/Main Panel" to="." method="_on_tilemenu_mouse_entered"]
 [connection signal="mouse_exited" from="UI/Main Panel" to="." method="_on_tilemenu_mouse_exited"]
+[connection signal="tab_clicked" from="UI/Placement Container/TabBar" to="UI/Placement Container" method="_on_tab_bar_tab_clicked"]
 [connection signal="pressed" from="UI/Output Panel/VBoxContainer/Save Button" to="." method="_on_save"]
 [connection signal="pressed" from="UI/Output Panel/VBoxContainer/Load Button" to="." method="_on_load"]

@@ -5,6 +5,8 @@ class_name FieldEntity
 @export var see_through: bool
 @export var sight_block_factor: float = 1
 
+var always_visible: bool = false
+
 var hex_pos: HexVector
 var hex_height: float
 var virtual_pos: HexVector
@@ -12,6 +14,8 @@ var inputManager: InputManager
 var playerID: int
 var unitID: int
 var teamID: int
+
+var atlasID: int
 
 var _calculating_sight = false
 @export var sightRange = 0
@@ -121,7 +125,7 @@ func getCurrentHexTile() -> HexTile:
 	return inputManager.controller.map.get_hex(hex_pos)
 
 func canSee() -> bool:
-	if onPlayerTeam():
+	if always_visible or onPlayerTeam():
 		return true
 	var hex: HexTile = getCurrentHexTile()
 	return (hex != null) and hex.hex.can_see

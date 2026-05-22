@@ -38,8 +38,8 @@ LocHexTile = ExtResource("2_55amd")
 SceneUnit = ExtResource("3_qohhg")
 hexData = ExtResource("4_jumj3")
 entityData = ExtResource("5_mbdl7")
-mapString = "-3.0,2.0 -2.0,4.0
-x|x|x|x|4,1|4,1|4,1;0|x|x|4,1|4,1|4,1|4,1|4,1|x|4,1|4,1|4,1;0|4,1|4,1;0|x|4,1;0|4,4|0,1|4,1|4,1|x|x|4,1|4,1|4,1|4,1|x|x|x|x|4,1;0|4,1;0|x|x|x|x|"
+mapString = "-3.0,3.0 -3.0,3.0
+x|x|x|2,0|2,0|2,0|2,0|x|x|2,0|4,0|4,0|4,0;0|2,0|x|2,0|4,0;0|3,0|3,0|4,0;0|2,0|2,0|4,0|3,0;0|0,0;0|3,0|4,0;0|2,0|2,0|4,0|3,0|3,0|4,0|2,0|x|2,0|4,0|4,0|4,0;0|2,0|x|x|2,0|2,0|2,0|2,0|x|x|x|"
 
 [node name="InputManager" type="Control" parent="." node_paths=PackedStringArray("actionsPanel", "vboxContainer", "doneTurnButton", "actionsView")]
 unique_name_in_owner = true

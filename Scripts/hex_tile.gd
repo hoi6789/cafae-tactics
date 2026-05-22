@@ -186,6 +186,12 @@ func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, n
 			inputManager.setInputState(InputManager.InputStates.PENDING)
 			pass
 		if inMapEditor() and event.button_index == 2 and event.pressed == true:
-			MapCreator.singleton.remove_hex(data)
+			if len(storedEntities) > 0:
+				MapCreator.singleton.remove_entity(data, storedEntities[0])
+			else:
+				MapCreator.singleton.remove_hex(data)
+			pass
+		if inMapEditor() and event.button_index == 1 and event.pressed == true and MapCreator.singleton.placementData.selectionMode == MapCreator.singleton.PlacementData.SelectionMode.ENTITY:
+			MapCreator.singleton.place_entity(data)
 			pass
 	pass # Replace with function body.

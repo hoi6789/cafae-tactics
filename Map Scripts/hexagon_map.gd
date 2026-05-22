@@ -257,7 +257,8 @@ func raycast(origin: HexVector, angle: float, distance: float, resolution: float
 			current_hex = get_hex(grid_hex)
 			
 			if current_hex != null:
-				block_factor += blocksLOSExclusive(current_hex, origin_hex)
+				if current_hex != origin_hex:
+					block_factor += blocksLOSExclusive(current_hex, origin_hex)
 				var double_last_found_hex = last_found_hex
 				last_found_hex = current_hex
 				if finalHex != null and current_hex == finalHex:
@@ -326,6 +327,9 @@ func getFloodedRange(from: HexTile, flood_range: int) -> Array[HexTile]:
 func hex_string(h: HexTile) -> String:
 	var s: String = ""
 	s += str(int(h.data_index)) + "," + str(int(h.height))
+	if h.hex != null and len(h.hex.storedEntities) > 0:
+		for ent in h.hex.storedEntities:
+			s += ";"+str(ent.atlasID)
 	return s
 
 func hex_from_string(s: String, data: HexData) -> HexTile:
@@ -446,14 +450,17 @@ func construct_entities_using_string_form(form: String, hex_atlas: HexData, cont
 			hex.id = current_id
 			
 			if len(hex_dat) > 1:
-				var str_entity = hex_dat[1] 
-				##summons an entity at a target hex. params: entity type id, q of hex, r of hex, h of hex tile, controller of unit, team of unit
-				var entity_command: Array[int] = [BattleController.Command.SUMMON_ENTITY, int(str_entity), hpos.q, hpos.r, hpos.s, hex.height, -1, -1]
-				if controller != null:
-					controller.processInput(entity_command)
-				else:
-					var entity = BattleController.createEntity(entity_command, entityData, 0, self, inputManager)
-					root.add_child(entity)
+				var index = 0
+				for str_entity in hex_dat:
+					index += 1 
+					if index == 1:
+						continue
+					##summons an entity at a target hex. params: entity type id, q of hex, r of hex, h of hex tile, controller of unit, team of unit
+					var entity_command: Array[int] = [BattleController.Command.SUMMON_ENTITY, int(str_entity), hpos.q, hpos.r, hpos.s, hex.height, -1, -1]
+					if controller != null:
+						controller.processInput(entity_command)
+					else:
+						MapCreator.singleton.place_entity(map[subpos],int(str_entity))
 			
 			current_id += 1
 

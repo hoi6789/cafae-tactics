@@ -5,8 +5,11 @@ static var singleton: MapCreator
 
 @export var HexTilePrefab: PackedScene
 @export var TileIconPrefab: PackedScene
+@export var EntityIconPrefab: PackedScene
 @export var tileGrid: GridContainer
+@export var entityGrid: GridContainer
 @export var data: HexData
+@export var entityData: FieldEntityAtlas
 @export var cam: Camera3D
 @export var outputText: TextEdit
 
@@ -36,10 +39,13 @@ class PlacementData:
 	
 	enum SelectionMode {
 		NONE,
-		HEX
+		HEX,
+		ENTITY
 	}
 	var current_placement_height: int = 0
 	var current_hex: HexTile
+	var current_hex_id: int = 0
+	var current_entity_id: int = 0
 	var ghost: GhostHex
 	var selectionMode: SelectionMode = SelectionMode.NONE
 	
@@ -48,6 +54,7 @@ class PlacementData:
 		ghost = GhostHex.new(current_hex)
 	
 	func set_type(id: int):
+		current_hex_id = id
 		var new_hex: HexTile = MapCreator.singleton.data.get_data(id)
 		new_hex.height = current_hex.height
 		new_hex.hex_pos = current_hex.hex_pos
@@ -55,6 +62,9 @@ class PlacementData:
 		ghost.ghost_hex.initialize(new_hex.clone())
 		
 		current_hex = new_hex
+	
+	func set_entity_type(id: int):
+		current_entity_id = id
 	
 	func update_parameters(delta: float, pos: HexVector, height: int = current_placement_height):
 		current_hex.height = height
@@ -113,6 +123,8 @@ func get_plane_pos():
 func _ready() -> void:
 	singleton = self
 	
+	EditorIcon.icons = []
+	
 	placementData = PlacementData.new()
 	
 	for i in range(len(data.data_list)):
@@ -120,7 +132,12 @@ func _ready() -> void:
 		icon.initialize(i)
 		tileGrid.add_child(icon)
 	
-	create_hex_at_pos(Vector2(0, 0), 1, 0)
+	for i in range(len(entityData.entityList)):
+		var icon: EntityIcon = EntityIconPrefab.instantiate()
+		icon.initialize(i)
+		entityGrid.add_child(icon)
+	
+	create_hex_at_pos(Vector2(0, 0), 0, 0)
 	
 	lastMousePos = get_viewport().get_mouse_position()
 	
@@ -180,6 +197,10 @@ func despawn_hex(id: int) -> void:
 	
 	var cubePos = HexVector.toCubePos(hex.data.hex_pos)
 	id_lookup.erase(cubePos)
+	
+	for entity in hex.storedEntities:
+		entity.queue_free()
+	
 	hex.queue_free()
 	
 	
@@ -260,7 +281,21 @@ func _process(delta: float) -> void:
 func select_hex_type(id: int):
 	placementData.selectionMode = PlacementData.SelectionMode.HEX
 	placementData.set_type(id)
+
+func select_entity_type(id: int):
+	placementData.selectionMode = PlacementData.SelectionMode.ENTITY
+	placementData.set_type(id)
 	
+func place_entity(tile: HexTile, id: int = placementData.current_entity_id):
+	var entity_command: Array[int] = [BattleController.Command.SUMMON_ENTITY, id, tile.hex_pos.q, tile.hex_pos.r, tile.hex_pos.s, tile.height, -1, -1]
+	var entity = BattleController.createEntity(entity_command, entityData, -1, hexmap, null)
+	entity.always_visible = true
+	add_child(entity)
+
+func remove_entity(tile: HexTile, entity: FieldEntity):
+	remove_child(entity)
+	tile.hex.storedEntities.erase(entity)
+	entity.queue_free()
 	
 			
 func _input(event) -> void:
@@ -289,6 +324,8 @@ func _on_load() -> void:
 	clear()
 	hexmap.construct_using_string_form(outputText.text, data)
 	generate_from_map()
+	hexmap.construct_entities_using_string_form(outputText.text,data,null)
+	
 		
 
 

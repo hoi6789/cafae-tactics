@@ -13,8 +13,10 @@ func init():
 	initialized = true
 	var id = 0
 
-func get_id(script: BattleScript) -> int:
-	return id_dict[script.moveName]
-
 func get_entity(id: int) -> FieldEntity:
-	return (entityList[id] as PackedScene).instantiate()
+	var _entity: FieldEntity = (entityList[id] as PackedScene).instantiate()
+	_entity.atlasID = id
+	return _entity
+
+func get_entity_scene(id: int) -> PackedScene:
+	return (entityList[id] as PackedScene)

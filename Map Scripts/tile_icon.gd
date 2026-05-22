@@ -1,13 +1,16 @@
 class_name TileIcon
-extends Panel
-@export var textLabel: RichTextLabel
-var id = -1
+extends EditorIcon
+
+
+
 var data: HexTile
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
+
+
+func isSelected() -> bool:
+	return (icon_mode == MapCreator.singleton.placementData.selectionMode) and (MapCreator.singleton.placementData.current_hex_id == id)
 
 func initialize(_id: int = id):
+	icon_mode = MapCreator.PlacementData.SelectionMode.HEX
 	#get data
 	id = _id
 	data = MapCreator.singleton.data.get_data(id)
@@ -19,3 +22,4 @@ func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			MapCreator.singleton.select_hex_type(id)
+			totalUpdate()
