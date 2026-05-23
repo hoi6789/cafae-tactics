@@ -176,6 +176,12 @@ func _on_mouse_exited() -> void:
 		inputManager.unsetHoveredHex(self)
 	pass # Replace with function body.
 
+func canPassThrough():
+	for _entity in storedEntities:
+		var entity: FieldEntity = _entity
+		if entity.pass_through == false:
+			return false
+	return true
 
 @warning_ignore("unused_parameter")
 func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:

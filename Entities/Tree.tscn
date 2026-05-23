@@ -20,4 +20,5 @@ billboard = 2
 sprite_frames = SubResource("SpriteFrames_yygbb")
 script = ExtResource("2_w044s")
 name_id = "tree"
+pass_through = false
 unit_height = 3

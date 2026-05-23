@@ -121,7 +121,7 @@ func rebuild_graph():
 			var nextpos = HexVector.add(hex.hex_pos, dir)
 			var adj: HexTile = get_hex(nextpos)
 			
-			if adj != null and adj.height-hex.height <= HEIGHT_STEP_MAX:
+			if adj != null and adj.height-hex.height <= HEIGHT_STEP_MAX and adj.hex != null and adj.hex.canPassThrough():
 				var cost = getIntermovementCost(hex, adj)
 				graph.insert_edge(hex.id,adj.id,cost)
 
@@ -463,6 +463,8 @@ func construct_entities_using_string_form(form: String, hex_atlas: HexData, cont
 						MapCreator.singleton.place_entity(map[subpos],int(str_entity))
 			
 			current_id += 1
+	
+	rebuild_graph()
 
 #map instantiation
 func spawn_hex(hextile: HexTile, prefab: PackedScene, parent: Node) -> Hex:

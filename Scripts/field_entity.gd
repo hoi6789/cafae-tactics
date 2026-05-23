@@ -3,6 +3,7 @@ class_name FieldEntity
 
 @export var name_id: String
 @export var see_through: bool
+@export var pass_through: bool = true
 @export var sight_block_factor: float = 1
 @export var unit_height: int = 1
 
