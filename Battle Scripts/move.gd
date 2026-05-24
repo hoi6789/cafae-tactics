@@ -39,6 +39,10 @@ func selection_logic(manager: InputManager):
 		if manager.actionState == InputManager.ActionState.FINISH:
 			break
 		
+		#if tile isnt a valid tile, skip it
+		if manager.selectedHex.data not in litTiles:
+			continue
+		
 		points.push_back(manager.selectedHex.data.hex_pos)
 		var new_path: Array[HexTile] = await map.getShortestPath(map.get_hex(points[-2]),map.get_hex(points[-1]))
 		if len(new_path) > 0:
@@ -49,7 +53,6 @@ func selection_logic(manager: InputManager):
 			for tile in new_path:
 				if last_tile != null:
 					var cost = HexagonMap.getIntermovementCost(last_tile, tile)
-					print("cost: ", cost)
 					if effectiveLen + cost <= user.unitData.speed:
 						effectiveLen += cost
 					else:

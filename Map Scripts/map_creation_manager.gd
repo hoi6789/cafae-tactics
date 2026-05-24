@@ -172,7 +172,6 @@ func remove_hex(to_remove: HexTile) -> void:
 	var cubePos = HexVector.toCubePos(to_remove.hex_pos)
 	hexmap.map.erase(cubePos)
 	id_lookup.erase(cubePos)
-	hextile_lookup.erase(cubePos)
 	
 	despawn_hex(to_remove.id)
 
